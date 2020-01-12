@@ -21,9 +21,11 @@
   },
   "homepage": "https://github.com/vivekburman/topselfnews#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "node-sass": "^4.13.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "sass": "^1.24.4"
   }
 }
