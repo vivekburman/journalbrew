@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import search from '../../../images/search.svg';
+import search from '../../images/search.svg';
 class SearchNLogoComponent extends Component {
     constructor () {
         super();
