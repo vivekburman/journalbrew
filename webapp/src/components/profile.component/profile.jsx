@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import NavMenuComponent from './navMenu';
-import navMenuIcon from '../../../images/nav-menu.svg';
+import NavMenuComponent from './functional.component/navMenu';
+import navMenuIcon from '../../images/nav-menu.svg';
 class ProfileComponent extends Component {
     constructor (props) {
         super();
