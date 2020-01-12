@@ -20,7 +20,9 @@ class Header extends Component {
         window.removeEventListener('resize', this.updateWindowSize);
     }
     updateWindowSize() {
-        this.setState({ windowWidth: window.innerWidth, hasWindowResized: this.state.hasWindowResized + 1 });
+        if (this.state.windowWidth !== window.innerWidth) {
+            this.setState({ windowWidth: window.innerWidth, hasWindowResized: this.state.hasWindowResized + 1 });
+        }
     }
     render () {
         const { windowWidth, hasWindowResized } = this.state;
