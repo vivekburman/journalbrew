@@ -14,7 +14,7 @@ class SearchNLogoComponent extends Component {
         }
         this.handleSearchClick = this.handleSearchClick.bind(this);
     }
-    handleSearchClick (windowSize) {
+    handleSearchClick () {
         /* if window less than 768
             *  open => close and vice-versa
             else
@@ -28,22 +28,22 @@ class SearchNLogoComponent extends Component {
                 hasResized: hasWindowResized, 
                 searchInputCssClass: 'expand-search', 
                 logoCssClass: 'collapse-logo',
-                searchCssClass: 'flex-1'
+                searchCssClass: 'flex-1',
             });
         } else {
             this.setState({
                 hasResized: hasWindowResized, 
                 searchInputCssClass: 'collapse-search', 
                 logoCssClass: 'expand-logo',
-                searchCssClass: 'flex-0'
+                searchCssClass: 'flex-0',
             });
         }
     }
     render() {
-        let { searchInputCssClass, searchText, hasResized, logoCssClass, searchCssClass } = this.state;
-        const {  windowWidth = window.innerWidth, hasWindowResized, handleSearchRequest } = this.props;
+        let { searchInputCssClass, hasResized, logoCssClass, searchCssClass } = this.state;
+        const { searchText, windowWidth = window.innerWidth, hasWindowResized, handleSearchRequest } = this.props;
         const placeholder = windowWidth < 576 ? 'Search' : 'Search by location, date or creator';
-        console.log(searchInputCssClass);
+        console.log(hasWindowResized, hasResized);
         if (hasWindowResized !== hasResized) {
             searchCssClass = '';
             logoCssClass = '';
@@ -60,7 +60,7 @@ class SearchNLogoComponent extends Component {
                         onChange= {(e) => handleSearchRequest(e.target.value)}
                         value={searchText} 
                     />
-                    <figure className="figure" onClick={() => this.handleSearchClick(windowWidth)}>
+                    <figure className="figure" onClick={this.handleSearchClick}>
                         <img src={search} alt="search-icon" className="icon-img"></img>
                     </figure>
                 </div>
@@ -68,10 +68,11 @@ class SearchNLogoComponent extends Component {
         );
     }
 }   
-const mapStateToProps = ({ window }) => {
+const mapStateToProps = ({ window, search }) => {
     return {
         windowWidth: window.windowSize,
-        hasWindowResized: window.hasWindowResized
+        hasWindowResized: window.hasWindowResized,
+        searchText: search.searchText
     };
 };
 const mapDispatchToProps = dispatch => ({
