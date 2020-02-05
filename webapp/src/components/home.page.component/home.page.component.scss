@@ -1,0 +1,10 @@
+@import '../../mainSass/main';
+
+.homepage {
+    @extend %flex-row-nowrap;
+    margin: 0;
+    font-family: 'Rubik', sans-serif;
+}
+.homepage > div {
+    min-height: 100%;
+}

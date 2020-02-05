@@ -1,0 +1,26 @@
+.accordian-list {
+    display: none;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+@media(min-width: 768px) {
+    .accordian-list {
+        display: flex;
+    }
+}
+.accordian-list-item {
+    padding: 16px 24px 16px 12px;
+}
+.item-icon {
+
+}
+.item-image {
+
+}
+.show-list {
+    display: flex;
+}
+.hide-list {
+    display: none;
+}
