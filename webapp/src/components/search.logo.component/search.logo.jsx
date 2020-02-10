@@ -1,65 +1,63 @@
 import React, { Component } from 'react';
 import search from '../../images/search.svg';
+import { connect } from 'react-redux';
+import handleSearchRequest from'../../reducers/search/search.action';
 class SearchNLogoComponent extends Component {
-    constructor () {
-        super();
+    constructor (props) {
+        super(props);
         this.state = {
-            searchInputField: '',
-            logoClass: '',
-            searchInputClass: '',
-            searchClass: '',
+            searchCssClass: '',
+            logoCssClass: '',
+            searchInputCssClass: '',
+            searchText: '',
             hasResized: -1
         }
         this.handleSearchClick = this.handleSearchClick.bind(this);
-        this.handleSearchRequest = this.handleSearchRequest.bind(this);
     }
-    handleSearchRequest (e) {
-        this.setState({searchInputField: e.target.value});
-    }
-    handleSearchClick(e) {
-        const { searchInputClass, hasResized, searchClass } = this.state,
-            { windowWidth, hasWindowResized } = this.props;
-        if (windowWidth < 768) {
-            // initial state, here search is closed by default
-            // therefore we need to open it and close logo
-            // or is closed then open and vice-versa.
-            if (searchInputClass === 'collapse-search' || searchInputClass === '' ||
-                hasResized !== hasWindowResized) {
-                this.setState({
-                    hasResized: hasWindowResized, 
-                    searchInputClass: 'expand-search', 
-                    logoClass: 'collapse-logo',
-                    searchClass: 'flex-1'
-                });
-            } else {
-                this.setState({
-                    hasResized: hasWindowResized, 
-                    searchInputClass: 'collapse-search', 
-                    logoClass: 'expand-logo',
-                    searchClass: 'flex-0'
-                });
-            }
+    handleSearchClick () {
+        /* if window less than 768
+            *  open => close and vice-versa
+            else
+            * do nothing
+        */
+       const { hasWindowResized } = this.props;
+       const { searchInputCssClass, hasResized } = this.state;
+       if (searchInputCssClass === 'collapse-search' || searchInputCssClass === '' ||
+            hasResized !== hasWindowResized) {
+            this.setState({
+                hasResized: hasWindowResized, 
+                searchInputCssClass: 'expand-search', 
+                logoCssClass: 'collapse-logo',
+                searchCssClass: 'flex-1',
+            });
+        } else {
+            this.setState({
+                hasResized: hasWindowResized, 
+                searchInputCssClass: 'collapse-search', 
+                logoCssClass: 'expand-logo',
+                searchCssClass: 'flex-0',
+            });
         }
     }
     render() {
-        let { searchInputField, searchClass, logoClass, hasResized, searchInputClass} = this.state,
-            { windowWidth, hasWindowResized } = this.props;
-        if (hasWindowResized !== hasResized && searchInputClass) {
-            searchClass = '';
-            logoClass = '';
-            searchInputClass = '';
+        let { searchInputCssClass, hasResized, logoCssClass, searchCssClass } = this.state;
+        const { searchText, windowWidth = window.innerWidth, hasWindowResized, handleSearchRequest } = this.props;
+        const placeholder = windowWidth < 576 ? 'Search' : 'Search by location, date or creator';
+        if (hasWindowResized !== hasResized) {
+            searchCssClass = '';
+            logoCssClass = '';
+            searchInputCssClass = '';
         }
-        let placeholder = windowWidth < 576 ? 'Search' : 'Search by location, date or creator';
         return (
             <div className="search-and-logo">
-                <h1 className={"logo " + logoClass}>TopSelfNews</h1>    
-                <div className={"search " + searchClass}>
+                <h1 className={"logo " + logoCssClass}>TopSelfNews</h1>    
+                <div className={"search " + searchCssClass}>
                     <input 
-                        className={"search-input " + searchInputClass}
+                        className={"search-input " + searchInputCssClass}
                         type="search"
                         placeholder={placeholder}
-                        onChange={this.handleSearchRequest}
-                        value={searchInputField} 
+                        onChange= {(e) => handleSearchRequest(e.target.value)}
+                        value={searchText} 
                     />
                     <figure className="figure" onClick={this.handleSearchClick}>
                         <img src={search} alt="search-icon" className="icon-img"></img>
@@ -69,5 +67,14 @@ class SearchNLogoComponent extends Component {
         );
     }
 }   
-
-export default SearchNLogoComponent;
+const mapStateToProps = ({ window, search }) => {
+    return {
+        windowWidth: window.windowSize,
+        hasWindowResized: window.hasWindowResized,
+        searchText: search.searchText
+    };
+};
+const mapDispatchToProps = dispatch => ({
+    handleSearchRequest: searchString => dispatch(handleSearchRequest(searchString))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(SearchNLogoComponent);

@@ -51,6 +51,7 @@
 }
 .search-input {
     display: none;
+    max-width: 600px;
     font-size: 16px;
     background-color: whitesmoke;
     border: none;
@@ -158,4 +159,19 @@ nav ul {
 }
 .flex-0 {
     flex-grow: 0;
+}
+.show-accordian-icon {
+    padding: 6px 0 2px;
+    display: block;
+}
+@media(min-width: 768px) {
+    .show-accordian-icon {
+        display: none;
+    }  
+}
+.open-icon {
+    display: initial;
+}
+.close-icon {
+    display: none;
 }
