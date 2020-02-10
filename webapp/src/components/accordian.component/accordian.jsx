@@ -13,6 +13,12 @@ import local from '../../images/accordian/local.svg';
 import global from '../../images/accordian/global.svg';
 import opinion from '../../images/accordian/opinion.svg';
 
+/*
+TODO: Style it,
+    animate it,
+    click it
+    if possible add auto collapse
+*/
 class Accordian extends Component {
     render() {
         const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 768) ? 'show-list' : 'hide-list';
