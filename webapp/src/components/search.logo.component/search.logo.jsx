@@ -43,7 +43,6 @@ class SearchNLogoComponent extends Component {
         let { searchInputCssClass, hasResized, logoCssClass, searchCssClass } = this.state;
         const { searchText, windowWidth = window.innerWidth, hasWindowResized, handleSearchRequest } = this.props;
         const placeholder = windowWidth < 576 ? 'Search' : 'Search by location, date or creator';
-        console.log(hasWindowResized, hasResized);
         if (hasWindowResized !== hasResized) {
             searchCssClass = '';
             logoCssClass = '';
