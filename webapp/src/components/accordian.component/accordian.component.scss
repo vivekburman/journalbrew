@@ -3,15 +3,22 @@
     font-family: 'Rubik', sans-serif;
     display: none;
     list-style-type: none;
-    margin: 8px 0 0 0;
-    padding: 0;
+    margin: 0;
+    padding: 8px 0 0 0;
     overflow-y: auto;
     flex-direction: column;
-    max-width: 200px;
-    min-height: 100vh;
+    width: 200px;
+    background-color: #fff;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    z-index: 10;
 }
 @media(min-width: 768px) {
     .accordian-list {
+        z-index: 1;
+        width: 225px;
+        flex-grow: 2;
         margin: 16px 0 0 0;
         display: flex;
     }
@@ -44,4 +51,9 @@
 }
 .hide-list {
     display: none;
+}
+@media (max-width: 768px) {
+    .show-list + .news-feed, .hide-list + .news-feed {
+        margin-left: 0;
+    }
 }

@@ -1,10 +1,12 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 class Advertisement extends Component {
-    constructor () {
-
-    }
     render () {
-        
+        return(
+            <div>
+                Advertisement
+            </div>
+        );
     }
 }
+export default Advertisement;

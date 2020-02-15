@@ -13,6 +13,10 @@
     display: flex;
     flex-flow: column wrap;
 }
+%flex-column-nowrap {
+    display: flex;
+    flex-flow: column nowrap;
+}
 body {
     margin: 0;
     padding: 0;

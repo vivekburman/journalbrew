@@ -1,0 +1,27 @@
+@import '../../mainSass/main';
+
+.news-feed {
+    // overflow-y: auto;
+    @extend %flex-column-nowrap;
+    margin-left: 200px;
+    flex-grow: 2;
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    background-color: whitesmoke;
+    font-family: 'Rubik', sans-serif;
+}
+@media (min-width: 768px) {
+    .news-feed {
+        margin: 16px 16px 16px 241px;
+    }
+}
+.news-item {
+    margin: 8px 16px 4px 16px;
+    background-color: #fff;
+}
+@media (min-width: 768px) {
+    .news-item {
+        padding: 16px;
+    }
+}
