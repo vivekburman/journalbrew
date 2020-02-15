@@ -1,0 +1,8 @@
+@import '../../mainSass/main';
+
+.main {
+    @extend %flex-row-nowrap;
+    margin: 0;
+    padding-top: 55px;
+    font-family: 'Rubik', sans-serif;
+}
