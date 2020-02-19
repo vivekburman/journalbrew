@@ -21,7 +21,7 @@ TODO: Style it,
 */
 class Accordian extends Component {
     render() {
-        const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 768) ? 'show-list' : 'hide-list';
+        const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 767) ? 'show-list' : 'hide-list';
         return (
             <ul className={"accordian-list " + shouldOpen}>
                 <li className="accordian-list-item">

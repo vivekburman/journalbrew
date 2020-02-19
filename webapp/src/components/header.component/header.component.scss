@@ -139,11 +139,15 @@ nav ul {
         font-size: 22px;
     }
 }
-@media (min-width: 768px) {
-}
 .show-accordian-icon {
+    margin-left: 8px;
     padding-top: 4px;
     display: initial;
+}
+@media (min-width: 527px) {
+    .show-accordian-icon {
+        margin-left: 16px;
+    }
 }
 @media(min-width: 768px) {
     .show-accordian-icon {
@@ -182,5 +186,10 @@ nav ul {
     display: none;
 }
 .profile {
-    margin-right: 27px;
+    margin-right: 12px;
+}
+@media (min-width: 768px) {
+    .profile {
+        margin-right: 27px;
+    }
 }

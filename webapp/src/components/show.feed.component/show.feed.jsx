@@ -2,14 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './show.feed.component.scss';
 import dummy from '../../images/dummy.jpeg';
+
 import profilePlaceholder from '../../images/profile-pic-placeholder.png';
 import bookmark from '../../images/bookmark.svg';
 import share from '../../images/share.svg';
+
 const ShowFeed = ({ feeds = [], windowWidth }) => {
     const feedList = [];
     for (let i = 0; i < 10; i++) {
         feedList.push((
-            <li key={ i } className="news-item">
+            <li key={ i } className="news-item" >
                 <div className="news-thumbnail">
                    <img src={ dummy } alt="Images" className="news-image"/>
                 </div>
