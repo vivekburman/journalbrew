@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-
+import './advertisement.component.scss'
 class Advertisement extends Component {
     render () {
         return(
-            <div>
+            <div className="advertisement-component">
                 Advertisement
             </div>
         );

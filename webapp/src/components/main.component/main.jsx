@@ -10,7 +10,7 @@ class Main extends Component {
             <main className="main">
                 <Accordian windowWidth= {windowWidth}/>
                 <ShowFeed windowWidth= {windowWidth}/>
-                <Advertisement/>
+                {/* <Advertisement/> */}
             </main>
         );
     }

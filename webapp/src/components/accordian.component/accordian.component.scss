@@ -52,7 +52,7 @@
 .hide-list {
     display: none;
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .show-list + .news-feed, .hide-list + .news-feed {
         margin-left: 0;
     }

@@ -29,6 +29,9 @@
     padding: 8px;
     height: 20px;
 }
+.icon-img:hover {
+    cursor: pointer;
+}
 @media (min-width: 576px) {
     .icon-img {
         width: 22px;
@@ -126,7 +129,7 @@ nav ul {
 }
 .logo {
     align-self: center;
-    margin: 0 5% 0 8px;
+    margin: 0 5% 0 27px;
     color: yellowgreen;
     font-size: 18px;
     font-weight: 400;
@@ -136,11 +139,15 @@ nav ul {
         font-size: 22px;
     }
 }
-@media (min-width: 768px) {
-}
 .show-accordian-icon {
+    margin-left: 8px;
     padding-top: 4px;
     display: initial;
+}
+@media (min-width: 527px) {
+    .show-accordian-icon {
+        margin-left: 16px;
+    }
 }
 @media(min-width: 768px) {
     .show-accordian-icon {
@@ -177,4 +184,12 @@ nav ul {
 }
 .close-icon {
     display: none;
+}
+.profile {
+    margin-right: 12px;
+}
+@media (min-width: 768px) {
+    .profile {
+        margin-right: 27px;
+    }
 }
