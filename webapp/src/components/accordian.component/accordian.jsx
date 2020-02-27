@@ -12,6 +12,7 @@ import science from '../../images/accordian/science.svg';
 import local from '../../images/accordian/local.svg';
 import global from '../../images/accordian/global.svg';
 import opinion from '../../images/accordian/opinion.svg';
+import { Link } from 'react-router-dom';
 
 /*
 TODO: Style it,
@@ -19,14 +20,17 @@ TODO: Style it,
     click it
     if possible add auto collapse
 */
+
 class Accordian extends Component {
     render() {
         const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 767) ? 'show-list' : 'hide-list';
         return (
             <ul className={"accordian-list " + shouldOpen}>
                 <li className="accordian-list-item">
-                    <img src={story} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">New Story</span>
+                    <Link to="/new-story">
+                        <img src={story} className="item-img" alt="list-item-icon" />
+                        <span className="item-name">New Story</span>
+                    </Link>
                 </li>
                 <li className="accordian-list-item">
                     <img src={bookmark} className="item-img" alt="list-item-icon" />

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div contenteditable="true">
+        <p>
+            This is earth
+        </p>
+        <p>
+            This is earth 2
+        </p>
+        <p>
+            This is earth 3
+        </p>
+        <p>
+            This is earth 4
+        </p>
+        <p>
+            This is earth 5
+        </p>
+
+    </div>
+    <script>
+        let p = document.getElementsByTagName('div')[0];
+        p.addEventListener('keyPress', console.log(window.getSelection()));
+    </script>
+</body>
+</html>

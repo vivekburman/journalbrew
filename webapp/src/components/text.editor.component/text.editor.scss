@@ -1,0 +1,10 @@
+@import '../../mainSass/main';
+
+.text-editor-conatiner {
+    margin: 45px auto 0;
+    max-width: 900px;
+    flex-grow: 1;
+}
+.text-editor-conatiner:focus {
+    outline: none;
+}

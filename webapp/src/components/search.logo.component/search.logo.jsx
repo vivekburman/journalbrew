@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import search from '../../images/search.svg';
 import { connect } from 'react-redux';
 import handleSearchRequest from'../../reducers/search/search.action';
+import { Switch, Route } from 'react-router-dom';
 class SearchNLogoComponent extends Component {
     constructor (props) {
         super(props);
@@ -50,19 +51,23 @@ class SearchNLogoComponent extends Component {
         }
         return (
             <div className="search-and-logo">
-                <h1 className={"logo " + logoCssClass}>TopSelfNews</h1>    
-                <div className={"search " + searchCssClass}>
-                    <input 
-                        className={"search-input " + searchInputCssClass}
-                        type="search"
-                        placeholder={placeholder}
-                        onChange= {(e) => handleSearchRequest(e.target.value)}
-                        value={searchText} 
-                    />
-                    <figure className="figure" onClick={this.handleSearchClick}>
-                        <img src={search} alt="search-icon" className="icon-img"></img>
-                    </figure>
-                </div>
+                <h1 className={"logo " + logoCssClass}>TopSelfNews</h1>
+                <Switch>
+                    <Route exact path="/">
+                        <div className={"search " + searchCssClass}>
+                            <input 
+                                className={"search-input " + searchInputCssClass}
+                                type="search"
+                                placeholder={placeholder}
+                                onChange= {(e) => handleSearchRequest(e.target.value)}
+                                value={searchText} 
+                            />
+                            <figure className="figure" onClick={this.handleSearchClick}>
+                                <img src={search} alt="search-icon" className="icon-img"></img>
+                            </figure>
+                        </div>
+                    </Route>
+                </Switch>
             </div>
         );
     }
