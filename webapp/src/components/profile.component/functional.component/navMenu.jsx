@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux'; 
 import bell from '../../../images/bell.svg';
 import user from '../../../images/user.svg';
 const NavMenuComponent = ({flexDirection}) => {
@@ -14,4 +15,7 @@ const NavMenuComponent = ({flexDirection}) => {
         </ul>
     );
 }
-export default NavMenuComponent;
+const mapStateToProps = ({ notification }) => ({
+    notification: notification
+});
+export default connect(mapStateToProps)(NavMenuComponent);

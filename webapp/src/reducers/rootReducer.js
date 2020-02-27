@@ -2,8 +2,10 @@ import { combineReducers } from 'redux';
 import accordianReducer from './click/accordian.reducer';
 import resizeReducer from './window/resize.reducer';
 import searchReducer from './search/search.reducer';
+import textUdpateReducer from './contentEdit/contentEdit.reducer';
 export default combineReducers({
     accordian: accordianReducer,
     window: resizeReducer,
-    search: searchReducer
+    search: searchReducer,
+    contentEdit: textUdpateReducer
 });
