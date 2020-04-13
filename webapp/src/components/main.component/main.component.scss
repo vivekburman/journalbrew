@@ -3,6 +3,7 @@
 .main {
     @extend %flex-row-nowrap;
     margin: 0;
+    position: relative;
     padding-top: 55px;
     font-family: 'Rubik', sans-serif;
 }

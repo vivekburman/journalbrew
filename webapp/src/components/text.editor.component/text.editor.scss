@@ -1,10 +1,14 @@
 @import '../../mainSass/main';
 
-.text-editor-conatiner {
+.text-editor-container {
     margin: 45px auto 0;
     max-width: 900px;
     flex-grow: 1;
+    
 }
-.text-editor-conatiner:focus {
+.text-editor-container h2 {
+    font-family: cursive;
+}
+.text-editor-container:focus {
     outline: none;
 }
