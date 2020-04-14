@@ -95,8 +95,8 @@
 nav ul {
     margin: 0;
     padding: 0;
-    @extend %flex-column-wrap;
-    display: none;
+    flex-direction: row;
+    display: flex;
     list-style-type: none;
 }
 .showNavMenu {
@@ -105,13 +105,6 @@ nav ul {
     padding-top: 8px;
 }
 @media (min-width: 576px) {
-    .navMenu {
-        display: none;
-    }
-    nav ul {
-        display: flex;
-        flex-direction: row;
-    }
     .showNavMenu {
         position: static;
         padding-top: 0;
