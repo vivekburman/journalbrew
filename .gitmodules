@@ -1,6 +1,3 @@
-[submodule "webapp/simple-video"]
-	path = webapp/simple-video
-	url = https://github.com/vivekburman/simple-video.git
 [submodule "webapp/src/_internal/simple-video"]
 	path = webapp/src/_internal/simple-video
 	url = https://github.com/vivekburman/simple-video.git
