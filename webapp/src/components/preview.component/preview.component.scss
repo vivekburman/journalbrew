@@ -1,0 +1,73 @@
+@import '../../mainSass/main';
+
+.preview {
+  overflow-y: auto;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  padding: 16px;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.73);
+}
+.preview-close {
+  position: sticky;
+  margin-right: 24px;
+  float: right;
+}
+.preview-container {
+  background-color: #fff;
+  max-width: 900px;
+  padding: 16px;
+  margin: 0 auto;
+}
+.preview-header,
+.preview-paragraph,
+.preview-table,
+.prevew-blockquote,
+.preview-video,
+.preview-image,
+.preview-list {
+  padding: 8px 0;
+}
+.preview-table {
+  border-spacing: 2px;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  border-color: grey;
+}
+.preview-delimiter {
+  text-align: center;  
+}
+.preview-delimiter::before {
+  display: inline-block;
+  content: "***";
+  font-size: 30px;
+  line-height: 65px;
+  height: 30px;
+  letter-spacing: 0.2em;
+}
+.preview-tr {
+  padding: 10px;
+  border-radius: 2px;
+}
+.preview-td {
+  padding: 10px;
+  border: 1px solid #dbdbe2;
+}
+.preview-ul {
+  list-style-type: decimal;
+  padding-left: 32px;
+}
+.preview-li {
+  padding: 4px 0;
+}
+.preview-video, .preview-img {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  max-width: 630px;
+  min-height: 300px;
+}

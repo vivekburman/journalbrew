@@ -121,6 +121,7 @@ nav ul {
     }
 }
 .logo {
+    cursor: pointer;
     align-self: center;
     margin: 0 5% 0 27px;
     color: yellowgreen;
@@ -178,11 +179,14 @@ nav ul {
 .close-icon {
     display: none;
 }
-.profile {
+.m-right-12-27sm {
     margin-right: 12px;
 }
 @media (min-width: 768px) {
-    .profile {
+    .m-right-12-27sm {
         margin-right: 27px;
     }
+}
+.top-nav {
+    @extend %flex-row-nowrap;
 }

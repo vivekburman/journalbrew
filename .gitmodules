@@ -4,3 +4,6 @@
 [submodule "webapp/src/_internal/table"]
 	path = webapp/src/_internal/table
 	url = https://github.com/vivekburman/table.git
+[submodule "webapp/src/_internal/simple-image"]
+	path = webapp/src/_internal/simple-image
+	url = https://github.com/vivekburman/simple-image.git

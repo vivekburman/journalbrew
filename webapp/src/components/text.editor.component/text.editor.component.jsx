@@ -2,11 +2,16 @@ import React, { useRef } from 'react';
 import './text.editor.scss';
 import EditorJS from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from './tool';
-const TextEditor = () => {
+import Preview from '../preview.component/preview.component';
+import { handleEditorData } from '../../reducers/editordata/editor.data.action';
+import { connect } from 'react-redux';
+
+const TextEditor = (props) => {
 	const instanceRef = useRef(null);
-	const data = {};
+	let data = {};
 	async function handleSave() {
-		await instanceRef.current.save();
+		data = instanceRef.current.save && await instanceRef.current.save();
+		props.handleEditorData(data);
 	} 
 	const defaultPlaceholder = 'Let the world know what happend!';
 	return (
@@ -16,7 +21,12 @@ const TextEditor = () => {
 				tools={ EDITOR_JS_TOOLS } 
 				instanceRef = { instance => (instanceRef.current = instance) }
 				placeholder={defaultPlaceholder} />
+			<Preview />
 		</article>
 	);
 }
-export default TextEditor;
+
+const mapDispatchToProps = dispatch => ({
+	handleEditorData: (data) => dispatch(handleEditorData(data))
+});
+export default connect(null, mapDispatchToProps)(TextEditor);
