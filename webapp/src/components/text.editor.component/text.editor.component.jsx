@@ -1,46 +1,32 @@
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 import './text.editor.scss';
-import Paragraph from '../paragraph.component/paragraph.component';
+import EditorJS from 'react-editor-js';
+import { EDITOR_JS_TOOLS } from './tool';
+import Preview from '../preview.component/preview.component';
+import { handleEditorData } from '../../reducers/editordata/editor.data.action';
 import { connect } from 'react-redux';
-import { updateText } from '../../reducers/contentEdit/contentEdit.action';
 
-/*
-    onKeyDown for everything as onKeyPress is deprecated
-*/
-class TextEditor extends Component {
-    handleKeyPressedEvent = (e) => {
-        e.persist();
-        const keyCode = e.which || e.keyCode;
-        const charKey = e.key;
-        const currentNode = window.getSelection().focusNode;
-        const text = currentNode.textContent;
-        const currentNodeDataKey = currentNode.parentNode.attributes['data-key'].value;
-        switch ( keyCode ) {
-            case 8:
-                // backspace
-                this.props.updateText({ paragraphId: currentNodeDataKey, oldText: text.slice(0, -1) });
-                break;
-            case 46:
-                // delete
-                break;
-            default:
-                this.props.updateText({ paragraphId: currentNodeDataKey, oldText: text + charKey });
-                break;
-        }
-    }
-    render () {
-        let i = 0;
-        return (
-            <article 
-                suppressContentEditableWarning={ true }
-                contentEditable='true'
-                className="text-editor-conatiner"
-                onKeyDown={ this.handleKeyPressedEvent }
-                >
-                <Paragraph itemIndex={++i} type='title'/>
-                <Paragraph itemIndex={++i} />
-            </article>
-        );
-    }
+const TextEditor = (props) => {
+	const instanceRef = useRef(null);
+	let data = {};
+	async function handleSave() {
+		data = instanceRef.current.save && await instanceRef.current.save();
+		props.handleEditorData(data);
+	} 
+	const defaultPlaceholder = 'Let the world know what happend!';
+	return (
+		<article className='text-editor-container'>
+			<EditorJS data={data}
+				onChange={handleSave}
+				tools={ EDITOR_JS_TOOLS } 
+				instanceRef = { instance => (instanceRef.current = instance) }
+				placeholder={defaultPlaceholder} />
+			<Preview />
+		</article>
+	);
 }
-export default connect(null, { updateText })(TextEditor);
+
+const mapDispatchToProps = dispatch => ({
+	handleEditorData: (data) => dispatch(handleEditorData(data))
+});
+export default connect(null, mapDispatchToProps)(TextEditor);

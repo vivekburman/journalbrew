@@ -1,0 +1,10 @@
+@import '../../mainSass/main';
+
+.post-preview-component {
+  margin-right: 4px;
+}
+@media (min-width: 900px) {
+  .post-preview-component {
+    margin-right: 16px;
+  } 
+}

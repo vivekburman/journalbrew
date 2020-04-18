@@ -8,6 +8,7 @@ import { Switch, Route } from 'react-router-dom';
 class Main extends Component {
     render() {
         const { windowWidth } = this.props;
+        console.log(windowWidth);
         return (
             <main className="main">
                <Switch>
