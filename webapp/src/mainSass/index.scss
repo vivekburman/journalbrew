@@ -1,0 +1,25 @@
+@import './main';
+
+.flex-row-nowrap {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.flex-row-wrap {
+  display: flex;
+  flex-flow: row wrap;
+}
+.flex-column-wrap {
+  display: flex;
+  flex-flow: column wrap;
+}
+.flex-column-nowrap {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.justify-content-between {
+  justify-content: space-between;
+}
+.align-items-center {
+  align-items: center;
+}

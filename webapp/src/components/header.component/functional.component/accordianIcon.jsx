@@ -1,5 +1,5 @@
 import React from 'react';
-import menu from '../../../images/menu.svg';
+import menu from '../../../images/hamburger.svg';
 import close from '../../../images/close.svg';
 import { connect } from 'react-redux';
 import { openAccordian, closeAccordian } from '../../../reducers/click/accordian.action';
