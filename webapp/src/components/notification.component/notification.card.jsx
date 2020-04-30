@@ -4,6 +4,9 @@ import './notification.component.scss';
 import ReactAvatar from 'react-avatar';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
+import { connect } from 'react-redux';
+import close from '../../images/close.svg';
+import { hideNotification } from '../../reducers/click/notification.action';
 
 const dummyData = [
   {
@@ -234,11 +237,9 @@ const timeCalculator = (time) => {
 const createCard = (data) => {
   if (!data) {
     return (
-      <div key={-1} className="notification-item">
-        <p className="link-text">
-          No new Notifications
-        </p>
-      </div>
+      <p className="no-notifications">
+        No new Notifications 
+      </p>
     );
   }
   const list = data.map((entity, index) => {
@@ -285,7 +286,7 @@ const createCard = (data) => {
             { avatar }
             <div className="notification-text-wrapper">
               <p className="link-text">
-                { index }
+                { arr }
               </p>
               <span className="notification-time">{timeCalculator(entity.time)}</span>
             </div>
@@ -296,11 +297,12 @@ const createCard = (data) => {
   });
   return list;
 }
-export default class Notification extends Component {
+class Notification extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notifications: dummyData
+      notifications: dummyData,
+      showNotifications: false
     };
     this.ref = React.createRef(null);
 
@@ -308,7 +310,7 @@ export default class Notification extends Component {
   fetchNotifications = () => {
     this.setState({ notifications: [...dummyData, ...dummyData] });
   }
-  handleScroll = () => {
+  handleScroll = (e) => {
     const ref = this.ref.current.contentWrapperEl;
     if (ref.scrollHeight - ref.scrollTop === ref.clientHeight) {
       this.fetchNotifications();
@@ -316,14 +318,21 @@ export default class Notification extends Component {
   }
   render() {
     const { notifications } = this.state;
+    const { windowSize, isOpen, hideNotification } = this.props;
+    if (!isOpen) {
+      return (
+        <></>
+      );
+    }
     return (
       <div className="notifications-container">
         <div className="flex-row-nowrap justify-content-between align-items-center notifications-header-container">
+          {windowSize <= 768 && <img onClick={hideNotification} src={close} alt="close" className="icon-img" />}
           <h1 className="notifications-header">Notifications</h1>
-          <span className="mark-read">Mark all read</span>
+          {notifications && <span className="mark-read">Mark all read</span>}
         </div>
         <div className="notifications-list-container">
-          <SimpleBar style={{ maxHeight: 300 }} ref={this.ref} onScroll={this.handleScroll}>
+          <SimpleBar style={{ maxHeight: windowSize > 768 ? 300 : '100vh'}} ref={this.ref} onScroll={this.handleScroll}>
             { createCard(notifications) }
           </SimpleBar>
         </div>
@@ -331,3 +340,11 @@ export default class Notification extends Component {
     );
   }
 }
+const mapStateToProps = ({window, notification}) => ({
+  windowSize: window.windowSize,
+  isOpen: notification.isOpen
+});
+const mapDispatchToProps = (dispatch) => ({
+  hideNotification: () => dispatch(hideNotification())
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Notification);
