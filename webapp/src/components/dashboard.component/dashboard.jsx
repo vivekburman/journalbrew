@@ -4,6 +4,7 @@ import ShowFeed from '../show.feed.component/show.feed';
 import {PersonalInfo} from '../personal.info.component/personal.info';
 import 'react-tabs/style/react-tabs.scss';
 import './dashboard.component.scss';
+import { GrowthGraph } from '../growth.graph.component/growth.graph';
 export const Dashboard = ({ windowWidth }) => {
   return (
     <>
@@ -23,10 +24,7 @@ export const Dashboard = ({ windowWidth }) => {
               Bookmarks
             </Tab>
             <Tab className="tab-item">
-              Growth Graph
-            </Tab>
-            <Tab className="tab-item">
-              Notifications
+              Insights
             </Tab>
           </TabList>
           <TabPanel>
@@ -39,10 +37,7 @@ export const Dashboard = ({ windowWidth }) => {
             <ShowFeed windowWidth/>
           </TabPanel>
           <TabPanel>
-            <ShowFeed windowWidth/>
-          </TabPanel>
-          <TabPanel>
-            <ShowFeed windowWidth/>
+            <GrowthGraph windowWidth/>
           </TabPanel>
         </Tabs>
       </section>

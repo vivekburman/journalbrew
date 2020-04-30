@@ -1,11 +1,15 @@
 import React from 'react';
 import bell from '../../images/bell.svg';
 import user from '../../images/user.svg';
-const ProfileComponent = () => {
+import Notification from '../notification.component/notification.card';
+import { showNotification, hideNotification } from '../../reducers/click/notification.action';
+import { connect } from 'react-redux';
+const ProfileComponent = ({ showNotification, isOpen, hideNotification }) => {
 	return (
 		<ul>
-			<li>
-				<img src={ bell } alt="notifications" className="icon-img" />
+			<li style={{ position: 'relative' }}>
+				<img src={ bell } alt="notifications" className="icon-img" onClick={() => isOpen ? hideNotification() : showNotification()}/>
+				<Notification />
 			</li>
 			<li>
 				<img src={ user } alt="notifications" className="icon-img" />
@@ -13,4 +17,11 @@ const ProfileComponent = () => {
 		</ul>
 	);
 }
-export default ProfileComponent;
+const mapDispatchStateToProps = (dispatch) => ({
+	showNotification: () => dispatch(showNotification()),
+	hideNotification: () => dispatch(hideNotification()),
+});
+const mapStateToProps = ({ notification }) => ({
+	isOpen: notification.isOpen
+})
+export default connect(mapStateToProps, mapDispatchStateToProps)(ProfileComponent);

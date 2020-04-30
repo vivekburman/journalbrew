@@ -4,10 +4,12 @@ import resizeReducer from './window/resize.reducer';
 import searchReducer from './search/search.reducer';
 import { handlePreviewReducer } from './postpreview/preview.reducer';
 import { saveEditorDataReducer } from './editordata/editor.data.reducer';
+import { handleNotificationVisibility } from './click/notification.reducer';
 export default combineReducers({
     accordian: accordianReducer,
     window: resizeReducer,
     search: searchReducer,
     preview: handlePreviewReducer,
-    editorData: saveEditorDataReducer
+    editorData: saveEditorDataReducer,
+    notification: handleNotificationVisibility
 });

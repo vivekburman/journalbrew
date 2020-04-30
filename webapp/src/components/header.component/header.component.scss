@@ -115,8 +115,9 @@ nav ul {
     flex-grow: 2;
     justify-content: space-between;
 }
-@media (mini-width: 768px) {
+@media (min-width: 768px) {
     .search-and-logo {
+        padding-left: 50px;
         justify-content: unset;
     }
 }
@@ -184,7 +185,7 @@ nav ul {
 }
 @media (min-width: 768px) {
     .m-right-12-27sm {
-        margin-right: 27px;
+        margin-right: 50px;
     }
 }
 .top-nav {
