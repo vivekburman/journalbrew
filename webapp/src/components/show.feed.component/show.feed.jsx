@@ -42,9 +42,9 @@ const ShowFeed = ({ feeds = [], windowWidth }) => {
         ));
     }      
     return (
-    <ul className="news-feed">
-        { feedList }
-    </ul>
+        <ul className="padding-left-0">
+            { feedList }
+        </ul>
     );
 }
 const mapStateToProps = ({ window }) => ({

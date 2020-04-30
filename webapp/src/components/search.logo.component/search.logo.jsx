@@ -56,7 +56,7 @@ class SearchNLogoComponent extends Component {
       <div className="search-and-logo">
         <h1 onClick={this.routeChange} className={"logo " + logoCssClass}>TopSelfNews</h1>
         <Switch>
-          <Route exact path="/">
+          <Route exact path={["/", "/user-profile"]}>
             <div className={"search " + searchCssClass}>
               <input 
                 className={"search-input " + searchInputCssClass}

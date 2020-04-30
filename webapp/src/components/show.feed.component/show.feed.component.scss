@@ -1,9 +1,11 @@
 @import '../../mainSass/main';
 
-.news-feed {
+.padding-left-0 {
+    padding-left: 0;
+}
+.main-feed {
     max-width: 750px;
     @extend %flex-column-nowrap;
-    margin-left: 200px;
     flex-grow: 2;
     list-style-type: none;
     padding: 0;
@@ -11,10 +13,12 @@
     font-family: 'Rubik', sans-serif;
 }
 @media (min-width: 768px) {
-    .news-feed {
+    .main-feed {
         margin: 16px 16px 16px 241px;
     }
 }
+
+
 .news-item {
     max-width: 746px;
     box-shadow: 0 1px 0.4px 0px rgba(128, 128, 128, 0.39);

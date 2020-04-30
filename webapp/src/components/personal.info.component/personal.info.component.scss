@@ -1,0 +1,29 @@
+@import '../../mainSass/main';
+.personal-info-container {
+  margin: 8px 16px;
+  @extend %flex-row-nowrap;
+  align-items: center;
+}
+.personal-info-img-container {
+  margin: 0;
+  padding: 0;
+}
+.personal-info-details {
+  flex-grow: 2;
+}
+.user-name {
+  font-family: 'Roboto', sans-serif;
+  margin: 4px 0;
+}
+.calendar-img {
+  padding-left: 1px;
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  vertical-align: middle;
+}
+.time {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: grey;
+}
