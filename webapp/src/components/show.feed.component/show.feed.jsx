@@ -6,43 +6,60 @@ import bookmark from '../../images/bookmark.svg';
 import { showCompletePost } from '../../reducers/click/showcompletepost.action';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 
 const ShowFeed = ({ feeds = [], showCompletePost }) => {
   const feedList = [];
   const postID = 'asdasd';
-  for (let i = 0; i < 10; i++) {
-    feedList.push((
-      <li key={ i } className="news-item" onClick={() => showCompletePost(postID)}>
-        <Link to={`/full-story?${postID}` } className="news-item-link">
-          <div className="news-thumbnail">
-            <img src={ dummy } alt="Images" className="news-image"/>
+  if (feeds.length === 0) {
+    for(let i = 0; i < 10; i++) {
+      feedList.push((
+        <li key={ i } className="news-item justify-space-between">
+          <div className="news-details" style={{lineHeight: 1.5}}>
+            <Skeleton />
+            <div style={{margin: '15px 0'}}></div>
+            <Skeleton count={4}/>
+            <Skeleton circle={true} height={30} width={30} />
           </div>
-          <div className="news-details">
-            <h1 className="news-title">
-              India is a democratic country. Until you critisize it. Then it is no more a democratic country.
-            </h1>
-            <p className="news-snapshot">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Eveniet inventore illo voluptatibus, eum itaque unde ea rem amet aliquam qui. Sed,
-              repellendus placeat iure harum itaque delectus id necessitatibus ullam?
-            </p>
-            <div className="flex flex-row align-items-center justify-space-between">
-              <div className="creator-info">
-                <img className="creator-pic" src={ profilePlaceholder } alt="Creator Profile Pic"/>
-                <div className="creator">
-                  <h2 className="creator-name">Mr. TalkBox</h2>
-                  <time className="creation-time">10:00AM</time>
+          <Skeleton height={150} width={150}/>
+        </li>
+      ));
+    }
+  } else {
+    for (let i = 0; i < 10; i++) {
+      feedList.push((
+        <li key={ i } className="news-item" onClick={() => showCompletePost(postID)}>
+          <Link to={`/full-story?${postID}` } className="news-item-link">
+            <div className="news-thumbnail">
+              <img src={ dummy } alt="Images" className="news-image"/>
+            </div>
+            <div className="news-details">
+              <h1 className="news-title">
+                India is a democratic country. Until you critisize it. Then it is no more a democratic country.
+              </h1>
+              <p className="news-snapshot">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                Eveniet inventore illo voluptatibus, eum itaque unde ea rem amet aliquam qui. Sed,
+                repellendus placeat iure harum itaque delectus id necessitatibus ullam?
+              </p>
+              <div className="flex flex-row align-items-center justify-space-between">
+                <div className="creator-info">
+                  <img className="creator-pic" src={ profilePlaceholder } alt="Creator Profile Pic"/>
+                  <div className="creator">
+                    <h2 className="creator-name">Mr. TalkBox</h2>
+                    <time className="creation-time">10:00AM</time>
+                  </div>
+                </div>      
+                <div className="menu-section">
+                  <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" />
                 </div>
-              </div>      
-              <div className="menu-section">
-                <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" />
               </div>
             </div>
-          </div>
-        </Link>
-      </li>
-    ));
-  }      
+          </Link>
+        </li>
+      ));
+    }   
+  }   
   return (
     <ul className="padding-left-0">
       { feedList }
