@@ -7,6 +7,7 @@ import 'simplebar/dist/simplebar.min.css';
 import { connect } from 'react-redux';
 import close from '../../images/close.svg';
 import { hideNotification } from '../../reducers/click/notification.action';
+import Skeleton from 'react-loading-skeleton';
 
 const dummyData = [
   {
@@ -203,8 +204,6 @@ const dummyData = [
     avatar: '',
   }
 ];
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const timeDiff = {};
 timeDiff.oneSecond = 1000;
 timeDiff.oneMinute = (() => timeDiff.oneSecond * 60)();
@@ -236,11 +235,21 @@ const timeCalculator = (time) => {
 }
 const createCard = (data) => {
   if (!data) {
-    return (
-      <p className="no-notifications">
-        No new Notifications 
-      </p>
-    );
+    const list = [];
+    for (let i = 0; i < 10; i++) {
+      list.push(
+        <div>
+          <div className="flex flex-row" style={{margin: '20px 5px', lineHeight: 1.4}}>
+            <Skeleton circle={true} width={50} height={50} />
+            <div className="flex-grow-1" style={{ margin: '5px 5px 0 5px' }}>
+              <Skeleton />
+              <Skeleton height={10}/>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return list;
   }
   const list = data.map((entity, index) => {
     const text = entity.text;
@@ -301,7 +310,7 @@ class Notification extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notifications: dummyData,
+      notifications: undefined,
       showNotifications: false
     };
     this.ref = React.createRef(null);
