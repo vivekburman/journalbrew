@@ -65,7 +65,7 @@
 .news-image {
     display: block;
     width: 100%;
-    min-height: 200px;
+    min-height: 100px;
     object-fit: cover;
 }
 .news-title {
@@ -125,16 +125,23 @@
 }
 .flex-row {
     @extend %flex-row-nowrap;
+}
+.align-items-center {
     align-items: center;
+}    
+.justify-space-between {
     justify-content: space-between;
 }
-.bookmark-link, .share-link {
+.bookmark-link {
     width: 18px;
     height: 18px;
-    margin: 0 4px;
 }
-@media (min-width:768px) {
-    .menu-section {
-        margin-right: 16px;
-    }
+.news-item-link {
+    text-decoration: none;
+    display: inherit;
+    cursor: inherit;
 }
+.news-item-link:visited {
+    color: initial;
+}
+

@@ -2,22 +2,8 @@ import React from 'react';
 import StarRatingComponent from 'react-star-rating-component';
 import calendar from '../../images/calendar.svg';
 import './personal.info.component.scss';
-import ReactAvatar from 'react-avatar';
+import {UserAvatar} from '../avatar.component/avatar'; 
 
-const createAvatar = (id, type) => {
-  const colorArray = ['red', 'blue', 'green'];
-  const colorID = Math.floor(Math.random() * (colorArray.length - 1));
-  switch(type) {
-    case 'twitter':
-      return <ReactAvatar className="avatar" twitterHandle={id} round color={colorArray[colorID]} />
-    case 'facebook':
-      return <ReactAvatar className="avatar" facebookId={id} round color={colorArray[colorID]} />;
-    case 'google':
-      return <ReactAvatar className="avatar" googleId={id} round color={colorArray[colorID]} />;
-    default:
-      return <ReactAvatar className="avatar" name="ABC" round color={colorArray[colorID]} />
-  }
-}
 export const PersonalInfo = (props) => {
   const { profileID, username, doj, rating, typeOfID } = props;
   return (
@@ -30,7 +16,7 @@ export const PersonalInfo = (props) => {
         </div>
         <StarRatingComponent name={'userrating'}value={rating||2} editing={false} starColor='yellow' emptyStarColor='lightgrey'/>
       </div>
-      { createAvatar(profileID, typeOfID) }
+      <UserAvatar id={profileID} type={typeOfID} />
     </div>
   );
 }

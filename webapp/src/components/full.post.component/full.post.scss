@@ -1,0 +1,32 @@
+.full-post-container {
+ width: 100%;  
+ margin-bottom: 40px;
+ position: relative;
+}
+.full-news {
+  max-width: 680px;
+  margin: 0 64px;
+}
+.news-location, .news-time-of-post {
+  font-size: 14px;
+  color: rgb(85, 85, 85);
+}
+.separator {
+  margin: 0 4px;
+  font-size: 12px;
+  color: grey;
+}
+.username {
+  margin-bottom: 4px;
+}
+.news-reaction-bookmark {
+  display: none;
+}
+@media (min-width: 1200px) {
+  .news-reaction-bookmark {
+    position: fixed;
+    display: initial;
+    top: 50%;
+    left: 50px;
+  }
+}

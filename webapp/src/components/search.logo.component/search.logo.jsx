@@ -66,7 +66,7 @@ class SearchNLogoComponent extends Component {
                 value={searchText} 
               />
               <figure className="figure" onClick={this.handleSearchClick}>
-                  <img src={search} alt="search-icon" className="icon-img"></img>
+                <img src={search} alt="search-icon" className="icon-img"></img>
               </figure>
             </div>
           </Route>
