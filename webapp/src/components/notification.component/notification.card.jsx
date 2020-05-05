@@ -319,7 +319,6 @@ class Notification extends Component {
   render() {
     const { notifications } = this.state;
     const { windowSize, isOpen, hideNotification } = this.props;
-    console.log(isOpen);
     if (!isOpen) {
       return (
         <></>

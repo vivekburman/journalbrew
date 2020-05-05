@@ -31,6 +31,8 @@
 }
 .icon-img:hover {
     cursor: pointer;
+    border-radius: 30%;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14);
 }
 @media (min-width: 576px) {
     .icon-img {
@@ -114,6 +116,10 @@ nav ul {
     @extend %flex-row-nowrap;
     flex-grow: 2;
     justify-content: space-between;
+}
+.search-and-logo .icon-img:hover {
+    border-radius: unset;
+    box-shadow: unset;
 }
 @media (min-width: 768px) {
     .search-and-logo {
