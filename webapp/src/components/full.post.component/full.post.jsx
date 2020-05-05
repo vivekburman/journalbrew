@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './full.post.scss';
 import bookmark from '../../images/bookmark.svg';
 import PostReaction from '../user.reaction.component/user.reaction';
@@ -8,9 +8,7 @@ import { UserAvatar } from '../avatar.component/avatar';
 import { createPost } from '../../helpers/generateHTMLView';
 import { SocialShare } from '../social.share.component/social.share';
 import { Tags } from '../tags.component/tags';
-import { useRef } from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const timeFormatter = (time) => {
@@ -50,6 +48,25 @@ export const FullPost = (props) => {
   const { hasUserLiked=false, post=postData } = props;
   const metaData = post.metaData;
   const article = post.blocks;
+  if (!article) {
+    return (
+      <div className="flex-row-nowrap full-post-container justify-content-evenly">
+        <div className="flex-column-nowrap flex-grow-2 full-news">
+          <div>
+            <Skeleton height={100} />
+            <section style={{ margin: '30px 0', lineHeight: 1.5 }}>
+              <Skeleton count={3} />
+            </section>
+            <Skeleton circle={true} height={30} width={30} />
+            <div style={{margin: '30px 0', lineHeight: 1.5}}>
+              <Skeleton height={200} />
+              <Skeleton count={3} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  } 
   return(
     <div className="flex-row-nowrap full-post-container">
       <div className="flex-grow-1">
