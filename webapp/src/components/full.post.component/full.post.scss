@@ -2,10 +2,21 @@
  width: 100%;  
  margin-bottom: 40px;
  position: relative;
+ justify-content: center;
 }
 .full-news {
   max-width: 680px;
-  margin: 0 64px;
+  margin: 0 16px;
+}
+@media (min-width: 768px) {
+  .full-news {
+    margin: 0 32px;
+  }
+}
+@media (min-width: 992px) {
+  .full-news {
+    margin: 0 64px;
+  }
 }
 .news-location, .news-time-of-post {
   font-size: 14px;
@@ -29,4 +40,7 @@
     top: 50%;
     left: 50px;
   }
+}
+.social-share-wrapper {
+  margin-top: 17px;
 }

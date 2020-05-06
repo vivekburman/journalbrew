@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 export const SocialShare = () => {
   return(
-    <div>
+    <div className="flex flex-row-nowrap">
       <Link to=''>
         <img src={twitter} alt="twitter" className="icon-img"/>
       </Link>
