@@ -8,7 +8,10 @@ const ProfileComponent = ({ showNotification, isOpen, hideNotification }) => {
 	return (
 		<ul>
 			<li style={{ position: 'relative' }}>
-				<img src={ bell } alt="notifications" className="icon-img" onClick={() => isOpen ? hideNotification() : showNotification()}/>
+				<img src={ bell } alt="notifications" className="icon-img" 
+				onClick={() => isOpen ? hideNotification() : showNotification()} 
+				onBlur={hideNotification} 
+				tabIndex="0" />
 				<Notification />
 			</li>
 			<li>
