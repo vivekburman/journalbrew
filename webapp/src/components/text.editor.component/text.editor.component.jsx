@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import './text.editor.scss';
 import EditorJS from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from './tool';
-import Preview from '../preview.component/preview.component';
+import Preview from '../preview.component/preview';
 import { handleEditorData } from '../../reducers/editordata/editor.data.action';
 import { connect } from 'react-redux';
 
