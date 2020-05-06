@@ -69,7 +69,7 @@ export const FullPost = (props) => {
   } 
   return(
     <div className="flex-row-nowrap full-post-container">
-      <div className="flex-grow-1">
+      <div className="post-reaction-container">
         {!visible && <div className="news-reaction-bookmark">
           <PostReaction likes={metaData.likes} 
             hasUserLiked={hasUserLiked} 
@@ -83,7 +83,7 @@ export const FullPost = (props) => {
         <div>
           <h1 className="news-heading">{parseHTMLToReact(article[0].data.text)}</h1>
           <div>
-            <div className="flex flex-row-nowrap justify-space-between">
+            <div className="flex flex-row-nowrap justify-content-between">
               <div className="flex flex-row-nowrap align-items-center ">
                 <UserAvatar id={metaData.userID} type={metaData.typeOfID} size={50}/>
                 <div className="flex flex-column-nowrap padding-8">
@@ -104,20 +104,17 @@ export const FullPost = (props) => {
         <div>
           <Tags tags={['Nokia', 'Telecommunication', 'India', 'XP13']}/>
         </div>
-        <div className="border-btm">
-          <div className="flex flex-row-nowrap justify-space-between">
-            <div className="flex flex-row-nowrap align-items-center ">
+        <div>
+          <div className="flex flex-row-nowrap justify-content-between align-items-center">
+            <div className="flex flex-row-nowrap">
               <PostReaction likes={metaData.likes} hasUserLiked={hasUserLiked} showViews={true} views={metaData.views}/>
             </div>
-            <div className="flex flex-row">
+            <div className="flex flex-row-wrap social-share-wrapper">
               <SocialShare />
               <img src={bookmark} alt="bookmark" className="icon-img" />
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        aside/advertisement/more to read
       </div>
    </div>
   );
