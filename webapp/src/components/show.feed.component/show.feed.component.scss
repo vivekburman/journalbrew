@@ -3,6 +3,9 @@
 .padding-left-0 {
     padding-left: 0;
 }
+.margin-top-0 {
+    margin-top: 0;
+}
 .main-feed {
     max-width: 750px;
     @extend %flex-column-nowrap;
@@ -10,7 +13,6 @@
     list-style-type: none;
     padding: 0;
     display: flex;
-    font-family: 'Rubik', sans-serif;
 }
 @media (min-width: 768px) {
     .main-feed {

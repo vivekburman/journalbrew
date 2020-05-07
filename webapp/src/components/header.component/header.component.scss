@@ -1,6 +1,5 @@
 @import '../../mainSass/main';
 .header-component {
-    font-family: 'Rubik', sans-serif;
     @extend %flex-row-nowrap;
     position: fixed;
     z-index: 100;
@@ -20,19 +19,16 @@
 @media (min-width: 768px) {
  .header-component {
     padding: 8px 0;
-    -webkit-box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.2);
-    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.2);
- }   
+    }   
 }
 .icon-img {
     width: 20px;
     padding: 8px;
     height: 20px;
 }
-.icon-img:hover {
+.icon-img {
     cursor: pointer;
     border-radius: 30%;
-    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14);
 }
 .icon-img:focus {
     outline: none;
@@ -72,16 +68,16 @@
     border-radius: 4px 0 0 4px;
 }
 .search figure {
-    margin: 0;
+    margin: 2px 0;
 }
 .search-input:focus {
     outline: none;
-    border-left: 4px solid rgb(56, 187, 89);
+    border-left: 4px solid rgba(0, 0, 0, 0.432);
 }
 @media (min-width: 768px) {
     .search-input {
         display: initial;
-        width: 75%;
+        width: 85%;
     }
     .search .icon-img {
         padding: 0;
@@ -89,7 +85,7 @@
     .search figure {
         background-color: whitesmoke;
         border-radius: 0 4px 4px 0;
-        padding: 6px 16px 2px;
+        padding: 5px 16px 2px;
     }
 }
 @media (min-width: 992px) {
@@ -126,21 +122,19 @@ nav ul {
 }
 @media (min-width: 768px) {
     .search-and-logo {
-        padding-left: 50px;
         justify-content: unset;
     }
 }
 .logo {
-    cursor: pointer;
     align-self: center;
+    @extend %font-playfair;
     margin: 0 5% 0 27px;
-    color: yellowgreen;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 400;
 }
 @media (min-width: 576px) {
     .logo {
-        font-size: 22px;
+        font-size: 25px;
     }
 }
 .show-accordian-icon {
@@ -188,6 +182,10 @@ nav ul {
 }
 .close-icon {
     display: none;
+}
+.icon-img-close {
+    width: 14px;
+    height: 14px;
 }
 .m-right-12-27sm {
     margin-right: 12px;

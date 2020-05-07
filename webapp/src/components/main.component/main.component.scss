@@ -4,8 +4,7 @@
     @extend %flex-row-nowrap;
     margin: 0;
     position: relative;
-    padding-top: 55px;
-    font-family: 'Rubik', sans-serif;
+    padding-top: 52px;
 }
 .w-100 {
     width: 100%;
@@ -13,5 +12,8 @@
 @media (min-width: 786px) {
     .margin-main {
         margin-top: 16px;
+    }
+    .main {
+        padding-top: 55px;
     }
 }
