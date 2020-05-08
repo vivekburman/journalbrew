@@ -1,0 +1,26 @@
+.notification-icon-wrapper::before {
+  display: block;
+  content: '';
+  background-color: rgb(155, 155, 155);
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+}
+
+@media (min-width: 768px) {
+  .notification-icon-wrapper::before {
+    top: 6px;
+    width: 7px;
+    height: 7px;
+  }
+}
+.notification-icon-wrapper-no-notification::before {
+  content: none;
+}
+.notification-icon-wrapper {
+  outline: none;
+  position: relative;
+}
