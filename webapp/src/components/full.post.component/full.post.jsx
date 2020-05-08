@@ -6,7 +6,7 @@ import { postData } from './dummydata';
 import { parseHTMLToReact } from '../../helpers/jsontohtml';
 import { UserAvatar } from '../avatar.component/avatar';
 import { createPost } from '../../helpers/generateHTMLView';
-import { SocialShare } from '../social.share.component/social.share';
+import SocialShare from '../social.share.component/social.share';
 import { Tags } from '../tags.component/tags';
 import Skeleton from 'react-loading-skeleton';
 
@@ -95,7 +95,7 @@ export const FullPost = (props) => {
                   </div>
                 </div>
               </div>
-              <SocialShare/>  
+              <SocialShare location={'top'}/>  
             </div>
           </div>
           <section>{showArticle(article)}</section>
@@ -109,9 +109,9 @@ export const FullPost = (props) => {
             <div className="flex flex-row-nowrap">
               <PostReaction likes={metaData.likes} hasUserLiked={hasUserLiked} showViews={true} views={metaData.views}/>
             </div>
-            <div className="flex flex-row-wrap social-share-wrapper">
-              <SocialShare />
+            <div className="flex flex-row-nowrap social-share-wrapper">
               <img src={bookmark} alt="bookmark" className="icon-img" />
+              <SocialShare location={'bottom'}/>
             </div>
           </div>
         </div>
