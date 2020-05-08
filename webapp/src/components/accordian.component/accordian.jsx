@@ -13,6 +13,10 @@ import local from '../../images/accordian/local.svg';
 import global from '../../images/accordian/global.svg';
 import opinion from '../../images/accordian/opinion.svg';
 import { Link } from 'react-router-dom';
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
+import { closeAccordian } from '../../reducers/click/accordian.action';
+
 
 /*
 TODO: Style it,
@@ -22,62 +26,71 @@ TODO: Style it,
 */
 
 class Accordian extends Component {
-    render() {
-        const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 767) ? 'show-list' : 'hide-list';
-        return (
-            <ul className={"accordian-list " + shouldOpen}>
-                <li className="accordian-list-item">
-                    <Link to="/new-story">
-                        <img src={story} className="item-img" alt="list-item-icon" />
-                        <span className="item-name">New Story</span>
-                    </Link>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={bookmark} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Bookmarks</span>
-                </li>
-                <li className="accordian-list-item divider">
-                    <img src={national} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">National</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={local} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Local</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={global} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Global</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={business} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Business</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={technology} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Technology</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={sport} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Sports</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={science} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Science</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={health} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Health</span>
-                </li>
-                <li className="accordian-list-item">
-                    <img src={opinion} className="item-img" alt="list-item-icon" />
-                    <span className="item-name">Opinion</span>
-                </li>
-            </ul>
-        );
-    }
+  render() {
+    const { collapseAccordian } = this.props;
+    const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 767) ? 'show-list' : 'hide-list';
+    return (
+      <div className={"accordian-list-container " + shouldOpen} 
+        onClick={collapseAccordian}>
+        <div className="accordian-list" >
+          <SimpleBar style={{ maxHeight: '100vh', paddingBottom: '20px' }}>
+            <div className="accordian-list-item">
+              <Link to="/new-story">
+                <img src={story} className="item-img" alt="list-item-icon" />
+                <span className="item-name">New Story</span>
+              </Link>
+            </div>
+            <div className="accordian-list-item">
+              <img src={bookmark} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Bookmarks</span>
+            </div>
+            <div className="accordian-list-item divider">
+              <img src={national} className="item-img" alt="list-item-icon" />
+              <span className="item-name">National</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={local} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Local</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={global} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Global</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={business} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Business</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={technology} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Technology</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={sport} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Sports</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={science} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Science</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={health} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Health</span>
+            </div>
+            <div className="accordian-list-item">
+              <img src={opinion} className="item-img" alt="list-item-icon" />
+              <span className="item-name">Opinion</span>
+            </div>
+          </SimpleBar>
+        </div>
+      </div>
+    );
+  }
 }
 const mapStateToProps = state => ({
     windowWidth: state.window.windowSize,
     shouldOpen: state.accordian.isOpen
 });
-export default connect(mapStateToProps)(Accordian);
+const mapDispatchToProps = (dispatch) => ({
+  collapseAccordian: (e) => dispatch(closeAccordian(e)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Accordian);

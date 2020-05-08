@@ -6,7 +6,6 @@
   margin: 0 8px 10px;
   padding: 0;
   list-style-type: none;
-  justify-content: space-between;
 }
 .tab-item {
   width: 25%;
@@ -17,20 +16,24 @@
   position: relative;
   list-style: none;
   padding: 6px 12px;
-  margin: 0 4px;
+  font-size: 18px;
+  @extend %font-roboto;
   cursor: pointer;
 }
 .react-tabs__tab--selected {
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 3px solid green;
-  color: black;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.555);
   border-radius: 5px 5px 0 0;
+  color: rgb(66, 66, 66);
 }
 .tab-item:focus {
   border-color: none;
   outline: none;
+}
+.tabs-info {
+  width: 100%;
 }
 
 

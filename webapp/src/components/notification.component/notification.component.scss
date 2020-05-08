@@ -42,15 +42,7 @@
    border-radius: 4px;
   }
 }
-/* Hide scrollbar for Chrome, Safari and Opera */
-.notifications-list-container::-webkit-scrollbar {
-  display: none;
-}
 
-/* Hide scrollbar for IE and Edge */
-.notifications-list-container {
-  -ms-overflow-style: none;
-}
 .notification-item {
   height: 100%;
   border-top: 1px solid rgba(0, 0, 0, 0.11);
@@ -59,7 +51,6 @@
   background-color: rgba(128, 128, 128, 0.055);
 }
 .notification-item-unread {
-  background-color: rgba(184, 184, 184, 0.048);
 }
 .notification-item-unread .link-text {
   color: #6b6d70;
@@ -86,6 +77,7 @@
 .notifications-header {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
+  margin-left: 20px;
   flex-grow: 1;
 }
 .mark-read {

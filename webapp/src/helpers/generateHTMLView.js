@@ -1,6 +1,6 @@
 import React from 'react';
 import { parseHTMLToReact } from './jsontohtml';
-export const createPost = (blocks) => {
+export const createPost = (blocks=[]) => {
   const layout = [];
   blocks.forEach((entity, index) => {
     switch(entity.type) {

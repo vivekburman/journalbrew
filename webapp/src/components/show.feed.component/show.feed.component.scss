@@ -3,18 +3,26 @@
 .padding-left-0 {
     padding-left: 0;
 }
+.margin-top-0 {
+    margin-top: 0;
+}
 .main-feed {
     max-width: 750px;
     @extend %flex-column-nowrap;
     flex-grow: 2;
     list-style-type: none;
     padding: 0;
+    margin: 16px 0;
     display: flex;
-    font-family: 'Rubik', sans-serif;
 }
 @media (min-width: 768px) {
     .main-feed {
-        margin: 16px 16px 16px 241px;
+        margin-left: 241px;
+        margin-right: 16px;
     }
 }
-
+@media (min-width: 1200px) {
+    .main-feed {
+        margin: 16px auto;
+    }
+}

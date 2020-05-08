@@ -10,8 +10,8 @@ const Preview = (props) => {
   if (openPreview) {
     return(
       <div className="preview">
-        <img src={close} alt="accordian" className="icon-img preview-close" onClick={props.hidePreview} />
         <div className="preview-container">
+          <img src={close} alt="accordian" className="icon-img icon-img-close preview-close" onClick={props.hidePreview} />
          { createPost(editorData.blocks) }
         </div>
       </div>

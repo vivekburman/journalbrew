@@ -4,18 +4,25 @@ import user from '../../images/user.svg';
 import Notification from '../notification.component/notification.card';
 import { showNotification, hideNotification } from '../../reducers/click/notification.action';
 import { connect } from 'react-redux';
+import { Switch, Route, Link } from 'react-router-dom';
+
 const ProfileComponent = ({ showNotification, isOpen, hideNotification }) => {
 	return (
 		<ul>
-			<li style={{ position: 'relative' }}>
-				<img src={ bell } alt="notifications" className="icon-img" 
-				onClick={() => isOpen ? hideNotification() : showNotification()} 
-				onBlur={hideNotification} 
-				tabIndex="0" />
-				<Notification />
-			</li>
+			<Switch>
+				<Route exact path={["/full-story", "/user-profile", "/"]}>
+					<li style={{ position: 'relative', outline: 'none' }} onBlur={hideNotification}
+						tabIndex={0}>
+						<img src={ bell } alt="notifications" className="icon-img" 
+						onClick={() => isOpen ? hideNotification() : showNotification()} />
+						<Notification />
+					</li>
+				</Route>
+			</Switch>
 			<li>
-				<img src={ user } alt="notifications" className="icon-img" />
+				<Link to='/user-profile'>
+					<img src={ user } alt="user" className="icon-img" />
+				</Link>
 			</li>
 		</ul>
 	);

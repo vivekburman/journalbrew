@@ -20,6 +20,9 @@
 .justify-content-between {
   justify-content: space-between;
 }
+.justify-content-center {
+  justify-content: center;
+}
 .justify-content-evenly {
   justify-content: space-evenly;
 }
@@ -34,4 +37,35 @@
 }
 .list-style-none {
   list-style: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE and Edge */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+}
+.icon-img {
+  width: 20px;
+  padding: 8px;
+  height: 20px;
+}
+.icon-img {
+  cursor: pointer;
+  border-radius: 30%;
+}
+@media (min-width: 576px) {
+  .icon-img {
+      width: 22px;
+      height: 22px;
+  }
+}
+@media (min-width: 768px) {
+  .icon-img {
+      width: 26px;
+      height: 26px;
+  }
 }

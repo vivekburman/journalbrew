@@ -14,7 +14,7 @@ const AccordianIconComponent = (props) => {
             <Route exact path="/">
             <figure className='show-accordian-icon figure'>
                 <img src={menu} alt="accordian" className={showAccordianIcon} onClick={expandAccordian}/>
-                <img src={close} alt="accordian" className={showCloseIcon} onClick={collapseAccordian} />
+                <img src={close} alt="accordian" className={showCloseIcon + " icon-img-close"} onClick={collapseAccordian} />
             </figure>
             </Route>
         </Switch>

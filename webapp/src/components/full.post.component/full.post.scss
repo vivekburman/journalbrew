@@ -1,3 +1,4 @@
+@import '../../mainSass/main';
 .full-post-container {
  width: 100%;  
  margin-bottom: 40px;
@@ -19,8 +20,13 @@
   }
 }
 .news-location, .news-time-of-post {
-  font-size: 14px;
+  font-size: 13px;
   color: rgb(85, 85, 85);
+}
+@media (min-width: 768px) {
+  .news-location, .news-time-of-post {
+    font-size: 14px;
+  } 
 }
 .separator {
   margin: 0 4px;
@@ -28,7 +34,17 @@
   color: grey;
 }
 .username {
+  font-size: 16px;
   margin-bottom: 4px;
+  line-height: 0.5;
+}
+.username, .news-location, .news-time-of-post {
+  @extend %font-playfair;
+}
+@media (min-width: 768px) {
+  .username {
+    font-size: 18px;
+  }
 }
 .news-reaction-bookmark {
   display: none;
@@ -43,4 +59,7 @@
 }
 .social-share-wrapper {
   margin-top: 17px;
+}
+.news-heading {
+  @extend %font-cormorant;
 }

@@ -238,8 +238,8 @@ const createCard = (data) => {
     const list = [];
     for (let i = 0; i < 10; i++) {
       list.push(
-        <div>
-          <div className="flex flex-row" style={{margin: '20px 5px', lineHeight: 1.4}}>
+        <div key={i}>
+          <div className="flex flex-row-nowrap" style={{margin: '20px 10px', lineHeight: 1.4}}>
             <Skeleton circle={true} width={50} height={50} />
             <div className="flex-grow-1" style={{ margin: '5px 5px 0 5px' }}>
               <Skeleton />
@@ -336,12 +336,12 @@ class Notification extends Component {
     return (
       <div className="notifications-container">
         <div className="flex-row-nowrap justify-content-between align-items-center notifications-header-container">
-          {windowSize <= 768 && <img onClick={hideNotification} src={close} alt="close" className="icon-img" />}
+          {windowSize <= 768 && <img onClick={hideNotification} src={close} alt="close" className="icon-img icon-img-close" />}
           <h1 className="notifications-header">Notifications</h1>
           {notifications && <span className="mark-read">Mark all read</span>}
         </div>
-        <div className="notifications-list-container">
-          <SimpleBar style={{ maxHeight: windowSize > 768 ? 300 : '100vh'}} ref={this.ref} onScroll={this.handleScroll}>
+        <div className="notifications-list-container hide-scrollbar">
+          <SimpleBar style={{ height: windowSize > 768 ? 300 : '100vh'}} ref={this.ref} onScroll={this.handleScroll}>
             { createCard(notifications) }
           </SimpleBar>
         </div>
