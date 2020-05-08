@@ -45,12 +45,22 @@
 
 .notification-item {
   height: 100%;
+  position: relative;
   border-top: 1px solid rgba(0, 0, 0, 0.11);
 }
 .notification-wrapper:hover {
   background-color: rgba(128, 128, 128, 0.055);
 }
-.notification-item-unread {
+.notification-item-unread::after {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: hsla(204, 89%, 52%, 1);
+  content: '';
+  bottom: 30%;
+  right: 15px;
+  position: absolute;
 }
 .notification-item-unread .link-text {
   color: #6b6d70;
@@ -72,10 +82,9 @@
 .notifications-header-container {
   padding: 0 8px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.11);
-
 }
 .notifications-header {
-  font-family: 'Roboto', sans-serif;
+  @extend %font-roboto;
   font-weight: 500;
   margin-left: 20px;
   flex-grow: 1;
@@ -83,10 +92,7 @@
 .mark-read {
   cursor: pointer;
   font-size: 12px;
-  font-family: 'Roboto', sans-serif;
-  color: rgb(46, 170, 46);
-}
-.no-notifications {
-  text-align: center;
-  padding: 8px 16px;
+  @extend %font-roboto;
+  font-weight: bold;
+  color: blue;
 }
