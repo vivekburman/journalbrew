@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import ShowFeed from '../show.feed.component/show.feed';
-import {PersonalInfo} from '../personal.info.component/personal.info';
+import PersonalInfo from '../personal.info.component/personal.info';
 import 'react-tabs/style/react-tabs.scss';
 import './dashboard.component.scss';
 import { GrowthGraph } from '../growth.graph.component/growth.graph';

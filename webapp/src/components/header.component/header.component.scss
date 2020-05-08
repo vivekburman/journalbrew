@@ -21,78 +21,7 @@
     padding: 8px 0;
     }   
 }
-.icon-img {
-    width: 20px;
-    padding: 8px;
-    height: 20px;
-}
-.icon-img {
-    cursor: pointer;
-    border-radius: 30%;
-}
-.icon-img:focus {
-    outline: none;
-}
-@media (min-width: 576px) {
-    .icon-img {
-        width: 22px;
-        height: 22px;
-    }
-}
-@media (min-width: 768px) {
-    .icon-img {
-        width: 26px;
-        height: 26px;
-    }
-}
-.figure {
-    margin: 0;
-}
-.search {
-    @extend %flex-row-nowrap;
-}
-@media (min-width: 768px) {
-    .search {
-        flex-grow: 1;
-    }
-}
-.search-input {
-    display: none;
-    max-width: 600px;
-    font-size: 16px;
-    background-color: whitesmoke;
-    border: none;
-    font-weight: 900;
-    align-self: center;
-    padding: 10px 16px;
-    border-radius: 4px 0 0 4px;
-}
-.search figure {
-    margin: 2px 0;
-}
-.search-input:focus {
-    outline: none;
-    border-left: 4px solid rgba(0, 0, 0, 0.432);
-}
-@media (min-width: 768px) {
-    .search-input {
-        display: initial;
-        width: 85%;
-    }
-    .search .icon-img {
-        padding: 0;
-    }
-    .search figure {
-        background-color: whitesmoke;
-        border-radius: 0 4px 4px 0;
-        padding: 5px 16px 2px;
-    }
-}
-@media (min-width: 992px) {
-    .search-input {
-        width: 60%;
-    }    
-}
+
 nav ul {
     margin: 0;
     padding: 0;

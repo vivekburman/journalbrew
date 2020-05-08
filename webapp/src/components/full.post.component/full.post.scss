@@ -38,6 +38,9 @@
   margin-bottom: 4px;
   line-height: 0.5;
 }
+.username, .news-location, .news-time-of-post {
+  @extend %font-playfair;
+}
 @media (min-width: 768px) {
   .username {
     font-size: 18px;

@@ -1,0 +1,62 @@
+@import '../../mainSass/main';
+
+.figure {
+  margin: 0;
+}
+.search {
+  @extend %flex-row-nowrap;
+  position: relative;
+}
+@media (min-width: 768px) {
+  .search {
+    flex-grow: 1;
+    margin: 0 24px;
+  }
+}
+
+.search-input {
+  display: none;
+  width: 100%;
+  font-size: 16px;
+  background-color: whitesmoke;
+  border: none;
+  font-weight: 900;
+  align-self: center;
+  padding: 12px 16px;
+  border-radius: 4px 0 0 4px;
+}
+.search-logo-wrapper {
+  width: 100%;
+  @extend %flex-row-nowrap;
+}
+.search-input:focus {
+  outline: none;
+  border-left: 4px solid rgba(0, 0, 0, 0.432);
+}
+.search-input + .icon-img {
+  margin-bottom: 3px;
+}
+@media (min-width: 768px) {
+  .search-input + .icon-img {
+    background-color: whitesmoke;
+    vertical-align: middle;
+    margin-bottom: 0;
+    border-radius: 0 4px 4px 0;
+    position: absolute;
+  }
+  .search-input {
+    max-width: 600px;
+    display: initial;
+  }
+  .search-logo-wrapper {
+    width: 85%;
+    display: initial;
+    margin: 0 auto;
+  }
+}
+@media (min-width: 1200px) {
+  .search-logo-wrapper {
+    margin: 0;
+    text-align: center;
+  }
+}

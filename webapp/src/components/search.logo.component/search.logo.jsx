@@ -3,6 +3,7 @@ import search from '../../images/search.svg';
 import { connect } from 'react-redux';
 import handleSearchRequest from'../../reducers/search/search.action';
 import { Switch, Route } from 'react-router-dom';
+import './search.logo.component.scss';
 class SearchNLogoComponent extends Component {
     constructor (props) {
       super(props);
@@ -57,16 +58,16 @@ class SearchNLogoComponent extends Component {
         <Switch>
           <Route exact path={["/", "/user-profile"]}>
             <div className={"search " + searchCssClass}>
-              <input 
-                className={"search-input " + searchInputCssClass}
-                type="search"
-                placeholder={placeholder}
-                onChange= {(e) => handleSearchRequest(e.target.value)}
-                value={searchText} 
-              />
-              <figure className="figure" onClick={this.handleSearchClick}>
-                <img src={search} alt="search-icon" className="icon-img"></img>
-              </figure>
+              <div className="search-logo-wrapper">
+                <input 
+                  className={"search-input " + searchInputCssClass}
+                  type="search"
+                  placeholder={placeholder}
+                  onChange= {(e) => handleSearchRequest(e.target.value)}
+                  value={searchText} 
+                />
+                <img src={search} alt="search-icon" className="icon-img" onClick={this.handleSearchClick}></img>
+              </div>
             </div>
           </Route>
         </Switch>

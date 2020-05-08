@@ -30,8 +30,9 @@ class Accordian extends Component {
     const { collapseAccordian } = this.props;
     const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 767) ? 'show-list' : 'hide-list';
     return (
-      <div className={"accordian-list-container " + shouldOpen} >
-        <div className="accordian-list" onClick={collapseAccordian}>
+      <div className={"accordian-list-container " + shouldOpen} 
+        onClick={collapseAccordian}>
+        <div className="accordian-list" >
           <SimpleBar style={{ maxHeight: '100vh', paddingBottom: '20px' }}>
             <div className="accordian-list-item">
               <Link to="/new-story">

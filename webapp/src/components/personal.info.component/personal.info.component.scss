@@ -11,19 +11,20 @@
 .personal-info-details {
   flex-grow: 2;
 }
-.user-name {
-  font-family: 'Roboto', sans-serif;
-  margin: 4px 0;
+.personal-info-details .username {
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: 400;
 }
 .calendar-img {
   padding-left: 1px;
   display: inline-block;
-  width: 11px;
-  height: 11px;
+  width: 13px;
+  height: 13px;
   vertical-align: middle;
 }
 .time {
-  font-family: 'Roboto', sans-serif;
-  font-size: 13px;
+  @extend %font-roboto;
+  font-size: 17px;
   color: grey;
 }
