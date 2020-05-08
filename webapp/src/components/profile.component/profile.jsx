@@ -5,14 +5,15 @@ import Notification from '../notification.component/notification.card';
 import { showNotification, hideNotification } from '../../reducers/click/notification.action';
 import { connect } from 'react-redux';
 import { Switch, Route, Link } from 'react-router-dom';
+import './profile.component.scss';
 
 const ProfileComponent = ({ showNotification, isOpen, hideNotification }) => {
 	return (
 		<ul>
 			<Switch>
 				<Route exact path={["/full-story", "/user-profile", "/"]}>
-					<li style={{ position: 'relative', outline: 'none' }} onBlur={hideNotification}
-						tabIndex={0}>
+					<li onBlur={hideNotification}
+						tabIndex={0} className="notification-icon-wrapper">
 						<img src={ bell } alt="notifications" className="icon-img" 
 						onClick={() => isOpen ? hideNotification() : showNotification()} />
 						<Notification />
