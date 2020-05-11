@@ -25,7 +25,7 @@ const Header = () => {
         </Route>
       </Switch>
       <SearchNLogoComponent />
-      <nav className="m-right-12-27sm top-nav">
+      <nav className="top-nav">
         <Switch>
           <Route exact path="/new-story">
             <PublishPreview />

@@ -24,13 +24,12 @@
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 3px solid rgba(0, 0, 0, 0.555);
+  border-bottom: 3px solid hsla(204, 89%, 52%, 1);
   border-radius: 5px 5px 0 0;
   color: rgb(66, 66, 66);
 }
 .tab-item:focus {
   border-color: none;
-  outline: none;
 }
 .tabs-info {
   width: 100%;

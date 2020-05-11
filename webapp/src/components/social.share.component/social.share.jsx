@@ -1,14 +1,14 @@
 import React from 'react';
 import facebook from '../../images/facebook.svg';
 import twitter from '../../images/twitter.svg';
-import linkedIn from '../../images/linkedIn.svg';
 import threeDots from '../../images/threeDots.svg';
+import linkedIn from '../../images/linkedIn.svg';
 import { Link } from 'react-router-dom';
-import './social.share.scss';
+import ReportDropDown from '../report.dropdown.component/report.dropdown';
 import { connect } from 'react-redux';
-import { closeReportDialog, openReportDialog } from '../../reducers/click/report.dialog.action';
+import { showReportDropDown, hideReportDropDown } from '../../reducers/click/report.dialog.action';
 
-const SocialShare = ({ isOpen, closeReportDialog, openReportDialog, location, activeLocation }) => {
+const SocialShare = (props) => {
   return(
     <div className="flex flex-row-nowrap">
       <Link to=''>
@@ -20,28 +20,23 @@ const SocialShare = ({ isOpen, closeReportDialog, openReportDialog, location, ac
       <Link to=''>
         <img src={linkedIn} alt="linkedIn" className="icon-img"/>
       </Link>
-      <div className="report-news-wrapper" 
-        onClick={() => isOpen ? closeReportDialog(location) : openReportDialog(location)}
-        onBlur={() => closeReportDialog(location)}
-        tabIndex={0}>
-        <img src={threeDots} alt="report" className="icon-img report-icon" />
-       { activeLocation === location && isOpen && <ul className="report-list-wrapper">
-          <li className="report-list-item">Report this news</li>
-          <li className="report-list-item">Mute this Author</li>
-          <li className="report-list-item">Unfollow this Author</li>
-        </ul>}
+      <div className="pos-rel">
+        <img src={threeDots} alt="report" className="icon-img" 
+        onClick= {() => props.isReportDropDownOpen ? props.hideReportDropDown(props.location) : props.showReportDropDown(props.location)}  />
+        <ReportDropDown isOpen= {props.isReportDropDownOpen} 
+          hideFunc={props.hideReportDropDown}
+          checkCondition = {() => props.activeLocation === props.location }
+          {...props}/>
       </div>
     </div>
   );
 }
-
-const mapStateToProps = ({ reportDialog }) => ({
-  isOpen: reportDialog.isOpen,
-  activeLocation: reportDialog.activeLocation
+const mapStateToProps = ({ reportDropDown }) => ({
+  isReportDropDownOpen: reportDropDown.isOpen,
+  activeLocation: reportDropDown.activeLocation,
 });
 const mapDispatchToProps = dispatch => ({
-  openReportDialog: (location) => dispatch(openReportDialog(location)),
-  closeReportDialog: (location) => dispatch(closeReportDialog(location))
+  showReportDropDown: (location) => dispatch(showReportDropDown(location)),
+  hideReportDropDown: (location) => dispatch(hideReportDropDown(location))
 });
-
 export default connect(mapStateToProps, mapDispatchToProps)(SocialShare);

@@ -1,5 +1,4 @@
 import React from 'react';
-import StarRatingComponent from 'react-star-rating-component';
 import calendar from '../../images/calendar.svg';
 import './personal.info.component.scss';
 import {UserAvatar} from '../avatar.component/avatar'; 
