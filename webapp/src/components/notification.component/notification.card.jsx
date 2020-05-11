@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './notification.component.scss';
-import ReactAvatar from 'react-avatar';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { connect } from 'react-redux';
 import close from '../../images/close.svg';
 import { hideNotification } from '../../reducers/click/notification.action';
 import Skeleton from 'react-loading-skeleton';
+import { UserAvatar } from '../avatar.component/avatar';
+import withFocusBlur from '../focus.blur.hoc.component/focus.blur';
 
 const dummyData = [
   {
     text: '{Abc} liked {your post}',
     link: 'https://www.google.com',
     read: false,
-    avatar: '',
+    id: '',
     type: 'google',
     time: new Date().setSeconds(new Date().getSeconds() - 2)
   }, {
@@ -22,7 +23,7 @@ const dummyData = [
     link: 'https://www.google.com',
     read: false,
     type: 'google',
-    avatar: '',
+    id: '',
     time: new Date().setMinutes(new Date().getMinutes() - 2)
   }, {
     text: '{Abc} liked {your post}',
@@ -30,39 +31,39 @@ const dummyData = [
     read: true,
     type: 'google',
     time: new Date().setHours(new Date().getHours() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Your {post} has been reported by someone.',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setDate(new Date().getDate() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'We have changed {terms and policies}. Have a look',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setMonth(new Date().getMonth() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {uploaded}',
     link: 'https://www.google.com',
     read: false,
     type: 'google',
     time: new Date().setFullYear(new Date().getFullYear() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {review}',
     link: 'https://www.google.com',
     time: new Date(12),
     read: false,
-    avatar: '',
+    id: '',
   },   {
     text: '{Abc} liked {your post}',
     link: 'https://www.google.com',
     read: false,
-    avatar: '',
+    id: '',
     type: 'google',
     time: new Date().setSeconds(new Date().getSeconds() - 2)
   }, {
@@ -70,7 +71,7 @@ const dummyData = [
     link: 'https://www.google.com',
     read: false,
     type: 'google',
-    avatar: '',
+    id: '',
     time: new Date().setMinutes(new Date().getMinutes() - 2)
   }, {
     text: '{Abc} liked {your post}',
@@ -78,39 +79,39 @@ const dummyData = [
     read: true,
     type: 'google',
     time: new Date().setHours(new Date().getHours() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Your {post} has been reported by someone.',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setDate(new Date().getDate() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'We have changed {terms and policies}. Have a look',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setMonth(new Date().getMonth() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {uploaded}',
     link: 'https://www.google.com',
     read: false,
     type: 'google',
     time: new Date().setFullYear(new Date().getFullYear() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {review}',
     link: 'https://www.google.com',
     time: new Date(12),
     read: false,
-    avatar: '',
+    id: '',
   },   {
     text: '{Abc} liked {your post}',
     link: 'https://www.google.com',
     read: false,
-    avatar: '',
+    id: '',
     type: 'google',
     time: new Date().setSeconds(new Date().getSeconds() - 2)
   }, {
@@ -118,7 +119,7 @@ const dummyData = [
     link: 'https://www.google.com',
     read: false,
     type: 'google',
-    avatar: '',
+    id: '',
     time: new Date().setMinutes(new Date().getMinutes() - 2)
   }, {
     text: '{Abc} liked {your post}',
@@ -126,39 +127,39 @@ const dummyData = [
     read: true,
     type: 'google',
     time: new Date().setHours(new Date().getHours() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Your {post} has been reported by someone.',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setDate(new Date().getDate() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'We have changed {terms and policies}. Have a look',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setMonth(new Date().getMonth() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {uploaded}',
     link: 'https://www.google.com',
     read: false,
     type: 'google',
     time: new Date().setFullYear(new Date().getFullYear() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {review}',
     link: 'https://www.google.com',
     time: new Date(12),
     read: false,
-    avatar: '',
+    id: '',
   },   {
     text: '{Abc} liked {your post}',
     link: 'https://www.google.com',
     read: false,
-    avatar: '',
+    id: '',
     type: 'google',
     time: new Date().setSeconds(new Date().getSeconds() - 2)
   }, {
@@ -166,7 +167,7 @@ const dummyData = [
     link: 'https://www.google.com',
     read: false,
     type: 'google',
-    avatar: '',
+    id: '',
     time: new Date().setMinutes(new Date().getMinutes() - 2)
   }, {
     text: '{Abc} liked {your post}',
@@ -174,34 +175,34 @@ const dummyData = [
     read: true,
     type: 'google',
     time: new Date().setHours(new Date().getHours() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Your {post} has been reported by someone.',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setDate(new Date().getDate() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'We have changed {terms and policies}. Have a look',
     link: 'https://www.google.com',
     read: true,
     type: 'google',
     time: new Date().setMonth(new Date().getMonth() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {uploaded}',
     link: 'https://www.google.com',
     read: false,
     type: 'google',
     time: new Date().setFullYear(new Date().getFullYear() - 2),
-    avatar: '',
+    id: '',
   }, {
     text: 'Status of {your post} has changed to {review}',
     link: 'https://www.google.com',
     time: new Date(12),
     read: false,
-    avatar: '',
+    id: '',
   }
 ];
 const timeDiff = {};
@@ -272,27 +273,11 @@ const createCard = (data) => {
     if (k !== text.length - 1) {
       arr.push(<>{text.substring(k)}</>);
     }
-    let avatar;
-    const avatarSize = 50;
-    switch (entity.type) {
-      case 'google':
-        avatar = <ReactAvatar googleId={entity.avatar} size={avatarSize} round={true} />
-        break;
-      case 'facebook':
-        avatar = <ReactAvatar facebookId={entity.avatar} size={avatarSize} round={true} />
-        break;
-      case 'twitter':
-        avatar = <ReactAvatar twitterHandle={entity.avatar} size={avatarSize} round={true} />
-        break;
-      default:
-        avatar = <ReactAvatar name={entity.name} size={avatarSize} round={true} />
-        break;
-    } 
     return (
       <div key={index} className={entity.read ? 'notification-item' : 'notification-item notification-item-unread'}>
         <Link to={ entity.link } className="link">
           <div className="notification-wrapper">
-            { avatar }
+            <UserAvatar size={50} type={entity.type} id={entity.id} />
             <div className="notification-text-wrapper">
               <p className="link-text">
                 { arr }
@@ -314,7 +299,6 @@ class Notification extends Component {
       showNotifications: false
     };
     this.ref = React.createRef(null);
-
   }
   fetchNotifications = () => {
     this.setState({ notifications: [...dummyData, ...dummyData] });
@@ -327,12 +311,7 @@ class Notification extends Component {
   }
   render() {
     const { notifications } = this.state;
-    const { windowSize, isOpen, hideNotification } = this.props;
-    if (!isOpen) {
-      return (
-        <></>
-      );
-    }
+    const { windowSize, hideNotification } = this.props;
     return (
       <div className="notifications-container">
         <div className="flex-row-nowrap justify-content-between align-items-center notifications-header-container">
@@ -356,4 +335,4 @@ const mapStateToProps = ({window, notification}) => ({
 const mapDispatchToProps = (dispatch) => ({
   hideNotification: () => dispatch(hideNotification())
 });
-export default connect(mapStateToProps, mapDispatchToProps)(Notification);
+export default connect(mapStateToProps, mapDispatchToProps)(withFocusBlur(Notification));

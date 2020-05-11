@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import search from '../../images/search.svg';
+import close from '../../images/close.svg';
 import { connect } from 'react-redux';
 import handleSearchRequest from'../../reducers/search/search.action';
 import { Switch, Route } from 'react-router-dom';
@@ -60,7 +61,7 @@ class SearchNLogoComponent extends Component {
             <div className={"search " + searchCssClass}>
               <div className="search-logo-wrapper">
                 <input 
-                  className={"search-input " + searchInputCssClass}
+                  className={"search-input outline-none " + searchInputCssClass}
                   type="search"
                   placeholder={placeholder}
                   onChange= {(e) => handleSearchRequest(e.target.value)}

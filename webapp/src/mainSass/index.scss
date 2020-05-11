@@ -59,13 +59,26 @@
 }
 @media (min-width: 576px) {
   .icon-img {
-      width: 22px;
-      height: 22px;
+    width: 22px;
+    height: 22px;
   }
 }
 @media (min-width: 768px) {
   .icon-img {
-      width: 26px;
-      height: 26px;
+    width: 26px;
+    height: 26px;
   }
+}
+.icon-img-close {
+  width: 16px;
+  height: 16px;
+}
+.outline-none {
+  outline: none;
+}
+.outline-none:focus {
+  outline: none;
+}
+.pos-rel {
+  position: relative;
 }

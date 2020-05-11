@@ -1,25 +1,25 @@
-const OPEN_REPORT_DIALOG = 'OPEN_REPORT_DIALOG';
-const CLOSE_REPORT_DIALOG = 'CLOSE_REPORT_DIALOG';
+const SHOW_REPORT_DROPDOWN = 'SHOW_REPORT_DROPDOWN';
+const HIDE_REPORT_DROPDOWN = 'HIDE_REPORT_DIALOG';
 
-const openReportDialog = (payload) => ({
-  type: OPEN_REPORT_DIALOG,
+const showReportDropDown = (payload) => ({
+  type: SHOW_REPORT_DROPDOWN,
   payload: {
     activeLocation: payload,
     isOpen: true
   }
 });
 
-const closeReportDialog = (payload) => ({
-  type: CLOSE_REPORT_DIALOG,
+const hideReportDropDown = (payload) => ({
+  type: HIDE_REPORT_DROPDOWN,
   payload: {
-    ...payload,
+    activeLocation: payload,
     isOpen: false
   }
 });
 
 export {
-  OPEN_REPORT_DIALOG,
-  CLOSE_REPORT_DIALOG,
-  openReportDialog,
-  closeReportDialog
+  SHOW_REPORT_DROPDOWN,
+  HIDE_REPORT_DROPDOWN,
+  showReportDropDown,
+  hideReportDropDown
 };

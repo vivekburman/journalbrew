@@ -1,14 +1,13 @@
-import { OPEN_REPORT_DIALOG, CLOSE_REPORT_DIALOG } from "./report.dialog.action";
+import { HIDE_REPORT_DROPDOWN, SHOW_REPORT_DROPDOWN } from "./report.dialog.action";
 
-const handleReportDialogBox = (state={}, action) => {
+const handleReportDropDown = (state={}, action) => {
   switch(action.type) {
-    case OPEN_REPORT_DIALOG:
-      console.log(action.payload);
+    case SHOW_REPORT_DROPDOWN:
       return {
         ...state,
         ...action.payload
       };
-    case CLOSE_REPORT_DIALOG:
+    case HIDE_REPORT_DROPDOWN:
       return {
         ...state,
         ...action.payload
@@ -17,4 +16,4 @@ const handleReportDialogBox = (state={}, action) => {
       return state;
   }
 }
-export default handleReportDialogBox;
+export default handleReportDropDown;

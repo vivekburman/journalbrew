@@ -14,17 +14,11 @@ export const Dashboard = ({ windowWidth }) => {
       <section className="tabs-info">
         <Tabs>
           <TabList className="dashboard-tab-list">
-            <Tab className="tab-item">
+            <Tab className="tab-item outline-none">
               Posts
             </Tab>
-            <Tab className="tab-item">
-              Likes
-            </Tab>
-            <Tab className="tab-item">
-              Bookmarks
-            </Tab>
-            <Tab className="tab-item">
-              Insights
+            <Tab className="tab-item outline-none">
+              Likes & Bookmarks
             </Tab>
           </TabList>
           <TabPanel>
@@ -32,12 +26,6 @@ export const Dashboard = ({ windowWidth }) => {
           </TabPanel>
           <TabPanel>
             <ShowFeed windowWidth/>
-          </TabPanel>
-          <TabPanel>
-            <ShowFeed windowWidth/>
-          </TabPanel>
-          <TabPanel>
-            <GrowthGraph windowWidth/>
           </TabPanel>
         </Tabs>
       </section>

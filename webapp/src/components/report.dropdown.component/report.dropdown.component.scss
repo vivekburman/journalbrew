@@ -1,22 +1,13 @@
 @import '../../mainSass/main';
-.report-news-wrapper {
-  position: relative;
-}
 .report-list-wrapper {
   list-style-type: none;
   padding: 0;
   margin: 0;
   background-color: #fff;
   border-radius: 4px;
-  position: absolute;
   width: 200px;
   padding: 8px 8px 4px;
   z-index: 2;
-  right: 5px;
-  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-}
-.report-news-wrapper:focus {
-  outline: none;
 }
 .report-list-item {
   @extend %font-roboto;

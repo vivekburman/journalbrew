@@ -15,7 +15,7 @@ const TextEditor = (props) => {
 	} 
 	const defaultPlaceholder = 'Let the world know what happend!';
 	return (
-		<article className='text-editor-container'>
+		<article className='text-editor-container outline-none'>
 			<EditorJS data={data}
 				onChange={handleSave}
 				tools={ EDITOR_JS_TOOLS } 
