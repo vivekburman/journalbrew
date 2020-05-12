@@ -5,70 +5,58 @@ import { connect } from 'react-redux';
 import handleSearchRequest from'../../reducers/search/search.action';
 import { Switch, Route } from 'react-router-dom';
 import './search.logo.component.scss';
+import SearchSuggestion from '../search.suggestion.component/search.suggestion';
+import { openSearchBar, closeSearchBar } from '../../reducers/click/search.bar.action';
 class SearchNLogoComponent extends Component {
     constructor (props) {
       super(props);
-      this.state = {
-        searchCssClass: '',
-        logoCssClass: '',
-        searchInputCssClass: '',
-        searchText: '',
-        hasResized: -1
-      }
-      this.handleSearchClick = this.handleSearchClick.bind(this);
+      this.ref = React.createRef(null);
+      this.searchIconRef = React.createRef(null);
     }
-    handleSearchClick () {
-      /* if window less than 768
-          *  open => close and vice-versa
-          else
-          * do nothing
-    */
-    const { hasWindowResized, windowWidth } = this.props;
-    const { searchInputCssClass, hasResized } = this.state;
-    if (windowWidth < 768) {
-      if (searchInputCssClass === 'collapse-search' || searchInputCssClass === '' ||
-      hasResized !== hasWindowResized) {
-      this.setState({
-        hasResized: hasWindowResized, 
-        searchInputCssClass: 'expand-search', 
-        logoCssClass: 'collapse-logo',
-        searchCssClass: 'flex-1',
-      });
-      } else {
-        this.setState({
-          hasResized: hasWindowResized, 
-          searchInputCssClass: 'collapse-search', 
-          logoCssClass: 'expand-logo',
-          searchCssClass: 'flex-0',
-        });
-      }
-    }
-  }
+
   render() {
-    let { searchInputCssClass, hasResized, logoCssClass, searchCssClass } = this.state;
-    const { searchText, windowWidth = window.innerWidth, hasWindowResized, handleSearchRequest } = this.props;
-    const placeholder = windowWidth < 576 ? 'Search' : 'Search by location, date or creator';
-    if (hasWindowResized !== hasResized) {
-      searchCssClass = '';
-      logoCssClass = '';
-      searchInputCssClass = '';
-    }
+    const { searchText='', windowWidth,
+    handleSearchRequest, isSearchBarOpen,
+    openSearchBar, closeSearchBar } = this.props;
+    const placeholder = 'Search by location, date or creator';
     return (
       <div className="search-and-logo">
-        <h1 className={"logo " + logoCssClass}>TopSelfNews</h1>
+        <h1 className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>TopSelfNews</h1>
         <Switch>
           <Route exact path={["/", "/user-profile"]}>
-            <div className={"search " + searchCssClass}>
-              <div className="search-logo-wrapper">
-                <input 
-                  className={"search-input outline-none " + searchInputCssClass}
-                  type="search"
-                  placeholder={placeholder}
-                  onChange= {(e) => handleSearchRequest(e.target.value)}
-                  value={searchText} 
-                />
-                <img src={search} alt="search-icon" className="icon-img" onClick={this.handleSearchClick}></img>
-              </div>
+            <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-1' : 'flex-0')}`}>
+              <form className="search-wrapper flex flex-row-nowrap justify-content-center" 
+                onSubmit={(e) => handleSearchRequest(e.target.value)}>
+                <div className="search-wrapper align-items-center">
+                  <div className="flex flex-row-nowrap align-items-center">
+                    <img src={close} alt="search-icon" className="icon-img icon-img-close"
+                      onClick={closeSearchBar}/>
+                    <img src={search} alt="search-icon" ref={this.searchIconRef}
+                      className="icon-img icon-img-search" 
+                      onClick={() => {
+                        windowWidth < 768 && openSearchBar();
+                      }} />
+                    <input 
+                      ref = {this.ref}
+                      className={`search-input outline-none ${windowWidth < 768 && (isSearchBarOpen ? 'expand-search' : 'collapse-search')}`}
+                      type="search"
+                      placeholder={placeholder}
+                      onChange= {(e) => handleSearchRequest(e.target.value)}
+                      value={searchText}
+                      onFocus={() => {
+                        this.ref.current.classList.add('on-focus');
+                        this.searchIconRef.current.classList.add('on-focus');
+                      }} 
+                      onBlur={() => {
+                        this.ref.current.classList.remove('on-focus');
+                        this.searchIconRef.current.classList.remove('on-focus');
+                        setTimeout(() => handleSearchRequest(''), 100); 
+                      }}
+                    />
+                  </div>
+                  { (windowWidth > 768 || isSearchBarOpen) && searchText.length > 0 && <SearchSuggestion /> }  
+                </div>
+              </form>
             </div>
           </Route>
         </Switch>
@@ -76,14 +64,16 @@ class SearchNLogoComponent extends Component {
     );
   }
 }   
-const mapStateToProps = ({ window, search }) => {
+const mapStateToProps = ({ window, search, searchBar }) => {
   return {
     windowWidth: window.windowSize,
-    hasWindowResized: window.hasWindowResized,
+    isSearchBarOpen: searchBar.isOpen,
     searchText: search.searchText
   };
 };
 const mapDispatchToProps = dispatch => ({
-  handleSearchRequest: searchString => dispatch(handleSearchRequest(searchString))
+  handleSearchRequest: searchString => dispatch(handleSearchRequest(searchString)),
+  openSearchBar: () => dispatch(openSearchBar()),
+  closeSearchBar: () => dispatch(closeSearchBar()),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(SearchNLogoComponent);

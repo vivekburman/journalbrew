@@ -9,6 +9,7 @@ import showCompletePostReducer from './click/showcompletepost.reducer';
 import { handleUserReaction } from './click/userreaction.reducer';
 import handleReportDropDown from './click/report.dialog.reducer';
 import handleProfileDropDown from './click/profile.dropdown.reducer';
+import handleSearchBar from './click/search.bar.reducer';
 export default combineReducers({
     accordian: accordianReducer,
     window: resizeReducer,
@@ -20,4 +21,5 @@ export default combineReducers({
     userReaction: handleUserReaction,
     reportDropDown: handleReportDropDown,
     profileDropDown: handleProfileDropDown,
+    searchBar: handleSearchBar,
 });
