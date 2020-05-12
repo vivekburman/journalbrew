@@ -1,0 +1,42 @@
+@import '../../mainSass/main';
+
+.suggestion-list-container {
+  background-color: #fff;
+  width: 100%;
+  padding: 8px 0 4px;
+  left: -0.5px;
+  text-align: left;
+  margin-top: 1px;
+  height: calc(100vh - 125px);
+  padding-bottom: 40px;
+  overflow-y: auto;
+  list-style-type: none;
+}
+
+@media (min-width: 768px) {
+  .suggestion-list-container {
+    position: absolute;
+    top: 43px;
+    max-height: 400px;
+    z-index: 20;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(128, 128, 128, 0.377);  
+  }
+}
+
+.suggestion-list-item {
+  padding: 4px 0 4px 16px;
+}
+.suggestion-list-item:hover {
+  background-color: rgba(128, 128, 128, 0.055);
+}
+.suggestion-list-item .icon-img {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+}
+.suggestion-list-title {
+  @extend %font-roboto;
+  font-size: 16px;
+}
