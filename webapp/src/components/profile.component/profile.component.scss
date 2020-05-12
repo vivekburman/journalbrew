@@ -35,16 +35,16 @@
   margin: 0 10px 0 8px;
   letter-spacing: .30px;
   @extend %font-roboto;
-  font-weight: 400;
   line-height: 16px;
+  font-weight: 700;
   text-align: center;
   border-radius: 4px;
-  background-color: #1a73e8;
+  background-color: #272727;
   outline: none;
-  border: 1px solid transparent;
+  box-shadow: 0 0 0 1px #dcdcdc18;
   color: #fff;
 }
 .sign-in-btn:hover {
-  background-color: #2b7de9;
-  box-shadow: 0 1px 2px 0 rgba(66,133,244,0.3), 0 1px 3px 1px rgba(66,133,244,0.15);
+  background-color: #4b4b4b;
+  box-shadow: 0 1px 2px 0 #4b4b4b48, 0 1px 3px 1px #4b4b4b0c;
 }

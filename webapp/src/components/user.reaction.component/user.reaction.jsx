@@ -19,14 +19,14 @@ class UserReaction extends Component {
   render() {
     const { likes, hasUserLiked, userLiked, userDisliked, showViews=false, views, direction='row'} = this.props;
     return (
-      <div className={`flex flex-${direction}-nowrap ${direction ==='row' ? 'align-items-center' : ''} margin-btm-10`}>
+      <div className={`flex flex-${direction}-nowrap ${direction ==='row' ? 'align-items-center' : ''}`}>
         <div className="flex flex-row-nowrap align-items-center">
           { hasUserLiked ? <img src={liked} alt="liked" className="icon-img rotate-180 size-29" onClick={userDisliked} />
           : <img src={likePlaceholder} alt="likePlaceholder" className="icon-img rotate-180 size-29" onClick={userLiked} /> }
-          <span className="align-self-center likes-count">{formatCount(likes)}</span>
+          <span className="align-self-center likes-count">{`${formatCount(likes)} Likes`}</span>
           { direction === 'row' && <span className="separator">&#8226;</span>}
         </div>
-        { showViews &&  <span className={`align-self-center likes-count views-${direction}`}>{ `${formatCount(views)} views` }</span>}
+        { showViews &&  <span className={`align-self-center likes-count views-${direction}`}>{ `${formatCount(views)} Views` }</span>}
       </div>
     );
   }

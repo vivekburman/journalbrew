@@ -29,6 +29,7 @@ div.search-wrapper {
   border-radius: 4px;
   @extend %flex-column-nowrap;
   align-items: center;
+  max-width: 600px;
 }
 div.search-wrapper > div:first-child {
   width: 100%;
@@ -57,7 +58,6 @@ div.search-wrapper > div:first-child {
 }
 @media (min-width: 768px) {
   .search-input {
-    max-width: 600px;
     display: initial;
   }
   .search-wrapper {
