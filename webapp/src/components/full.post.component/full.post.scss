@@ -21,6 +21,9 @@
 }
 .news-location, .news-time-of-post {
   font-size: 13px;
+  @extend %font-roboto;
+  line-height: 2;
+  letter-spacing: 0.30px;
   color: rgb(85, 85, 85);
 }
 @media (min-width: 768px) {
@@ -34,8 +37,8 @@
   color: grey;
 }
 .username {
+  letter-spacing: 0.30px;
   font-size: 16px;
-  margin-bottom: 4px;
   line-height: 0.5;
 }
 .username, .news-location, .news-time-of-post {
@@ -47,7 +50,11 @@
   }
 }
 .news-reaction-bookmark {
+  text-align: center;
   display: none;
+}
+.news-reaction-bookmark .icon-img {
+  margin-top: 8px;
 }
 @media (min-width: 1200px) {
   .news-reaction-bookmark {
@@ -57,9 +64,58 @@
     left: 50px;
   }
 }
-.social-share-wrapper {
-  margin-top: 17px;
-}
+
 .news-heading {
   @extend %font-cormorant;
+}
+.follow, .following {
+  vertical-align: middle;
+  @extend %font-roboto;
+  cursor: pointer;
+  margin-left: 12px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.30px;
+}
+.follow {
+  border: 1px solid #000;
+}
+.following {
+  margin-top: 0px;
+  background-color: #4b4b4b;
+  color: #fff;
+}
+.full-story-profile-wrapper, .full-story-profile-wrapper-bottom {
+  @extend %flex-column-nowrap;
+}
+
+@media (min-width: 576px) {
+  .full-story-profile-wrapper {
+    flex-direction: row;
+  }
+  .social-share-wrapper {
+    margin-top: 17px;
+  }
+}
+.font-large {
+  font-size: 20px;
+}
+.written-by {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: grey;
+  letter-spacing: 0.30px;
+  @extend %font-roboto;
+}
+.margin-left-8 {
+  margin-left: 8px;
+}
+.padding-left-8 {
+  padding-left: 8px;
+} 
+.padding-top-8 {
+  padding-top: 8px;
 }

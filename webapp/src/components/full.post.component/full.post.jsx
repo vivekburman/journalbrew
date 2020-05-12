@@ -45,7 +45,7 @@ const useOnScreen = (options) => {
 };
 export const FullPost = (props) => {
   const [ref, visible] = useOnScreen({ threshold: 0 });
-  const { hasUserLiked=false, post=postData } = props;
+  const { hasUserLiked=false, post=postData, hasUserFollowed } = props;
   const metaData = post.metaData;
   const article = post.blocks;
   if (!article) {
@@ -83,11 +83,14 @@ export const FullPost = (props) => {
         <div>
           <h1 className="news-heading">{parseHTMLToReact(article[0].data.text)}</h1>
           <div>
-            <div className="flex flex-row-nowrap justify-content-between">
+            <div className="full-story-profile-wrapper justify-content-between">
               <div className="flex flex-row-nowrap align-items-center ">
                 <UserAvatar id={metaData.userID} type={metaData.typeOfID} size={50}/>
                 <div className="flex flex-column-nowrap padding-8">
+                 <div className="flex flex-row-nowrap align-items-center" >
                   <span className="username">{metaData.userName}</span>
+                  { hasUserFollowed ? <span className="following">Following</span> : <span className="follow">Follow</span> }
+                 </div>
                   <div className="flex flex-row align-items-center">
                     <span className="news-location">{ metaData.location }</span>
                     <span className="separator">&#8226;</span>
@@ -105,13 +108,25 @@ export const FullPost = (props) => {
           <Tags tags={['Nokia', 'Telecommunication', 'India', 'XP13']}/>
         </div>
         <div>
-          <div className="flex flex-row-nowrap justify-content-between align-items-center">
-            <div className="flex flex-row-nowrap">
-              <PostReaction likes={metaData.likes} hasUserLiked={hasUserLiked} showViews={true} views={metaData.views}/>
+          <div className="full-story-profile-wrapper-bottom justify-content-between">
+            <div className="full-story-profile-wrapper justify-content-between">
+              <div className="flex flex-row-nowrap padding-top-8">
+                <PostReaction likes={metaData.likes} hasUserLiked={hasUserLiked} showViews={true} views={metaData.views}/>
+              </div>
+              <div className="flex flex-row-nowrap social-share-wrapper padding-top-8">
+                <img src={bookmark} alt="bookmark" className="icon-img" />
+                <SocialShare location={'bottom'}/>
+              </div>
             </div>
-            <div className="flex flex-row-nowrap social-share-wrapper">
-              <img src={bookmark} alt="bookmark" className="icon-img" />
-              <SocialShare location={'bottom'}/>
+            <div className="flex flex-row-nowrap justify-content-between align-items-center">
+              <div className="flex flex-row-nowrap align-items-center padding-top-8">
+                <UserAvatar id={metaData.userID} type={metaData.typeOfID} size={50}/>
+                <div className="flex flex-column-nowrap margin-left-8">
+                  <span className="written-by">Written By</span>
+                  <span className="username">{metaData.userName}</span>
+                </div>
+              </div>
+              { !hasUserFollowed ? <span className="following">Following</span> : <span className="follow">Follow</span> }
             </div>
           </div>
         </div>
