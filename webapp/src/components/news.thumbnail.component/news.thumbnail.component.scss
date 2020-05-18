@@ -62,7 +62,7 @@
   font-size: 20px;
   line-height: 1.2;
   margin: 4px 0;
-  @extend %font-playfair;
+  @extend %font-crimson;
 }
 @media (min-width: 576px) {
   .news-title {
@@ -83,27 +83,12 @@
   height: 42px;
   border-radius: 50%;
 }
-.creator-name {
-  font-size: 13px;
-  color: #000;
-  font-weight: 500;
-  margin: 0;
-  @extend %font-roboto;
-}
-.creation-time {
-  color: #000;
-  font-size: 12px;
-  font-weight: 400;
-  @extend %font-roboto;
-}
+
 .creator-info {
   @extend %flex-row-nowrap;
   align-items: stretch;
 }
-.creator {
-  padding: 3px 0;
-  margin-left: 8px;
-}
+
 .news-snapshot {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -114,7 +99,6 @@
   line-height: 1.4;
   @extend %font-roboto;
   font-size: 15px;
-  font-family: 'Roboto', sans-serif;
 }
 .bookmark-link {
   width: 18px;

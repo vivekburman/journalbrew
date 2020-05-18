@@ -7,29 +7,26 @@ import ShowFeed from '../show.feed.component/show.feed';
 import './main.component.scss';
 import { Switch, Route } from 'react-router-dom';
 import { FullPost } from '../full.post.component/full.post';
+import PaymentHistoryNInsights from '../payment.history.component/payment.history';
+import AsideContent from '../aside.content.component/aside.content';
 class Main extends Component {
   render() {
     const { windowWidth } = this.props;
     return (
       <main className="main">
         <Switch>
-          <Route exact path={["/user-profile", "/"]}>
-            <Accordian windowWidth= {windowWidth}/>
-            <Switch>
-              <Route exact path="/user-profile">
-                <div className="main-feed">
-                  <Dashboard windowWidth= {windowWidth}/>
-                </div>
-              </Route>
-              <Route exact path="/">
-                <div className="main-feed">
-                  <ShowFeed windowWidth= {windowWidth}/>
-                </div>
-                {/* <Advertisement/> */}
-              </Route>
-            </Switch>
+          <Route exact path="/user-profile">
+            <div className="main-feed margin-auto">
+              <Dashboard windowWidth= {windowWidth}/>
+            </div>
           </Route>
-          
+          <Route exact path="/">
+            <Accordian windowWidth= {windowWidth}/>
+            <div className="main-feed">
+              <ShowFeed windowWidth= {windowWidth}/>
+            </div>
+            <AsideContent />          
+          </Route>
           <Route exact path="/new-story">
             <TextEditor />
           </Route>
@@ -39,6 +36,13 @@ class Main extends Component {
               <FullPost />
             </div>
           </Route>
+
+          <Route exact path="/payment-history-&-insights">
+            <div className="margin-main w-100">
+              <PaymentHistoryNInsights />
+            </div>
+          </Route>
+
         </Switch>
       </main>
     );

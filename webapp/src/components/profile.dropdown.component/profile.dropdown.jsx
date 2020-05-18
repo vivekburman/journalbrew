@@ -38,7 +38,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown }) => {
       </Link>
     </li>
     <li className="profile-list-item-wrapper">
-      <Link to="/" className="profile-item-link">
+      <Link to="/payment-history-&-insights" className="profile-item-link">
         <div className="profile-list-item">
           <img src={insights} className="icon-img" alt="Payment History & Insights" />
           <span className="profile-list-info">Payment History & Insights</span>	

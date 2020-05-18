@@ -1,7 +1,6 @@
 @import '../../mainSass/main';
 .accordian-list-container {
     height: 100vh;
-    -webkit-overflow-scrolling: touch;
     overflow: hidden;
     width: 100%;
     position: fixed;
@@ -13,21 +12,23 @@
     list-style-type: none;
     margin: 0;
     padding: 8px 0 0 0;
+    position: fixed;
     overflow: auto;
     flex-direction: column;
     background-color: #fff;
-    width: 90%;
     height: 100%;
     border-right: 1px solid rgba(160, 114, 114, 0.418);
 }
 @media(min-width: 768px) {
     .accordian-list-container {
         z-index: 1;
-        width: 225px;
+        flex-grow: 1;
+        background-color: #fff;
+        position: relative;
+        max-width: 185px;
     }
     .accordian-list {
-        flex-grow: 2;
-        width: 100%;
+        width: 185px;
         border-right: none;
     }
 }

@@ -11,13 +11,7 @@ const Header = () => {
   return (
     <header className="header-component">
       <Switch>
-        <Route exact path="/full-story">
-          <Back />
-        </Route>
-        <Route exact path="/user-profile">
-          <Back />
-        </Route>
-        <Route exact path="/new-story">
+        <Route exact path={["/full-story", "/user-profile", "/new-story", "/payment-history-&-insights"]}>
           <Back />
         </Route>
         <Route exact path="/">
