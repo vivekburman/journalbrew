@@ -10,7 +10,7 @@ const ShowFeed = ({ feeds = [], showCompletePost }) => {
   if (feeds.length !== 0) {
     for(let i = 0; i < 10; i++) {
       feedList.push((
-        <li key={ i } className="news-item justify-content-between">
+        <li key={ i } className="news-item flex flex-row-nowrap justify-content-between">
           <div className="news-details" style={{lineHeight: 1.5}}>
             <Skeleton />
             <div style={{margin: '15px 0'}}></div>

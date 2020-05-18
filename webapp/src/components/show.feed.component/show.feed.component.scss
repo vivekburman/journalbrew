@@ -1,11 +1,5 @@
 @import '../../mainSass/main';
 
-.padding-left-0 {
-    padding-left: 0;
-}
-.margin-top-0 {
-    margin-top: 0;
-}
 .main-feed {
     max-width: 750px;
     @extend %flex-column-nowrap;
@@ -15,14 +9,9 @@
     margin: 16px 0;
     display: flex;
 }
-@media (min-width: 768px) {
+
+@media (min-width: 1400px) {
     .main-feed {
-        margin-left: 241px;
-        margin-right: 16px;
-    }
-}
-@media (min-width: 1200px) {
-    .main-feed {
-        margin: 16px auto;
+        margin: 0 auto;
     }
 }

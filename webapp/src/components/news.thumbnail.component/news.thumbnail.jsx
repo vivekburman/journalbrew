@@ -6,6 +6,7 @@ import bookmark from '../../images/bookmark.svg';
 import { showCompletePost } from '../../reducers/click/showcompletepost.action';
 import { Link } from 'react-router-dom';
 import './news.thumbnail.component.scss';
+import CreatorInfo from '../creator.info.component/creator.info';
 
 const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
   // const imgRef = useRef();
@@ -54,10 +55,7 @@ const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
           <div className="flex flex-row-nowrap align-items-center justify-content-between">
             <div className="creator-info">
               <img className="creator-pic" src={ profilePlaceholder } alt="Creator Profile Pic"/>
-              <div className="creator">
-                <h2 className="creator-name">Mr. TalkBox</h2>
-                <time className="creation-time">10:00AM</time>
-              </div>
+              <CreatorInfo username={'Mr.Talkbox'} time={'10:30AM'} />
             </div>      
             <div className="menu-section">
               <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" />

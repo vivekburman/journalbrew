@@ -4,6 +4,7 @@
     @extend %flex-row-nowrap;
     margin: 0;
     position: relative;
+    width: 100%;
     padding-top: 52px;
 }
 .w-100 {
@@ -15,5 +16,10 @@
     }
     .main {
         padding-top: 55px;
+    }
+}
+@media (min-width: 1400px) {
+    .main {
+        padding-top: 64px;
     }
 }

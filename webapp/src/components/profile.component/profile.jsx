@@ -10,7 +10,7 @@ import './profile.component.scss';
 import ProfileDropDown from '../profile.dropdown.component/profile.dropdown';
 import { showProfileDropDown, hideProfileDropDown } from '../../reducers/click/profile.dropdown.action';
 
-const ProfileComponent = ({ currentUser, isProfileDropDownOpen, showNotification, isNotificationDropDownOpen,
+const ProfileComponent = ({ currentUser=true, isProfileDropDownOpen, showNotification, isNotificationDropDownOpen,
 	hideNotification, hideProfileDropDown, showProfileDropDown }) => {
 	return (
 		<>

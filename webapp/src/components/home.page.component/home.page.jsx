@@ -4,6 +4,7 @@ import Header from '../header.component/header';
 import Main from '../main.component/main';
 import updateWindowSize from '../../reducers/window/resize.action';
 import '../../mainSass/index.scss';
+import './home.page.component.scss';
 class HomePage extends Component {
     constructor() {
         super();

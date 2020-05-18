@@ -7,6 +7,8 @@ import ShowFeed from '../show.feed.component/show.feed';
 import './main.component.scss';
 import { Switch, Route } from 'react-router-dom';
 import { FullPost } from '../full.post.component/full.post';
+import PaymentHistoryNInsights from '../payment.history.component/payment.history';
+import AsideContent from '../aside.content.component/aside.content';
 class Main extends Component {
   render() {
     const { windowWidth } = this.props;
@@ -25,9 +27,9 @@ class Main extends Component {
                 <div className="main-feed">
                   <ShowFeed windowWidth= {windowWidth}/>
                 </div>
-                {/* <Advertisement/> */}
               </Route>
             </Switch>
+            <AsideContent />
           </Route>
           
           <Route exact path="/new-story">
@@ -39,6 +41,13 @@ class Main extends Component {
               <FullPost />
             </div>
           </Route>
+
+          <Route exact path="/payment-history-&-insights">
+            <div className="margin-main w-100">
+              <PaymentHistoryNInsights />
+            </div>
+          </Route>
+
         </Switch>
       </main>
     );
