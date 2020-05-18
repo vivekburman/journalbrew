@@ -15,23 +15,18 @@ class Main extends Component {
     return (
       <main className="main">
         <Switch>
-          <Route exact path={["/user-profile", "/"]}>
-            <Accordian windowWidth= {windowWidth}/>
-            <Switch>
-              <Route exact path="/user-profile">
-                <div className="main-feed">
-                  <Dashboard windowWidth= {windowWidth}/>
-                </div>
-              </Route>
-              <Route exact path="/">
-                <div className="main-feed">
-                  <ShowFeed windowWidth= {windowWidth}/>
-                </div>
-              </Route>
-            </Switch>
-            <AsideContent />
+          <Route exact path="/user-profile">
+            <div className="main-feed margin-auto">
+              <Dashboard windowWidth= {windowWidth}/>
+            </div>
           </Route>
-          
+          <Route exact path="/">
+            <Accordian windowWidth= {windowWidth}/>
+            <div className="main-feed">
+              <ShowFeed windowWidth= {windowWidth}/>
+            </div>
+            <AsideContent />          
+          </Route>
           <Route exact path="/new-story">
             <TextEditor />
           </Route>
