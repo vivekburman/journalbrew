@@ -77,16 +77,12 @@
   font-size: 20px;
   line-height: 1.2;
   margin: 4px 0;
-  @extend %font-crimson;
+  @extend %font-roboto;
 }
-@media (min-width: 992px) {
-  .news-title {
-    font-size: 22px;
-  }
-}
+
 @media (min-width: 1200px) {
   .news-title {
-    font-size: 25px;
+    font-size: 22px;
   }
 }
 .news-details {
