@@ -17,7 +17,7 @@ const ProfileComponent = ({ currentUser=true, isProfileDropDownOpen, showNotific
 		{ currentUser ? 
 			<ul>
 				<Switch>
-					<Route exact path={["/full-story", "/user-profile", "/"]}>
+					<Route exact path={["/full-story", "/user-profile", "/opinions", "/"]}>
 						<li className="notification-icon-wrapper outline-none">
 							<img src={ bell } alt="notifications" className="icon-img outline-none" 
 							onClick={() => isNotificationDropDownOpen ? hideNotification() : showNotification()} />

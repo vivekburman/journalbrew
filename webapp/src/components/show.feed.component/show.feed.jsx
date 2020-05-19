@@ -2,8 +2,11 @@ import React from 'react';
 import './show.feed.component.scss';
 import Skeleton from 'react-loading-skeleton';
 import NewsFeedThumbnail from '../news.thumbnail.component/news.thumbnail';
+import Article from '../article.thumbnail.component/article.thumbnail';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
-const ShowFeed = ({ feeds = [], showCompletePost }) => {
+const createList = (feeds=[], location) => {
   const feedList = [];
   const postID = 'asdasd';
 
@@ -23,16 +26,39 @@ const ShowFeed = ({ feeds = [], showCompletePost }) => {
     }
   } else {
     for (let i = 0; i < 10; i++) {
-      feedList.push(
-        <NewsFeedThumbnail key={i} postID={postID} />
-      );
+      if (location === 'opinion') {
+        feedList.push(
+          <Article setStyle={true}/>
+        );
+      } else {
+        feedList.push(
+          <NewsFeedThumbnail key={i} postID={postID} />
+        );
+      }
     }   
-  }   
+  } 
+  return feedList;
+}
+
+const ShowFeed = ({ feeds = [], location }) => {
+
+  let header;
+  switch(location.pathname.substr(1)) {
+    case 'opinions':
+      header = 'opinion';
+      break;
+    default:
+      header = 'home';
+      break;
+  }
   return (
-    <ul className="padding-left-0 list-style-none margin-top-0">
-      { feedList }
+    <ul className="main-feed-list-wrapper list-style-none margin-top-0 flex flex-column-nowrap">
+      { createList(feeds, header) }
     </ul>
   );
 }
+const mapStateToProps = ({ feedType }) => ({
+  feedType: feedType.fetchFeedOfType,
+});
 
-export default ShowFeed;
+export default connect(mapStateToProps)(withRouter(ShowFeed));

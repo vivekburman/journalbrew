@@ -28,678 +28,81 @@ TODO: Style it,
 class Accordian extends Component {
   render() {
     const { collapseAccordian } = this.props;
-    const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 767) ? 'show-list' : 'hide-list';
+    const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 929) ? 'show-list' : 'hide-list';
     return (
       <div className={"accordian-list-container " + shouldOpen} 
         onClick={collapseAccordian}>
         <div className="accordian-list" >
-          <SimpleBar style={{ maxHeight: '100vh', paddingBottom: '20px' }}>
+          <SimpleBar style={{paddingBottom: '60px', boxSizing: 'content-box', maxHeight: '99vh' }}>
             <div className="accordian-list-item">
-              <Link to="/new-story">
-                <img src={story} className="item-img" alt="list-item-icon" />
-                <span className="item-name">New Story</span>
+              <Link to="/new-story" className="link">
+                <div className="accordian-item">
+                  <img src={story} className="item-img" alt="list-item-icon" />
+                  <span className="item-name">New Story</span>
+                </div>
               </Link>
             </div>
             <div className="accordian-list-item">
-              <img src={bookmark} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Bookmarks</span>
+              <div className="accordian-item">
+                <img src={bookmark} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Bookmarks</span>
+              </div>
             </div>
             <div className="accordian-list-item divider">
-              <img src={national} className="item-img" alt="list-item-icon" />
-              <span className="item-name">National</span>
+              <div className="accordian-item">
+                <img src={national} className="item-img" alt="list-item-icon" />
+                <span className="item-name">National</span>
+              </div>
             </div>
             <div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
+              <div className="accordian-item">
+                <img src={local} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Local</span>
+              </div>
             </div>
             <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
+              <div className="accordian-item">
+                <img src={global} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Global</span>
+              </div>
             </div>
             <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
+              <div className="accordian-item">
+                <img src={business} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Business</span>
+              </div>
             </div>
             <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
+              <div className="accordian-item">
+                <img src={technology} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Technology</span>
+              </div>
             </div>
             <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
+              <div className="accordian-item">
+                <img src={sport} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Sports</span>
+              </div>
             </div>
             <div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
+              <div className="accordian-item">
+                <img src={science} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Science</span>
+              </div>
             </div>
             <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
+              <div className="accordian-item">
+                <img src={health} className="item-img" alt="list-item-icon" />
+                <span className="item-name">Health</span>
+              </div>
             </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div><div className="accordian-list-item">
-              <img src={local} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Local</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={global} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Global</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={business} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Business</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={technology} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Technology</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={sport} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Sports</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={science} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Science</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={health} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Health</span>
-            </div>
-            <div className="accordian-list-item">
-              <img src={opinion} className="item-img" alt="list-item-icon" />
-              <span className="item-name">Opinion</span>
+            <div className="accordian-list-item external-item">
+              <Link to="/opinions" className="link">
+                <div className="accordian-item">
+                  <img src={opinion} className="item-img" alt="list-item-icon" />
+                  <span className="item-name">Opinion</span>
+                </div>
+              </Link>
             </div>
           </SimpleBar>
         </div>

@@ -10,6 +10,7 @@ import { handleUserReaction } from './click/userreaction.reducer';
 import handleReportDropDown from './click/report.dialog.reducer';
 import handleProfileDropDown from './click/profile.dropdown.reducer';
 import handleSearchBar from './click/search.bar.reducer';
+import handleFeedLoad from './feeds/fetch.feed.reducer';
 export default combineReducers({
     accordian: accordianReducer,
     window: resizeReducer,
@@ -22,4 +23,5 @@ export default combineReducers({
     reportDropDown: handleReportDropDown,
     profileDropDown: handleProfileDropDown,
     searchBar: handleSearchBar,
+    feedType: handleFeedLoad,
 });
