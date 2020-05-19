@@ -12,6 +12,8 @@ import science from '../../images/accordian/science.svg';
 import local from '../../images/accordian/local.svg';
 import global from '../../images/accordian/global.svg';
 import opinion from '../../images/accordian/opinion.svg';
+import history from '../../images/accordian/history.svg';
+
 import { Link } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
@@ -39,6 +41,14 @@ class Accordian extends Component {
                 <div className="accordian-item">
                   <img src={story} className="item-img" alt="list-item-icon" />
                   <span className="item-name">New Story</span>
+                </div>
+              </Link>
+            </div>
+            <div className="accordian-list-item external-item">
+              <Link to={`/full-story?${'history'}`} className="link">
+                <div className="accordian-item">
+                  <img src={history} className="item-img" alt="list-item-icon" />
+                  <span className="item-name">Historical Event</span>
                 </div>
               </Link>
             </div>

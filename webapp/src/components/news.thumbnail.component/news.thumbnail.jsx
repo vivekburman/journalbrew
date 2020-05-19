@@ -45,7 +45,7 @@ const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
         </div>
         <div className="news-details">
           <h1 className="news-title">
-            India is a democratic country. Until you critisize it. Then it is no more a democratic country.
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam commodi, voluptatem magnam rem quia consequuntur provident officia iusto corrupti error sint voluptatibus, temporibus cumque sapiente modi ad saepe maiores explicabo!
           </h1>
           <p className="news-snapshot">
             Lorem ipsum dolor sit, amet consectetur adipisicing elit.
