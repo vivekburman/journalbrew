@@ -7,6 +7,8 @@ timeDiff.oneWeek = (() => timeDiff.oneDay * 7)();
 timeDiff.oneMonth = (() => timeDiff.oneWeek * 4)();
 timeDiff.oneYear = (() => timeDiff.oneWeek * 12)();
 
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 const timeCalculator = (time) => {
   const _time = new Date(time);
   const diff = Date.now() - _time;
@@ -27,4 +29,7 @@ const timeCalculator = (time) => {
     return `${Math.floor(diff / timeDiff.oneMonth)} months ago.`;
   }
 }
-export default timeCalculator;
+export {
+  timeCalculator as default,
+  months,
+};

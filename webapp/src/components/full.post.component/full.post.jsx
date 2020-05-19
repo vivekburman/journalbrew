@@ -9,8 +9,8 @@ import { createPost } from '../../helpers/generateHTMLView';
 import SocialShare from '../social.share.component/social.share';
 import { Tags } from '../tags.component/tags';
 import Skeleton from 'react-loading-skeleton';
+import { months } from '../../helpers/timeformatter';
 
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const timeFormatter = (time) => {
   const _time = new Date(time);
   return `${months[_time.getMonth()]} ${_time.getDate()}`;

@@ -1,21 +1,16 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import './growth.graph.component.scss';
-const dummyGraphData = {
-    labels: ['jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Sept', 'Oct', 'Nov', 'Dec'],
-    datasets:[{
-      label: 'Income over time',
-      data: [0, 0, 22, 43, 33, 456, 3112, 21, 333, 444, 555, 32],
-      backgroundColor: [
-        'rgba(52, 235, 168, 1)',
-      ],
-      borderWidth: 2
-    }]
-};
+import { dummyGraphData } from './dummdata';
+
+
 export const GrowthGraph = (props) => {
-  const { incomeGraphData=dummyGraphData, viewsGraphData=dummyGraphData } = props;
+  const { incomeGraphData=dummyGraphData, totalAmount=0 } = props;
+
   return (
     <div className="chart-container">
+      <h2 className="header">Income Statistics</h2>
+      <div className="total-amount">Total: {totalAmount}</div>
       <section className="income-graph-container">
         <Line 
           data={incomeGraphData}
@@ -23,32 +18,45 @@ export const GrowthGraph = (props) => {
           options={{ 
             maintainAspectRatio: false,
             legend: {
-              position: 'bottom'
+              display: false              
             },
             scales: {
-              yAxes: [{
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Income'
+              x: {
+                type: 'linear',
+              },
+              xAxes: [{
+                type: 'time',
+                gridLines: {
+                  display: false
+                },
+                ticks: {
+                  autoSkip: true,
+                  maxTicksLimit: 5,
+                  maxRotation: 0,
+                  minRotation: 0,
+                  fontSize: 12,
+                  fontStyle: '500'
                 }
-              }]
-            } 
-            }}/>
-      </section>
-      <section className="views-graph-container">
-        <Line 
-          data={viewsGraphData}
-          responsive={true}
-          options={{ 
-            maintainAspectRatio: false,
-            legend: {
-              position: 'bottom'
-            },
-            scales: {
+              }],
               yAxes: [{
                 scaleLabel: {
-                  display: true,
-                  labelString: 'Views'
+                  display: false,
+                },
+                ticks: {
+                  autoSkip: true,
+                  maxTicksLimit: 5,
+                  callback: function (value, index, values) {
+                    if (value < 1000) {
+                      return value;
+                    } else if (value < 100000) {
+                      return ((value / 1000).toFixed(0) + 'K');
+                    } else {
+                      return ((value / 1000000).toFixed(0) + 'L');
+                    }
+                  },
+                  stepSize: 1000,
+                  fontSize: 12,
+                  fontStyle: '500'
                 }
               }]
             } 
