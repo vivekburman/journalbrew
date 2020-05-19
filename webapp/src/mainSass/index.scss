@@ -29,6 +29,10 @@
 .align-items-center {
   align-items: center;
 }
+
+.flex-0 {
+  flex-grow: 0;
+}
 .flex-grow-1 {
   flex-grow: 1;
 }
@@ -83,6 +87,7 @@
   position: relative;
 }
 .link {
+  color: #000;
   cursor: pointer;
   @extend %font-roboto;
   text-decoration: none;

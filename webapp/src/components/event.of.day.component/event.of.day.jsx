@@ -1,8 +1,8 @@
 import React from 'react';
 
-const EventOfDay = ({ list=[] }) => {
+const EventOfDay = ({ event, isSticky }) => {
   return (
-    <div>EventOfDay</div>
+    <div className={isSticky && 'sticky'}>EventOfDay</div>
   );
 }
 export default EventOfDay;

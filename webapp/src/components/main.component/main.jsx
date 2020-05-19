@@ -9,24 +9,25 @@ import { Switch, Route } from 'react-router-dom';
 import { FullPost } from '../full.post.component/full.post';
 import PaymentHistoryNInsights from '../payment.history.component/payment.history';
 import AsideContent from '../aside.content.component/aside.content';
+
 class Main extends Component {
   render() {
-    const { windowWidth } = this.props;
     return (
       <main className="main">
         <Switch>
           <Route exact path="/user-profile">
             <div className="main-feed margin-auto">
-              <Dashboard windowWidth= {windowWidth}/>
+              <Dashboard />
             </div>
           </Route>
-          <Route exact path="/">
-            <Accordian windowWidth= {windowWidth}/>
+          <Route exact path={["/", "/opinions"]}>
+            <Accordian />
             <div className="main-feed">
-              <ShowFeed windowWidth= {windowWidth}/>
+              <ShowFeed />
             </div>
             <AsideContent />          
           </Route>
+
           <Route exact path="/new-story">
             <TextEditor />
           </Route>
@@ -42,7 +43,6 @@ class Main extends Component {
               <PaymentHistoryNInsights />
             </div>
           </Route>
-
         </Switch>
       </main>
     );

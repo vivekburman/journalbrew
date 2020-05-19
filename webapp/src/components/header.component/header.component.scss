@@ -51,28 +51,19 @@ nav ul {
         margin-left: 16px;
     }
 }
-@media(min-width: 768px) {
-    .show-accordian-icon {
-        display: none;
-    }  
-}
 
-.flex-1 {
-    flex-grow: 1;
-}
-.flex-0 {
-    flex-grow: 0;
-}
 .show-accordian-icon {
     padding: 6px 0 2px;
     display: block;
 }
-@media(min-width: 768px) {
+@media(min-width: 929px) {
     .show-accordian-icon {
         display: none;
     }  
 }
 .open-icon {
+    width: 16px !important;
+    height: 16px !important;
     display: initial;
 }
 .close-icon {

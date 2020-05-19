@@ -1,9 +1,8 @@
 @import '../../mainSass/main';
 
 .main-feed {
-    max-width: 750px;
+    max-width: 680px;
     @extend %flex-column-nowrap;
-    flex-grow: 2;
     list-style-type: none;
     padding: 0;
     margin: 16px 0;
@@ -14,4 +13,7 @@
     .main-feed {
         margin: 0 auto;
     }
+}
+.main-feed-list-wrapper {
+  padding: 8px 16px 4px 16px;
 }
