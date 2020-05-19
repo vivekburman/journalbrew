@@ -12,10 +12,57 @@
 .payment-history-item {
   padding: 8px;
   border-radius: 4px;
-  margin: 4px 0;
+  margin: 4px 0 16px;
   border: 1px solid rgba(110, 109, 109, 0.212);
   background-color: #fff;
 }
 .payment-history-item:hover {
   box-shadow: 0 1px 0.4px 0px rgba(128, 128, 128, 0.39);   
+}
+@media (min-width: 527px) {
+  .history-container {
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+.payment-date {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 8px;
+  margin-left: 8px;
+  text-align: center;
+  border: 1px solid rgba(110, 109, 109, 0.212);
+}
+@media (min-width: 768px) {
+  .payment-date {
+    margin-left: 16px;
+  }
+}
+.payment-day {
+  font-size: 24px;
+  display: inline-block;
+  @extend %font-roboto;
+  font-weight: 700;
+  padding: 4px;
+}
+.payment-month, .payment-year {
+  @extend %font-roboto;
+  font-size: 14px;
+  display: inline-block;
+  margin: 4px 2px;
+}
+.payment-amount {
+  font-size: 20px;
+  @extend %font-roboto;
+  letter-spacing: 0.33px;
+  margin-right: 8px;
+}
+@media (min-width: 768px) {
+  .payment-amount {
+    margin-right: 16px;
+  }
+}
+.history-container .header {
+  @extend %font-roboto;
+  margin: 16px 0 8px 8px;
 }
