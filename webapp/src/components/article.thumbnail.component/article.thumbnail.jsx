@@ -13,7 +13,7 @@ const Article = ({ entry={}, index=0, setStyle=false}) => {
         <div className="flex flex-row-nowrap">
           <UserAvatar size={50} type={entry.type} id={entry.id} />
           <div className="flex flex-column-nowrap">
-            <h3 className="aside-news-title">{ entry.title || dummyData }</h3>
+            <h3 className="aside-news-title">{ dummyData || entry.title }</h3>
             <CreatorInfo username={entry.name} time={entry.time} />
           </div>
         </div>

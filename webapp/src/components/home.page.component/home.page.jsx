@@ -28,6 +28,7 @@ class HomePage extends Component {
         );
     }
 }
+
 const mapDispatchToProps = dispatch => ({
     updateWindowSize: (size) => dispatch(updateWindowSize(size))
 });

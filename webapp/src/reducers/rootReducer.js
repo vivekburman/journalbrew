@@ -11,6 +11,7 @@ import handleReportDropDown from './click/report.dialog.reducer';
 import handleProfileDropDown from './click/profile.dropdown.reducer';
 import handleSearchBar from './click/search.bar.reducer';
 import handleFeedLoad from './feeds/fetch.feed.reducer';
+import handleLoginModal from './click/login.reducer';
 export default combineReducers({
     accordian: accordianReducer,
     window: resizeReducer,
@@ -24,4 +25,5 @@ export default combineReducers({
     profileDropDown: handleProfileDropDown,
     searchBar: handleSearchBar,
     feedType: handleFeedLoad,
+    loginModal: handleLoginModal
 });

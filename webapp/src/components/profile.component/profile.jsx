@@ -1,7 +1,6 @@
 import React from 'react';
 import bell from '../../images/bell.svg';
 import user from '../../images/user.svg';
-
 import Notification from '../notification.component/notification.card';
 import { showNotification, hideNotification } from '../../reducers/click/notification.action';
 import { connect } from 'react-redux';
@@ -9,9 +8,11 @@ import { Switch, Route } from 'react-router-dom';
 import './profile.component.scss';
 import ProfileDropDown from '../profile.dropdown.component/profile.dropdown';
 import { showProfileDropDown, hideProfileDropDown } from '../../reducers/click/profile.dropdown.action';
+import { showLogin, hideLogin } from '../../reducers/click/login.action';
+import Login from '../login.component/login';
 
-const ProfileComponent = ({ currentUser=true, isProfileDropDownOpen, showNotification, isNotificationDropDownOpen,
-	hideNotification, hideProfileDropDown, showProfileDropDown }) => {
+const ProfileComponent = ({ currentUser, isProfileDropDownOpen, showNotification, isNotificationDropDownOpen,
+	hideNotification, hideProfileDropDown, showProfileDropDown, hideLogin, showLogin, isLoginPageOpen }) => {
 	return (
 		<>
 		{ currentUser ? 
@@ -33,8 +34,13 @@ const ProfileComponent = ({ currentUser=true, isProfileDropDownOpen, showNotific
 					}} />
 					<ProfileDropDown hideFunc={hideProfileDropDown} isOpen={isProfileDropDownOpen} />
 					</li>
-			</ul> : 
-				<span className="sign-in-btn">Sign in</span>
+			</ul> :
+			<div>
+				 <span className="sign-in-btn" onClick={ () => isLoginPageOpen ? hideLogin() : showLogin() }>Sign in</span>
+					{ isLoginPageOpen && <div className="login-container">
+						<Login hideFunc={hideLogin} isOpen={isLoginPageOpen}/>
+					</div>}
+			</div> 
 				}
 		</>
 	);
@@ -43,10 +49,13 @@ const mapDispatchStateToProps = (dispatch) => ({
 	showNotification: () => dispatch(showNotification()),
 	hideNotification: () => dispatch(hideNotification()),
 	showProfileDropDown: () => dispatch(showProfileDropDown()),
-  hideProfileDropDown: () => dispatch(hideProfileDropDown()),
+	hideProfileDropDown: () => dispatch(hideProfileDropDown()),
+	showLogin: () => dispatch(showLogin()),
+  hideLogin: () => dispatch(hideLogin()),
 });
-const mapStateToProps = ({ notification, profileDropDown }) => ({
+const mapStateToProps = ({ notification, profileDropDown, loginModal }) => ({
 	isNotificationDropDownOpen: notification.isOpen,
-	isProfileDropDownOpen: profileDropDown.isOpen
-})
+	isProfileDropDownOpen: profileDropDown.isOpen,
+	isLoginPageOpen: loginModal.isOpen,
+});
 export default connect(mapStateToProps, mapDispatchStateToProps)(ProfileComponent);
