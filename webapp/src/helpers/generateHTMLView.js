@@ -1,5 +1,7 @@
 import React from 'react';
 import { parseHTMLToReact } from './jsontohtml';
+import '../components/preview.component/preview.component.scss';
+
 export const createPost = (blocks=[]) => {
   const layout = [];
   blocks.forEach((entity, index) => {

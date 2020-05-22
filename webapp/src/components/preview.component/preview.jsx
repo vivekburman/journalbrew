@@ -1,7 +1,6 @@
 import React from 'react';
 import close from '../../images/close.svg';
 import { connect } from "react-redux";
-import './preview.component.scss';
 import { hidePreview } from '../../reducers/postpreview/preview.action';
 import { createPost } from '../../helpers/generateHTMLView';
 
