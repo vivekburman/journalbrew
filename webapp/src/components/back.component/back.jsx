@@ -4,7 +4,7 @@ import backBtn from '../../images/return.svg';
 
 const Back = ({ history }) => {
   return(
-    <img src= {backBtn} className="icon-img" alt="return"
+    <img data-test="back-icon" src= {backBtn} className="icon-img" alt="return"
      onClick={() => history.goBack()} ></img>
   );
 }
