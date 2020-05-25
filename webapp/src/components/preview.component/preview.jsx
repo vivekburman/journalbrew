@@ -2,7 +2,8 @@ import React from 'react';
 import close from '../../images/close.svg';
 import { connect } from "react-redux";
 import { hidePreview } from '../../reducers/postpreview/preview.action';
-import { createPost } from '../../helpers/generateHTMLView';
+import { renderTemplate } from '../news.template.component/news.template';
+import './preview.component.scss';
 
 const Preview = (props) => {
   const { openPreview, editorData } = props;
@@ -11,7 +12,7 @@ const Preview = (props) => {
       <div className="preview">
         <div className="preview-container">
           <img src={close} alt="accordian" className="icon-img icon-img-close preview-close" onClick={props.hidePreview} />
-         { createPost(editorData.blocks) }
+         { renderTemplate(editorData.blocks) }
         </div>
       </div>
     );
