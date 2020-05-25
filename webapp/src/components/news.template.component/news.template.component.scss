@@ -1,0 +1,65 @@
+@import '../../mainSass/main';
+.template-header,
+.template-paragraph,
+.template-table,
+.template-blockquote,
+.template-video,
+.template-image,
+.template-list {
+  padding: 4px 0;
+}
+.template-table {
+  border-spacing: 2px;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  border-color: grey;
+}
+.template-delimiter {
+  text-align: center;
+}
+.template-delimiter::before {
+  display: inline-block;
+  content: "***";
+  font-size: 30px;
+  line-height: 65px;
+  height: 30px;
+  letter-spacing: 0.2em;
+}
+.template-tr {
+  padding: 10px;
+  border-radius: 2px;
+}
+.template-td {
+  padding: 10px;
+  border: 1px solid #dbdbe2;
+}
+.template-ul {
+  list-style-type: decimal;
+  padding-left: 32px;
+}
+.template-li {
+  padding: 4px 0;
+}
+.template-video, .template-img {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  max-width: 630px;
+  min-height: 300px;
+}
+.template-header {
+  margin: 0;
+}
+.template-paragraph, .template-li,
+.template-td, .template-blockquote {
+  @extend %font-cormorant;
+  font-size: 18px;
+  line-height: 1.6;
+}
+@media (min-width: 768px) {
+  .template-paragraph, .template-li,
+  .template-td, .template-blockquote {
+    font-size: 23px;
+  }
+}

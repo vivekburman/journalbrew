@@ -5,11 +5,11 @@ import PostReaction from '../user.reaction.component/user.reaction';
 import { postData } from './dummydata';
 import { parseHTMLToReact } from '../../helpers/jsontohtml';
 import { UserAvatar } from '../avatar.component/avatar';
-import { createPost } from '../../helpers/generateHTMLView';
 import SocialShare from '../social.share.component/social.share';
 import { Tags } from '../tags.component/tags';
 import Skeleton from 'react-loading-skeleton';
 import { months } from '../../helpers/timeformatter';
+import { renderTemplate } from '../news.template.component/news.template';
 
 const timeFormatter = (time) => {
   const _time = new Date(time);
@@ -19,7 +19,7 @@ const showArticle = (blocks) => {
   const _blocks = blocks.slice(1);
   return(
     <>
-      { createPost(_blocks) }
+      { renderTemplate(_blocks) }
     </>
   );
 }
