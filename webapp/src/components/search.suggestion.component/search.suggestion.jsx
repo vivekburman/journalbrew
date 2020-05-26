@@ -3,6 +3,7 @@ import React from 'react';
 import './search.suggestion.scss';
 import search from '../../images/search.svg';
 import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
 
 
 const dummyData = [];

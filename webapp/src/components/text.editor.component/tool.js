@@ -1,28 +1,28 @@
-import Embed from "@editorjs/embed";
-import List from "@editorjs/list";
-import Header from "@editorjs/header";
-import Quote from "@editorjs/quote";
-import Marker from "@editorjs/marker";
-import Delimiter from "@editorjs/delimiter";
-import SimpleVideo from '../../_internal/simple-video/src/index';
-import SimpleImage from '../../_internal/simple-image/src/index';
-import Table from "../../_internal/table/dist/bundle";
+import Embed from '@editorjs/embed';
+import List from '@editorjs/list';
+import Header from '@editorjs/header';
+import Quote from '@editorjs/quote';
+import Marker from '@editorjs/marker';
+import Delimiter from '@editorjs/delimiter';
+import SimpleVideo from '../../_internal/simple-video/dist/bundle';
+import SimpleImage from '../../_internal/simple-image/dist/bundle';
+import Table from '../../_internal/table/dist/bundle';
 
 export const EDITOR_JS_TOOLS = {
   embed: Embed,
   table: {
     class: Table,
     inlineToolbar: true,
-    shortcut: 'CMD+ALT+T'
+    shortcut: 'CMD+ALT+T',
   },
   marker: {
     class: Marker,
-    shortcut: 'CMD+ALT+T'
+    shortcut: 'CMD+ALT+T',
   },
   list: {
     class: List,
     inlineToolbar: true,
-    shortcut: 'CMD+ALT+L'
+    shortcut: 'CMD+ALT+L',
   },
   image: SimpleImage,
   video: SimpleVideo,
@@ -30,18 +30,18 @@ export const EDITOR_JS_TOOLS = {
     class: Header,
     inlineToolbar: ['link'],
     config: {
-      placeholder: 'Header'
+      placeholder: 'Header',
     },
-    shortcut: 'CMD+ALT+H'
+    shortcut: 'CMD+ALT+H',
   },
   quote: {
     class: Quote,
     inlineToolbar: true,
     config: {
       quotePlaceholder: 'Enter a blockquote...',
-      captionPlaceholder: 'Quote\'s Author'
+      captionPlaceholder: 'Quote\'s Author',
     },
-    shortcut: 'CMD+ALT+Q'
+    shortcut: 'CMD+ALT+Q',
   },
   delimiter: Delimiter,
 };
