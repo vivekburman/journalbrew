@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+/* eslint-disable react/prop-types */
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import './accordian.component.scss';
 import sport from '../../images/accordian/sport.svg';
 import story from '../../images/accordian/story.svg';
@@ -14,10 +15,10 @@ import global from '../../images/accordian/global.svg';
 import opinion from '../../images/accordian/opinion.svg';
 import history from '../../images/accordian/history.svg';
 
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
-import { closeAccordian } from '../../reducers/click/accordian.action';
+import {closeAccordian} from '../../reducers/click/accordian.action';
 
 
 /*
@@ -29,13 +30,13 @@ TODO: Style it,
 
 class Accordian extends Component {
   render() {
-    const { collapseAccordian } = this.props;
+    const {collapseAccordian} = this.props;
     const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 929) ? 'show-list' : 'hide-list';
     return (
-      <div className={"accordian-list-container " + shouldOpen} 
+      <div className={'accordian-list-container ' + shouldOpen}
         onClick={collapseAccordian}>
         <div className="accordian-list" >
-          <SimpleBar style={{paddingBottom: '60px', boxSizing: 'content-box', maxHeight: '99vh' }}>
+          <SimpleBar style={{paddingBottom: '60px', boxSizing: 'content-box', maxHeight: '99vh'}}>
             <div className="accordian-list-item">
               <Link to="/new-story" className="link">
                 <div className="accordian-item">
@@ -120,9 +121,9 @@ class Accordian extends Component {
     );
   }
 }
-const mapStateToProps = state => ({
-    windowWidth: state.window.windowSize,
-    shouldOpen: state.accordian.isOpen
+const mapStateToProps = (state) => ({
+  windowWidth: state.window.windowSize,
+  shouldOpen: state.accordian.isOpen,
 });
 const mapDispatchToProps = (dispatch) => ({
   collapseAccordian: (e) => dispatch(closeAccordian(e)),
