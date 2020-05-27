@@ -22,7 +22,7 @@ module.exports = function(_env, args) {
     module: {
       rules: [
         {
-          test: /\.(js|jsx)?$/,
+          test: /\.(js|jsx|ts|tsx)?$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
@@ -79,7 +79,7 @@ module.exports = function(_env, args) {
       ],
     },
     resolve: {
-      extensions: ['.jsx', '.js', '.css'],
+      extensions: ['.jsx', '.js', '.ts', '.tsx'],
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
