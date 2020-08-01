@@ -19,46 +19,33 @@ import {encryptDecrypt} from '../utils/encrypt_decrypt';
 const googleStartegyCallback = (type: string, accessToken: any, refreshToken: any, profile: any, done: Function) => {
 
    if(!profile.emails[0].value) {
-      console.log('Cannot find Email, Please try with other account which has email');
       return done(null, false);
    }
    return done(null, profile);
 };
 
-const pathToPublicKey:string = path.join(__dirname, '../id_rsa_pub.pem');
-const PUB_KEY:string = fs.readFileSync(pathToPublicKey, 'utf-8');
-
 
 export function initPassport () {
-   const options = {
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: PUB_KEY,
-      algorithms: ['RS256'],
-      ignoreExpiration: false,
-      jsonWebTokenOptions: {
-         maxAge: '2d'
-      }
-   };
    
-   passport.use(new JwtStrategy(options, (payload: {sub: string, email:string, iat: Date}, done) => {
-      console.log('comapreing it')
-      const id = payload.sub;
-      const email = payload.email;
-      Database.getDBQueryHandler().selectWithValues('SELECT id, strategy_id FROM user where email=?', [email])
-         .then((data: any) => {
-            console.log('id=',id);
-            console.log('strategy_id=',data[0][0].strategy_id);
-            console.log("compare=", id === data[0][0].strategy_id);
-            if (data[0].length && id === data[0][0].strategy_id) {
-               done(null, data)
-            } else {
-               done(null, false);
-            }
-         })
-         .catch((err: Error) => {
-            done(err, null);
-         })
-   }));
+   // passport.use(new JwtStrategy(options, (payload: {sub: string, email:string, iat: Date}, done) => {
+   //    console.log('comapreing it')
+   //    const id = payload.sub;
+   //    const email = payload.email;
+   //    Database.getDBQueryHandler().selectWithValues('SELECT id, strategy_id FROM user where email=?', [email])
+   //       .then((data: any) => {
+   //          console.log('id=',id);
+   //          console.log('strategy_id=',data[0][0].strategy_id);
+   //          console.log("compare=", id === data[0][0].strategy_id);
+   //          if (data[0].length && id === data[0][0].strategy_id) {
+   //             done(null, data)
+   //          } else {
+   //             done(null, false);
+   //          }
+   //       })
+   //       .catch((err: Error) => {
+   //          done(err, null);
+   //       })
+   // }));
    //  passport.use(new FacebookStrategy({
    //     ...config.authStrategyKeys[config.enums.FACEBOOK]
    //  }, (accessToken, refreshToken, profile, done) => StrategyCallback('facebook', accessToken, refreshToken, profile, done)));

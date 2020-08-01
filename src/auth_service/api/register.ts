@@ -1,10 +1,13 @@
-import {Router} from 'express';
+import {Router, NextFunction, Response, Request} from 'express';
 import passport from 'passport';
 import { Database } from '../../database';
 import { utils } from '../utils/jwtUtils';
 import { encryptDecrypt } from '../utils/encrypt_decrypt';
+import createHttpError from 'http-errors';
+import { token } from 'morgan';
 
 const UNDEF = undefined;
+
 
 const registerRouter: Router = Router();
 // auth with google
@@ -13,16 +16,16 @@ registerRouter.get('/google', passport.authenticate('google',{
    session: false
 }));
 
-registerRouter.get('/protected', passport.authenticate('jwt', {session: false}, ), (req, res) => {
+registerRouter.get('/protected', utils.verifyAccessToken, (req, res) => {
    res.send('YOU ARE AUTHORIZED');
 })
 
 // auth google redirect
 registerRouter.get('/google/redirect', passport.authenticate('google', {session: false}), (req, res:any, next:Function) => { 
-   if (res.req.user) {
+   try {
       const profile = res.req.user;
       if (!profile.emails[0].value) {
-         next(new Error('Email not found!!!!'));
+         throw new createHttpError.BadRequest("Email not Found");
       } else {
          const name = profile.displayName.split(' ');
          const db = Database.getDBQueryHandler();
@@ -59,22 +62,43 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
                   return profile.id;
                   // return encryptDecrypt.encrypt(profile.id); // if user exists create the hash for JWT and return it
                }
-               return UNDEF;
+               throw new createHttpError.BadRequest('Invalid OAuth Credentials');
             })
             .then((data: string) => {
-               if (data) {
-                  const jwt = utils.issueJWT({id: data, email: profile.emails[0].value});
-                  res.status(200).json({success: true, token: jwt.token, expiresIn: jwt.expires});
-               } else {
-                  res.status(401).json({success: false});
-               }
+               const tokenObj = {id: data, email: profile.emails[0].value};
+               const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
+               const refreshTokenJWT = utils.issueRefreshTokenJWT(tokenObj);
+               res.status(200).json({success: true, access_token: accessTokenJWT.token, 
+                  expiresIn: accessTokenJWT.expires,
+                  refresh_token: refreshTokenJWT   
+               });
             })
             .catch((err: Error) => {
-               console.log('Database Error either User is not found or insertion has failed!', err);
                next(err);
             });  
       }  
+   } catch(err) {
+      next(err);
    }
 });
+
+registerRouter.post('/refresh-token', async (req:Request, res:Response, next:NextFunction) => {
+   const { refreshToken } = req.body;
+   try {
+      if (!refreshToken) {
+         throw new createHttpError.BadRequest();
+      }
+      const tokenObj = await utils.verifyRefreshToken(refreshToken);
+      const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
+      const refreshTokenJWT = utils.issueRefreshTokenJWT(tokenObj);
+      res.status(200).json({success: true, access_token: accessTokenJWT.token, 
+         expiresIn: accessTokenJWT.expires,
+         refresh_token: refreshTokenJWT   
+      });
+   }catch(err) {
+      next(err);
+   }
+
+})
 
 export default registerRouter;
