@@ -1,0 +1,27 @@
+#% RAML 1.0
+title: Authentication and Authorization
+version: v1
+baseUri: /api/{version}
+
+securitySchemes: 
+  basicAuth:
+    description: |
+        Each request must contain the following headers
+        for basic authentication.
+    type: Basic Authentication
+    describedBy: 
+        headers:
+            Authorization:
+            description: Used to send the encrypted string in JWT for user authorization.
+            type: string
+        responses:
+            401:
+                description: |
+                    Unauthorized. Either the provided token has expired or you are not allowed
+                    access this content.
+types:
+    Error:
+        properties:
+            code: integer
+            message: string
+        
