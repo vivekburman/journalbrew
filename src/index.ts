@@ -9,6 +9,9 @@ import {authService} from './auth_service';
 
 process.on('uncaughtException', (err) => console.log('Uncaught Exception = ', err));
 process.on('unhandledRejection', (err) => console.log('Unhandled Rejection = ', err));
+process.on('SIGINT', () => {
+    Database.endConnection();
+})
 
 try {
     Database.initDB()

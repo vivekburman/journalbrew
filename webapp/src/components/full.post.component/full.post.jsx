@@ -85,7 +85,7 @@ export const FullPost = (props) => {
           <div>
             <div className="full-story-profile-wrapper justify-content-between">
               <div className="flex flex-row-nowrap align-items-center ">
-                <UserAvatar id={metaData.userID} type={metaData.typeOfID} size={50}/>
+                <UserAvatar size={50}/>
                 <div className="flex flex-column-nowrap padding-8">
                  <div className="flex flex-row-nowrap align-items-center" >
                   <span className="username">{metaData.userName}</span>
@@ -120,7 +120,7 @@ export const FullPost = (props) => {
             </div>
             <div className="flex flex-row-nowrap justify-content-between align-items-center">
               <div className="flex flex-row-nowrap align-items-center padding-top-8">
-                <UserAvatar id={metaData.userID} type={metaData.typeOfID} size={50}/>
+                <UserAvatar size={50}/>
                 <div className="flex flex-column-nowrap margin-left-8">
                   <span className="written-by">Written By</span>
                   <span className="username">{metaData.userName}</span>

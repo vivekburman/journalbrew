@@ -3,7 +3,7 @@ import search from '../../images/search.svg';
 import close from '../../images/close.svg';
 import {connect} from 'react-redux';
 import handleSearchRequest from '../../reducers/search/search.action';
-import {Switch, Route} from 'react-router-dom';
+import {Switch, Route, withRouter} from 'react-router-dom';
 import './search.logo.component.scss';
 import SearchSuggestion from '../search.suggestion.component/search.suggestion';
 import {openSearchBar, closeSearchBar} from '../../reducers/click/search.bar.action';
@@ -13,7 +13,9 @@ class SearchNLogoComponent extends Component {
     this.ref = React.createRef(null);
     this.searchIconRef = React.createRef(null);
   }
-
+  goToHome = () => {
+    this.props.history.push("/");
+  }
   render() {
     const {searchText='', windowWidth,
       handleSearchRequest, isSearchBarOpen,
@@ -21,7 +23,7 @@ class SearchNLogoComponent extends Component {
     const placeholder = 'Search by location, date or creator';
     return (
       <div className="search-and-logo">
-        <h1 className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>TopSelfNews</h1>
+        <h1 onClick={this.goToHome} className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>TopSelfNews</h1>
         <Switch>
           <Route exact path={['/', '/user-profile', '/opinions']}>
             <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-1' : 'flex-0')}`}>
@@ -76,4 +78,4 @@ const mapDispatchToProps = (dispatch) => ({
   openSearchBar: () => dispatch(openSearchBar()),
   closeSearchBar: () => dispatch(closeSearchBar()),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(SearchNLogoComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SearchNLogoComponent));

@@ -11,7 +11,7 @@ const Article = ({ entry={}, index=0, setStyle=false}) => {
       className={`aside-list-item flex flex-row-nowrap ${setStyle && 'aside-list-item-url'}`}>
       <Link to={ entry.link } className="link">
         <div className="flex flex-row-nowrap">
-          <UserAvatar size={50} type={entry.type} id={entry.id} />
+          <UserAvatar size={50} />
           <div className="flex flex-column-nowrap">
             <h3 className="aside-news-title">{ dummyData || entry.title }</h3>
             <CreatorInfo username={entry.name} time={entry.time} />

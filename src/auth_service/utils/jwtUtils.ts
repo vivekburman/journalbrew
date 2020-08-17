@@ -3,6 +3,9 @@ import fs from 'fs';
 import jsonwebtoken from 'jsonwebtoken';
 import { Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
+import { setRedis, getRedis } from '../server/redis.server';
+import ms from 'ms';
+
 
 const pathToPrivateKeyAccessToken:string = path.join(__dirname, '../id_access_rsa_prv.pem');
 const PRV_KEY_ACCESS_TOKEN:string = fs.readFileSync(pathToPrivateKeyAccessToken, 'utf-8');
@@ -18,9 +21,9 @@ const PUB_KEY_REFRESH_TOKEN:string = fs.readFileSync(pathToPublicKeyRefreshToken
 
 
 const issueAccessTokenJWT = (userID: {id:string, email:string}) => {
-   const expiresIn = '1h';
+   const expiresIn = '15m';
    const payload = {
-      sub: userID.id,
+      id: userID.id,
       email: userID.email,
    };
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_ACCESS_TOKEN, {
@@ -39,7 +42,7 @@ const issueAccessTokenJWT = (userID: {id:string, email:string}) => {
 const issueRefreshTokenJWT = (userID: {id:string, email:string}) => {
    const expiresIn = '1y';
    const payload = {
-      sub: userID.id,
+      id: userID.id,
       email: userID.email,
    };
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_REFRESH_TOKEN, {
@@ -49,10 +52,14 @@ const issueRefreshTokenJWT = (userID: {id:string, email:string}) => {
       audience: JSON.stringify(userID) 
    });
 
-   return {
-      token: `RefreshToken ${signedToken}`,
-      expires: expiresIn
-   };
+   return setRedis(userID.email, signedToken)
+   .then(() => {
+      return {
+         token: signedToken,
+         expires: expiresIn,
+         expiresInMs: ms(expiresIn)
+      };
+   });
 }
 
 const verifyAccessToken = (req:any, res:Response, next: NextFunction) => {
@@ -74,12 +81,18 @@ const verifyAccessToken = (req:any, res:Response, next: NextFunction) => {
 const verifyRefreshToken = (refreshToken: string): Promise<{id:string, email:string}> => {
    let user:{id:string, email:string}={id: '', email:''};
    return new Promise((resolve, reject) => {
-      jsonwebtoken.verify(refreshToken, PUB_KEY_REFRESH_TOKEN, (err, payload:any) => {
+      jsonwebtoken.verify(refreshToken, PUB_KEY_REFRESH_TOKEN, (err, payload:any) => {  
          if (err) {
             return reject(new createHttpError.Unauthorized());
          }
          user = JSON.parse(payload.aud);
-         resolve(user);
+         getRedis(user.email)
+         .then((res) => {
+            if (res === refreshToken) {
+               return resolve(user);
+            }
+            return reject(new createHttpError.Unauthorized());
+         })
       });
    });
 }

@@ -5,6 +5,11 @@ import Main from '../main.component/main';
 import updateWindowSize from '../../reducers/window/resize.action';
 import '../../mainSass/index.scss';
 import './home.page.component.scss';
+import { Switch, Route } from 'react-router';
+import loadable from '@loadable/component';
+import silentRefresh from '../../helpers/silentrefresh';
+
+const OauthCallback = loadable(() => import('../loadable.component/loadableOauthCallback'));
 class HomePage extends Component {
     constructor() {
         super();
@@ -12,6 +17,7 @@ class HomePage extends Component {
     }
     componentDidMount() {
         window.addEventListener('resize', this.updateWindowSize);
+        silentRefresh();
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowSize);
@@ -21,10 +27,17 @@ class HomePage extends Component {
     }
     render () {
         return (
-            <div className="homepage">
-                <Header />
-                <Main />
-            </div>
+            <Switch>
+                <Route exact path="/oauth_callback">
+                    <OauthCallback />
+                </Route>
+                <Route>
+                    <div className="homepage">
+                        <Header />
+                        <Main />
+                    </div>
+                </Route>
+            </Switch>
         );
     }
 }
