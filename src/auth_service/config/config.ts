@@ -9,8 +9,6 @@ const enums = {
     LINKEDIN: 'linkedIn'
 }
 
-console.log('environment = ', process.env.NODE_ENV == 'development' ? 'http://localhost:9000/oauth_callback' : '/oauth_callback');
-
 const authStrategyKeys: object = {
     [enums.GOOGLE]: {
         clientID: process.env.GOOGLE_clientID,

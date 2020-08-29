@@ -4,7 +4,7 @@ import { Database } from '../../database';
 import { utils } from '../utils/jwtUtils';
 import { encryptDecrypt } from '../utils/encrypt_decrypt';
 import createHttpError from 'http-errors';
-import { delRedis, setRedis } from '../server/redis.server';
+import { delRedis } from '../server/redis.server';
 
 const UNDEF = undefined,
    ID = 'id',
