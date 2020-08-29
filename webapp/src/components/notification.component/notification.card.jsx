@@ -250,7 +250,7 @@ const createCard = (data) => {
       <div key={index} className={entity.read ? 'notification-item' : 'notification-item notification-item-unread'}>
         <Link to={ entity.link } className="link">
           <div className="notification-wrapper">
-            <UserAvatar size={50} type={entity.type} id={entity.id} />
+            <UserAvatar size={50} />
             <div className="notification-text-wrapper">
               <p className="link-text">
                 { arr }

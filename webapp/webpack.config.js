@@ -139,9 +139,17 @@ module.exports = function(_env, args) {
     devServer: {
       compress: true,
       hot: true,
+      port: 9000,
       historyApiFallback: true,
       open: true,
       overlay: true,
-    },
+      proxy: {
+        '/api/auth': {
+          changeOrigin: true,
+          pathRewrite: { '^/api': '' },
+          target: 'http://localhost:5000'
+        }
+      }
+    }
   };
 };

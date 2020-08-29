@@ -2,11 +2,15 @@ import mysql, { Connection } from 'mysql2/promise';
 import { dbQuery } from './db.query';
 
 console.log('--Starting Database Connection --');
-type dbQueryFunc = { insertWithValues: Function, updateWithValues: Function, selectWithValues: Function };
+interface dbQueryFunc { 
+    insertWithValues(query: string, values:any): Promise<any>,
+    updateWithValues(query: string, values:any): Promise<any>, 
+    selectWithValues(query: string, values:any): Promise<any>, 
+};
 let dbQueryHandler: dbQueryFunc;
+let db: Connection;
 
 async function initDB(): Promise<void | Connection> {
-    let db;
     try {
         db = await mysql.createConnection({
             host: process.env.DB_HOSTNAME,
@@ -17,7 +21,7 @@ async function initDB(): Promise<void | Connection> {
     } catch(err) {
         console.log('DB connection error');
         console.log('Closing DB');
-        db?.end();
+        db.end();
         throw err;
     }
     console.log('DB Connected!');
@@ -28,4 +32,9 @@ function getDBQueryHandler(): dbQueryFunc {
     return dbQueryHandler;
 }
 
-export const Database = Object.assign({}, {initDB, getDBQueryHandler});
+function endConnection() {
+    db.end();
+    console.log('Successfully Closed DataBase');
+}
+
+export const Database = Object.assign({}, {initDB, getDBQueryHandler, endConnection});

@@ -10,13 +10,14 @@ import ProfileDropDown from '../profile.dropdown.component/profile.dropdown';
 import {showProfileDropDown, hideProfileDropDown} from '../../reducers/click/profile.dropdown.action';
 import {showLogin, hideLogin} from '../../reducers/click/login.action';
 import Login from '../login.component/login';
+import { UserAvatar } from '../avatar.component/avatar';
 
 const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification, isNotificationDropDownOpen,
   hideNotification, hideProfileDropDown, showProfileDropDown, hideLogin, showLogin, isLoginPageOpen}) => {
   return (
     <>
       { currentUser ?
-			<ul>
+			<ul className="flex-row-nowrap align-items-center">
 			  <Switch>
 			    <Route exact path={['/full-story', '/user-profile', '/opinions', '/', '/payment-history-&-insights']}>
 			      <li className="notification-icon-wrapper outline-none">
@@ -26,13 +27,13 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
 			      </li>
 			    </Route>
 			  </Switch>
-			  <li className="profile-wrapper">
-			    <img src={ user } alt="user" className="icon-img outline-none"
-			      tabIndex={0}
-			      onClick={ () => {
+			  <li className="profile-wrapper margin-left-8">
+					<span tabIndex={0} onClick={ () => {
 						isProfileDropDownOpen ? hideProfileDropDown() : showProfileDropDown();
-			      }} />
-			    <ProfileDropDown hideFunc={hideProfileDropDown} isOpen={isProfileDropDownOpen} />
+			      }}>
+				    <UserAvatar url={ currentUser.profilePicUrl } size={35}/>
+					</span>
+			    <ProfileDropDown hideFunc={hideProfileDropDown} hidePointer={true} isOpen={isProfileDropDownOpen} />
 			  </li>
 			</ul> :
 			<div>
@@ -53,9 +54,10 @@ const mapDispatchStateToProps = (dispatch) => ({
   showLogin: () => dispatch(showLogin()),
   hideLogin: () => dispatch(hideLogin()),
 });
-const mapStateToProps = ({notification, profileDropDown, loginModal}) => ({
+const mapStateToProps = ({notification, profileDropDown, loginModal, user}) => ({
   isNotificationDropDownOpen: notification.isOpen,
   isProfileDropDownOpen: profileDropDown.isOpen,
-  isLoginPageOpen: loginModal.isOpen,
+	isLoginPageOpen: loginModal.isOpen,
+	currentUser: user.currentUser
 });
 export default connect(mapStateToProps, mapDispatchStateToProps)(ProfileComponent);

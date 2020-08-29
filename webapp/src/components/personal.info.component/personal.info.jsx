@@ -6,7 +6,7 @@ import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
 
 const PersonalInfo = (props) => {
-  const { profileID, username='Vivek Burman', doj='Jan 15, 2019', typeOfID, windowSize } = props;
+  const {username='Vivek Burman', doj='Jan 15, 2019', windowSize } = props;
   let size;
   if (windowSize < 768) {
     size = 100;
@@ -28,8 +28,7 @@ const PersonalInfo = (props) => {
           <Skeleton width={65} />
         </div> }
       </div>
-      { (profileID && typeOfID) ? <UserAvatar id={profileID} type={typeOfID} size={size}/> 
-      : <Skeleton circle={true} height={size} width={size} /> }
+      <UserAvatar size={size}/> 
     </div>
   );
 }

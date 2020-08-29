@@ -97,6 +97,7 @@ div.search-wrapper > div:first-child {
   @extend %font-playfair;
   margin: 0 5% 0 10px;
   font-size: 20px;
+  cursor: pointer;
   font-weight: 400;
 }
 @media (min-width: 576px) {
