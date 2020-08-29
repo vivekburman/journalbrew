@@ -9,6 +9,8 @@ import { delRedis } from '../server/redis.server';
 const UNDEF = undefined,
    ID = 'id',
    STRATEGY_ID = 'strategy_id',
+   // USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo',
+   // REFRESH_TOKEN_URL = 'https://oauth2.googleapis.com/token',
    STRATEGY_TYPE = 'strategy_type',
    STRATEGY_ACCESS_TOKEN = 'strategy_access_token',
    STRATEGY_REFRESH_TOKEN = 'strategy_refresh_token',
