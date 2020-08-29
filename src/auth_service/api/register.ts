@@ -12,8 +12,6 @@ const UNDEF = undefined,
    // USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo',
    // REFRESH_TOKEN_URL = 'https://oauth2.googleapis.com/token',
    STRATEGY_TYPE = 'strategy_type',
-   STRATEGY_ACCESS_TOKEN = 'strategy_access_token',
-   STRATEGY_REFRESH_TOKEN = 'strategy_refresh_token',
    FIRST_NAME = 'first_name', 
    MIDDLE_NAME = 'middle_name', 
    LAST_NAME = 'last_name',
@@ -66,12 +64,10 @@ registerRouter.get('/protected', utils.verifyAccessToken, (req, res) => {
 // auth google redirect
 registerRouter.get('/google/redirect', passport.authenticate('google', {session: false}), (req: any, res: Response, next:NextFunction) => { 
    try {
-      const {profile, accessToken: strategyAccessToken, refreshToken: strategyRefreshToken} = req.user;
+      const {profile} = req.user;
 
       if (!profile.emails || !profile.emails[0] || !profile.emails[0].value) {
          throw new createHttpError.BadRequest("Email not Found");
-      } else if (!strategyRefreshToken || !strategyAccessToken) {
-         throw new createHttpError.Unauthorized();
       } else {
          const {firstName, middleName, lastName} = getName(profile.displayName);
          const profilePicUrl = profile.photos[0]?.value || null;
@@ -92,12 +88,10 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
                const time = convertTime();
                if (typeof data == 'string') {
                   db.insertWithValues(
-                     `INSERT INTO user (${STRATEGY_ID}, ${STRATEGY_TYPE}, ${STRATEGY_ACCESS_TOKEN}, ${STRATEGY_REFRESH_TOKEN}, ${FIRST_NAME}, 
-                        ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL}, ${EMAIL}, ${CREATED_AT}, ${LAST_LOGGED_AT}) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
+                     `INSERT INTO user (${STRATEGY_ID}, ${STRATEGY_TYPE}, ${FIRST_NAME}, 
+                        ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL}, ${EMAIL}, ${CREATED_AT}, ${LAST_LOGGED_AT}) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
                            data,
                            'google',
-                           strategyAccessToken,
-                           strategyRefreshToken,
                            firstName,
                            middleName,
                            lastName,

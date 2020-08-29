@@ -11,11 +11,11 @@ import {config} from '../config/config';
  * account into the MYSQL Database
  */
 
-const googleStartegyCallback = (type: string, accessToken: string, refreshToken: string, profile:any, done: Function) => {
+const googleStartegyCallback = (type: string, profile:any, done: Function) => {
    if(!profile.emails[0] || !profile.emails[0].value) {
       return done(null, false);
    }
-   return done(null, {profile, accessToken, refreshToken});
+   return done(null, {profile});
 };
 
 
@@ -32,6 +32,6 @@ export function initPassport () {
     passport.use(new GoogleStartegy({
        ...config.authStrategyKeys[config.enums.GOOGLE]
     }, function (accessToken:string, refreshToken:string, profile:any, done:Function) {
-      googleStartegyCallback('google', accessToken, refreshToken, profile, done); 
+      googleStartegyCallback('google', profile, done); 
     })); 
 }
