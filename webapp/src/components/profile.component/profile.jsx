@@ -17,7 +17,7 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
   return (
     <>
       { currentUser ?
-			<ul>
+			<ul className="flex-row-nowrap align-items-center">
 			  <Switch>
 			    <Route exact path={['/full-story', '/user-profile', '/opinions', '/', '/payment-history-&-insights']}>
 			      <li className="notification-icon-wrapper outline-none">
@@ -27,13 +27,13 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
 			      </li>
 			    </Route>
 			  </Switch>
-			  <li className="profile-wrapper">
+			  <li className="profile-wrapper margin-left-8">
 					<span tabIndex={0} onClick={ () => {
 						isProfileDropDownOpen ? hideProfileDropDown() : showProfileDropDown();
 			      }}>
-				    <UserAvatar url={ currentUser.profilePicUrl } />
+				    <UserAvatar url={ currentUser.profilePicUrl } size={35}/>
 					</span>
-			    <ProfileDropDown hideFunc={hideProfileDropDown} isOpen={isProfileDropDownOpen} />
+			    <ProfileDropDown hideFunc={hideProfileDropDown} hidePointer={true} isOpen={isProfileDropDownOpen} />
 			  </li>
 			</ul> :
 			<div>

@@ -1,5 +1,3 @@
-const { type } = require("os");
-
 const USER = 'USER';
 const USER_LOGIN = 'USER_LOGIN';
 const USER_LOGOUT = "USER_LOGOUT";
@@ -14,9 +12,8 @@ const loginUser = (payload) => ({
   payload
 });
 
-const logoutUser = (payload) => ({
-  type: USER_LOGOUT,
-  payload
+const logoutUser = () => ({
+  type: USER_LOGOUT
 });
 
 export {

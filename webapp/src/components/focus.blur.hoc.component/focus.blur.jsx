@@ -39,7 +39,7 @@ const withFocusBlur = (WrappedComponent) => {
         ref={setRef}
         className="outline-none focus-blur-container">
         <WrappedComponent {...props}/>
-        <img src={triangle} alt="pointer" className="focus-blur-pointer"/>
+        {!props.hidePointer && <img src={triangle} alt="pointer" className="focus-blur-pointer"/> }
       </div>  }
       </>
     );

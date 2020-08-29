@@ -2,7 +2,11 @@ import mysql, { Connection } from 'mysql2/promise';
 import { dbQuery } from './db.query';
 
 console.log('--Starting Database Connection --');
-type dbQueryFunc = { insertWithValues: Function, updateWithValues: Function, selectWithValues: Function };
+interface dbQueryFunc { 
+    insertWithValues(query: string, values:any): Promise<any>,
+    updateWithValues(query: string, values:any): Promise<any>, 
+    selectWithValues(query: string, values:any): Promise<any>, 
+};
 let dbQueryHandler: dbQueryFunc;
 let db: Connection;
 

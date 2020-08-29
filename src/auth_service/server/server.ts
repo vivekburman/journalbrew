@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, Application } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import { initPassport } from './passport.config';
@@ -8,7 +8,7 @@ import passport from 'passport';
 import createHttpError from 'http-errors';
 import { initRedis } from './redis.server';
 
-const start: Function = (port:number | string) => {
+const start = (port:number | string):Promise<Error | Application> => {
     initRedis();
     initPassport();
     return new Promise((resolve, reject) => {
@@ -46,4 +46,4 @@ const start: Function = (port:number | string) => {
     });
 }
 
-export const server: {start: Function} = Object.assign({}, {start});
+export const server = Object.assign({}, {start});

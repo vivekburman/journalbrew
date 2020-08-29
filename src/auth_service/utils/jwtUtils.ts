@@ -1,10 +1,11 @@
 import path from 'path';
 import fs from 'fs';
 import jsonwebtoken from 'jsonwebtoken';
-import { Response, NextFunction } from 'express';
+import { Response, NextFunction, Request } from 'express';
 import createHttpError from 'http-errors';
 import { setRedis, getRedis } from '../server/redis.server';
 import ms from 'ms';
+import { RequestWithPayload } from '.';
 
 
 const pathToPrivateKeyAccessToken:string = path.join(__dirname, '../id_access_rsa_prv.pem');
@@ -19,11 +20,9 @@ const PRV_KEY_REFRESH_TOKEN:string = fs.readFileSync(pathToPrivateKeyRefreshToke
 const pathToPublicKeyRefreshToken:string = path.join(__dirname, '../id_refresh_rsa_pub.pem');
 const PUB_KEY_REFRESH_TOKEN:string = fs.readFileSync(pathToPublicKeyRefreshToken, 'utf-8');
 
-
-const issueAccessTokenJWT = (userID: {id:string, email:string}) => {
+const issueAccessTokenJWT = (userID: {email:string}) => {
    const expiresIn = '15m';
    const payload = {
-      id: userID.id,
       email: userID.email,
    };
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_ACCESS_TOKEN, {
@@ -39,10 +38,9 @@ const issueAccessTokenJWT = (userID: {id:string, email:string}) => {
    };
 }
 
-const issueRefreshTokenJWT = (userID: {id:string, email:string}) => {
+const issueRefreshTokenJWT = (userID: {email:string}) => {
    const expiresIn = '1y';
    const payload = {
-      id: userID.id,
       email: userID.email,
    };
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_REFRESH_TOKEN, {
@@ -62,24 +60,24 @@ const issueRefreshTokenJWT = (userID: {id:string, email:string}) => {
    });
 }
 
-const verifyAccessToken = (req:any, res:Response, next: NextFunction) => {
+const verifyAccessToken = (req_:Request, res:Response, next: NextFunction) => {
+   const req = req_ as RequestWithPayload;
    if (!req.headers['authorization']) {
       return next(new createHttpError.Unauthorized('Unauthorized Error'));
    }
    const authHeader:string = req.headers['authorization'];
    const bearerToken = authHeader.split(' ')[1];
    jsonwebtoken.verify(bearerToken, PUB_KEY_ACCESS_TOKEN, (err, payload) => {
-      console.log('error = ', err);
       if(err) {
          return err.name == 'JsonWebTokenError' ? next(new createHttpError.Unauthorized()) : next(new createHttpError.Unauthorized(err.message));
       }
-      req.payload = payload;
+      req['payload'] = payload;
       next();
    });
 }
 
-const verifyRefreshToken = (refreshToken: string): Promise<{id:string, email:string}> => {
-   let user:{id:string, email:string}={id: '', email:''};
+const verifyRefreshToken = (refreshToken: string): Promise<{email:string}> => {
+   let user:{email:string}={email:''};
    return new Promise((resolve, reject) => {
       jsonwebtoken.verify(refreshToken, PUB_KEY_REFRESH_TOKEN, (err, payload:any) => {  
          if (err) {
