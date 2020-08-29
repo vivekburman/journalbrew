@@ -178,7 +178,7 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
 
 registerRouter.delete('/logout', async (req, res, next) => {
    try{
-      const { refreshToken } = req.cookies['refresh_token'];
+      const refreshToken = req.cookies['refresh_token'];
       if (!refreshToken) {
          throw new createHttpError.BadRequest();
       }

@@ -10,9 +10,27 @@ import { hideProfileDropDown } from '../../reducers/click/profile.dropdown.actio
 import './profile.dropdown.component.scss';
 import withFocusBlur from '../focus.blur.hoc.component/focus.blur';
 import { logoutUser } from '../../reducers/user/user.action';
+import axios from 'axios';
 
 const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentUser }) => {
 
+  const userLogout = () => {
+    axios.delete('/api/auth/logout').then((res) => {
+      if (res.status == 204) {
+        logoutUser();
+      }
+    });
+  }
+  const getDisplayName = ({name}) => {
+    let displayName = name['first_name'];
+    if (name['middle_name']) {
+      displayName += ` ${name['middle_name']}`
+    }
+    if (name['last_name']) {
+      displayName += ` ${name['last_name']}`
+    }
+    return displayName;
+  }
   return (
   <ul className="profile-list-wrapper">
     {windowSize <= 768 && <li className="flex-row-nowrap align-items-center profile-header">
@@ -24,7 +42,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
         <div className="profile-list-item">
           <UserAvatar size={50} url={ currentUser.profilePicUrl }/>
           <div className="flex flex-column-nowrap profile-list-info">
-            <span>Vivek Burman</span>
+            <span>{getDisplayName(currentUser)}</span>
             <span className="see-profile">See your Profile</span>
           </div>
         </div>
@@ -47,7 +65,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
       </Link>
     </li>
     <li className="profile-list-item-wrapper">
-      <Link to="/" onClick={logoutUser} className="profile-item-link">
+      <Link to="/" onClick={userLogout} className="profile-item-link">
         <div className="profile-list-item">
           <img src={logout} className="icon-img" alt="LogOut" />
           <span className="profile-list-info">LogOut</span>	

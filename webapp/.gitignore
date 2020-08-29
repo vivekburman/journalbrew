@@ -5,7 +5,7 @@ node_modules/*
 !@editorjs/
 /.pnp
 .pnp.js
-
+webapp/dist
 # testing
 /coverage
 

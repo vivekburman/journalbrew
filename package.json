@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "submodule": "git submodule update --init",
-    "start-dev": "cross-env NODE_ENV=development nodemon ./src/index.ts",
+    "start-dev": "cross-env NODE_ENV=development nodemon ./src/index.ts --exit",
+    "start-prod": "cross-env NODE_ENV=production nodemon ./src/index.ts --exit",
     "start-test": "cross-env mocha tsconfig.testing.json -r ts-node/register ./src/auth_service/api/register.spec.ts --exit"
   },
   "repository": {

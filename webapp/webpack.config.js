@@ -147,7 +147,7 @@ module.exports = function(_env, args) {
         '/api/auth': {
           changeOrigin: true,
           pathRewrite: { '^/api': '' },
-          target: 'http://localhost:3000'
+          target: 'http://localhost:5000'
         }
       }
     }
