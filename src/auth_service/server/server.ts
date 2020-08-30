@@ -25,7 +25,10 @@ const start = (port:number | string):Promise<Error | Application> => {
         // add all routes here.
         authRoutes.registerRoutes(app);
         
-        if (process.env.NODE_ENV?.trim() == 'development') {
+        if (process.env.NODE_ENV?.trim() == 'production') {
+            console.log('--Starting in PROD mode --');
+            app.use(morgan('combined'));
+        } else {
             console.log('--Starting in DEV mode --');
             app.use(morgan('dev'));
         }

@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = function(_env, args) {
   const isProduction = args.mode === 'production';
@@ -94,6 +95,8 @@ module.exports = function(_env, args) {
         template: path.resolve(__dirname, 'public/index.html'),
         inject: true,
       }),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      isDevelopment && new BundleAnalyzerPlugin(),
     ].filter(Boolean),
     optimization: {
       minimize: isProduction,
@@ -117,7 +120,8 @@ module.exports = function(_env, args) {
       ],
       splitChunks: {
         chunks: 'all',
-        minSize: 0,
+        minSize: 10000,
+        maxSize: 2500000,
         maxInitialRequests: 20,
         maxAsyncRequests: 20,
         cacheGroups: {
