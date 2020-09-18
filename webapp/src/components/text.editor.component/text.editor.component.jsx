@@ -6,13 +6,22 @@ import {EDITOR_JS_TOOLS} from './tool';
 import Preview from '../preview.component/preview';
 import {handleEditorData} from '../../reducers/editordata/editor.data.action';
 import {connect} from 'react-redux';
+import JSONDiff from '../../helpers/jsondiff';
 
 const TextEditor = (props) => {
   const instanceRef = useRef(null);
+  let timer = 0;
   let data = {};
-  async function handleSave() {
-    data = instanceRef.current.save && await instanceRef.current.save();
-    props.handleEditorData && props.handleEditorData(data);
+  function handleSave(e) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(async () => {
+      let prevData = await instanceRef.current.save();
+      let diff = new JSONDiff(data, prevData);
+      diff.generateObjDiff();
+      data = prevData;
+      console.log('json diff = ', diff.jsonPatch);
+      props.handleEditorData(data);
+    }, 200);
   }
   const defaultPlaceholder = 'Let the world know what happend!';
   return (
