@@ -20,10 +20,11 @@ const PRV_KEY_REFRESH_TOKEN:string = fs.readFileSync(pathToPrivateKeyRefreshToke
 const pathToPublicKeyRefreshToken:string = path.join(__dirname, '../id_refresh_rsa_pub.pem');
 const PUB_KEY_REFRESH_TOKEN:string = fs.readFileSync(pathToPublicKeyRefreshToken, 'utf-8');
 
-const issueAccessTokenJWT = (userID: {email:string}) => {
+const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
    const expiresIn = '15m';
    const payload = {
       email: userID.email,
+      id:userID.id
    };
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_ACCESS_TOKEN, {
       expiresIn: expiresIn,
@@ -38,10 +39,11 @@ const issueAccessTokenJWT = (userID: {email:string}) => {
    };
 }
 
-const issueRefreshTokenJWT = (userID: {email:string}) => {
+const issueRefreshTokenJWT = (userID: {email:string, id:string}) => {
    const expiresIn = '1y';
    const payload = {
       email: userID.email,
+      id:userID.id
    };
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_REFRESH_TOKEN, {
       expiresIn: expiresIn,
@@ -50,7 +52,7 @@ const issueRefreshTokenJWT = (userID: {email:string}) => {
       audience: JSON.stringify(userID) 
    });
 
-   return setRedis(userID.email, signedToken)
+   return setRedis(userID.id, signedToken)
    .then(() => {
       return {
          token: signedToken,
@@ -76,15 +78,15 @@ const verifyAccessToken = (req_:Request, res:Response, next: NextFunction) => {
    });
 }
 
-const verifyRefreshToken = (refreshToken: string): Promise<{email:string}> => {
-   let user:{email:string}={email:''};
+const verifyRefreshToken = (refreshToken: string): Promise<{id:string}> => {
+   let user:{id:string}={id:''};
    return new Promise((resolve, reject) => {
       jsonwebtoken.verify(refreshToken, PUB_KEY_REFRESH_TOKEN, (err, payload:any) => {  
          if (err) {
             return reject(new createHttpError.Unauthorized());
          }
          user = JSON.parse(payload.aud);
-         getRedis(user.email)
+         getRedis(user.id)
          .then((res) => {
             if (res === refreshToken) {
                return resolve(user);

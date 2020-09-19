@@ -16,8 +16,8 @@ process.on('SIGINT', () => {
 
 Database.initDB()
 .then(() => {
+    authService.startService();
     postService.startService();
-    // authService.startService();
 }).catch(err => {
     console.log('ERROR!', err);
 });

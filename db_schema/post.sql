@@ -8,14 +8,13 @@ CREATE TABLE post (
     summary TEXT NOT NULL,
     tags TINYTEXT NOT NULL,
     location VARCHAR(255) NOT NULL,
-    author_id INT UNSIGNED NOT NULL,
     likes INT UNSIGNED DEFAULT 0,
     views INT UNSIGNED DEFAULT 0,
     type ENUM('article', 'opinion', 'eod') NOT NULL,
-    full_story JSON NOT NULL,
+    full_story_id INT UNSIGNED NOT NULL,
     publish_status ENUM('published', 'pendingReview', 'underReview', 'draft', 'discarded', 'removed'),
     reported_by TEXT,
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY (author_id) REFERENCES user(id)
+    FOREIGN KEY (full_story_id) REFERENCES user_to_post(id)
 );

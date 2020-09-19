@@ -5,6 +5,9 @@ import { utils } from '../utils/jwtUtils';
 import { encryptDecrypt } from '../utils/encrypt_decrypt';
 import createHttpError from 'http-errors';
 import { delRedis } from '../server/redis.server';
+import { v4 as uuidv4, parse as uuidParse, stringify as uuidStringify } from 'uuid';
+import { convertTime } from '../utils/general';
+import { Buffer } from 'buffer';
 
 const UNDEF = undefined,
    ID = 'id',
@@ -18,7 +21,8 @@ const UNDEF = undefined,
    PROFILE_PIC_URL = 'profile_pic_url', 
    EMAIL = 'email', 
    CREATED_AT = 'created_at', 
-   LAST_LOGGED_AT = 'last_logged_at';
+   LAST_LOGGED_AT = 'last_logged_at',
+   UUID = 'uuid';
 
    
 type userName = {
@@ -26,11 +30,6 @@ type userName = {
    [MIDDLE_NAME]:string, 
    [LAST_NAME]:string
 }
-
-const convertTime = (time?: number|Date|undefined) => {
-   return time ? new Date(time).toISOString().slice(0, 19).replace('T', ' ') 
-   : new Date().toISOString().slice(0, 19).replace('T', ' ') 
-};
 
 const getName = (name:string) => {
    const name_ = name?.split(' ');
@@ -74,39 +73,39 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
          const email = profile.emails[0]?.value;
          const db = Database.getDBQueryHandler();
 
-         db.selectWithValues(`SELECT ${ID}, ${STRATEGY_ID} FROM user WHERE ${EMAIL}=?`, [profile.emails[0].value])
-            .then((data): Promise<string|boolean> => {            
+         db.selectWithValues(`SELECT ${UUID}, ${STRATEGY_ID} FROM user WHERE ${EMAIL}=?`, [profile.emails[0].value])
+            .then((data): Promise<string|{id:string}|null> => {            
                if(data[0].length) {
                   const strategyId = data[0][0].strategy_id;
-                  return encryptDecrypt.compare(profile.id, strategyId);
+                  return encryptDecrypt.compare(profile.id, strategyId).then(res => res ? {id: uuidStringify(data[0][0].uuid)} : null);
                } else {
                   // create a hash to encrypt strategy_id
                   return encryptDecrypt.encrypt(profile.id);
                }
             })
-            .then((data: string | boolean) => {
-               const time = convertTime();
+            .then(async (data: string | {id:string} | null) => {
                if (typeof data == 'string') {
-                  db.insertWithValues(
-                     `INSERT INTO user (${STRATEGY_ID}, ${STRATEGY_TYPE}, ${FIRST_NAME}, 
-                        ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL}, ${EMAIL}, ${CREATED_AT}, ${LAST_LOGGED_AT}) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
-                           data,
-                           'google',
-                           firstName,
-                           middleName,
-                           lastName,
-                           profilePicUrl,
-                           email,
-                           time,
-                           UNDEF
-                  ]);
+                  const uuid = uuidv4();
+                  const time = convertTime();
+                  await db.insertWithValues("INSERT INTO `user` SET ?", {
+                     [STRATEGY_ID]: data,
+                     [STRATEGY_TYPE]: 'google',
+                     [FIRST_NAME]: firstName,
+                     [LAST_NAME]: lastName,
+                     [MIDDLE_NAME]: middleName,
+                     [PROFILE_PIC_URL]: profilePicUrl,
+                     [EMAIL]: email,
+                     [UUID]: Buffer.from(uuidParse(uuid)),
+                     [CREATED_AT]: time
+                  });
+                  return uuid;
                } else if (data) {
-                  return;
+                  return data.id;
                }
                throw new createHttpError.BadRequest('Invalid OAuth Credentials');
             })
-            .then(() => {
-               const tokenObj = {email: profile.emails[0].value};
+            .then((data: string) => {
+               const tokenObj = {email: profile.emails[0].value, id:data};
                const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
                const refreshTokenJWT = utils.issueRefreshTokenJWT(tokenObj);
                refreshTokenJWT.then((response) => {
@@ -136,9 +135,9 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
          throw new createHttpError.BadRequest();
       }
       const tokenObj = await utils.verifyRefreshToken(refreshToken);
-      if (!tokenObj.email) throw new createHttpError.BadRequest()
+      if (!tokenObj.id) throw new createHttpError.BadRequest()
       const db = Database.getDBQueryHandler();
-      db.selectWithValues(`SELECT ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL} FROM user WHERE ${EMAIL}=?`, [tokenObj.email])
+      db.selectWithValues(`SELECT ${EMAIL}, ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL} FROM user WHERE ${UUID}=?`, [Buffer.from(uuidParse(tokenObj.id))])
          .then((data: any) => {
             if(!data[0].length) {
                throw new createHttpError.Unauthorized();
@@ -147,11 +146,13 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
                [FIRST_NAME]: data[0][0][FIRST_NAME], 
                [MIDDLE_NAME]: data[0][0][MIDDLE_NAME], 
                [LAST_NAME]:  data[0][0][LAST_NAME],
-               [PROFILE_PIC_URL]: data[0][0][PROFILE_PIC_URL]
+               [PROFILE_PIC_URL]: data[0][0][PROFILE_PIC_URL],
+               [EMAIL]: data[0][0][EMAIL]
             };
-         }).then((data: userName & {[PROFILE_PIC_URL]: string}) => {
-            const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
-            const refreshTokenJWT = utils.issueRefreshTokenJWT(tokenObj);
+         }).then((data: userName & {[PROFILE_PIC_URL]: string, [EMAIL]:string}) => {
+            const token = {...tokenObj, email: data[EMAIL]};
+            const accessTokenJWT = utils.issueAccessTokenJWT(token)
+            const refreshTokenJWT = utils.issueRefreshTokenJWT(token);
             refreshTokenJWT.then((response) => {
                res.cookie('refresh_token', response.token, {
                   httpOnly: true,
@@ -179,7 +180,7 @@ registerRouter.delete('/logout', async (req, res, next) => {
          throw new createHttpError.BadRequest();
       }
       const response = await utils.verifyRefreshToken(refreshToken);
-      await delRedis(response.email);
+      await delRedis(response.id);
       res.sendStatus(204);
    }catch(err) {
       next(err);
