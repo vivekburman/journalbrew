@@ -18,11 +18,12 @@ const OauthCallback = ({ setCurrentUser, history }) => {
         lastVisitedPage && history.push(lastVisitedPage);
       } else {
         // TODO: What to do if not able to login USER
+        setCurrentUser(undefined);
       }
     }).catch(err => {
       console.error(err);
     });
-  });
+  }, []);
   return (
     <div>Please Wait.....</div>
   );

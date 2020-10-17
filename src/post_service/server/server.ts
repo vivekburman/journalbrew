@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction, Application } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import createHttpError from 'http-errors';
+import * as postRoutes from '../api';
 
 const start = (port:number | string):Promise<Error | Application> => {
     return new Promise((resolve, reject) => {
@@ -14,7 +15,7 @@ const start = (port:number | string):Promise<Error | Application> => {
         app.use(express.urlencoded({extended: true}));
 
         // add all routes here.
-        // authRoutes.registerRoutes(app);
+        postRoutes.registerRoutes(app);
         
         if (process.env.NODE_ENV?.trim() == 'production') {
             console.log('--Starting in PROD mode --');

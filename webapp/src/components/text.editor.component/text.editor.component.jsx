@@ -1,42 +1,44 @@
-/* eslint-disable react/prop-types */
-import React, {useRef} from 'react';
+import React from 'react';
 import './text.editor.scss';
 import EditorJS from '../../_internal/react-editor-js/lib/index';
 import {EDITOR_JS_TOOLS} from './tool';
-import Preview from '../preview.component/preview';
-import {handleEditorData} from '../../reducers/editordata/editor.data.action';
-import {connect} from 'react-redux';
 import JSONDiff from '../../helpers/jsondiff';
+import { Component } from 'react';
+import { createRef } from 'react';
 
-const TextEditor = (props) => {
-  const instanceRef = useRef(null);
-  let timer = 0;
-  let data = {};
-  function handleSave(e) {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(async () => {
-      let prevData = await instanceRef.current.save();
-      let diff = new JSONDiff(data, prevData);
-      diff.generateObjDiff();
-      data = prevData;
-      console.log('json diff = ', diff.jsonPatch);
-      props.handleEditorData(data);
-    }, 200);
+class TextEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.timer = 0;
+    this.instanceRef = createRef(null);
+    this.state = {
+      editorData: {}
+    }
   }
-  const defaultPlaceholder = 'Let the world know what happend!';
-  return (
-    <article className='text-editor-container outline-none'>
-      <EditorJS data={data}
-        onChange={handleSave}
-        tools={ EDITOR_JS_TOOLS }
-        instanceRef = { (instance) => (instanceRef.current = instance) }
-        placeholder={defaultPlaceholder} />
-      <Preview />
-    </article>
-  );
-};
+  saveEditorData = () => {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = setTimeout(async () => {
+      const newEditorData = await this.instanceRef.current.save();
+      // remove unwanted data
+      const diff = new JSONDiff({...this.state.editorData, time: 0, version: 0}, {...newEditorData, time: 0, version: 0});
+      diff.generateObjDiff();
+      diff.jsonPatch.length && this.props.handleSave(newEditorData, diff.jsonPatch);
+      this.setState({editorData: newEditorData});
+    }, 1000);
+  }
 
-const mapDispatchToProps = (dispatch) => ({
-  handleEditorData: (data) => dispatch(handleEditorData(data)),
-});
-export default connect(null, mapDispatchToProps)(TextEditor);
+  render() {
+    const defaultPlaceholder = 'Let the world know what happend!';
+  
+    return (
+      <article className='text-editor-container outline-none'>
+        <EditorJS data={this.state.editorData}
+          onChange={() => this.saveEditorData()}
+          tools={ EDITOR_JS_TOOLS }
+          instanceRef = { (instance) => (this.instanceRef.current = instance) }
+          placeholder={defaultPlaceholder} />
+      </article>
+    );
+  }
+}
+export default TextEditor;

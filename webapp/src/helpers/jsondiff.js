@@ -84,6 +84,8 @@ export default class JSONDiff {
         }
       }
     }
+    this.oldObj = {};
+    this.newObj = {};
   }
   comparisonOperation(a, b) {
     if (!a || !b) {
@@ -135,7 +137,7 @@ export default class JSONDiff {
       }
       let y = box.top + (x - box.left) - k;
       let py = (i == 0 || x != px) ? y : y - 1;
-      while (x < box.right && y < box.bottom && this.comparisonOperation(oldArr[this.modCalc(x, oldArr.length - 1)], newArr[this.modCalc(y, newArr.length - 1)])) {
+      while (x < box.right && y < box.bottom && this.comparisonOperation(oldArr[x], newArr[y])) {
         x = x + 1;
         y = y + 1;
       }
@@ -160,7 +162,7 @@ export default class JSONDiff {
       }
       let x = box.left + (y - box.top) + k;
       let px = (i == 0 || x != px) ? x : x + 1;
-      while (x > box.left && y > box.top && this.comparisonOperation(oldArr[this.modCalc(x - 1, oldArr.length - 1)], newArr[this.modCalc(y - 1, newArr.length - 1)])) {
+      while (x > box.left && y > box.top && this.comparisonOperation(oldArr[x - 1], newArr[y - 1])) {
         x = x - 1;
         y = y - 1;
       }
@@ -205,62 +207,62 @@ export default class JSONDiff {
       ...tail || [finish]
     ];
   }
+  callbackFunc (x1, y1, x2, y2, oldArr, newArr, path_) {
+    const lastIndex = Math.max(0, this.jsonPatch.length - 1);
+    if (x1 == x2) {
+      if (typeof newArr[y1] == 'object' && !Array.isArray(newArr[y1]) && 
+        (this.jsonPatch[lastIndex]?.path == `${path_}/${y1}` 
+        && this.jsonPatch[lastIndex]?.op == 'delete')) {
+      // if there is a delete at same index and the type is object check for partial update
+          this.jsonPatch.pop();
+          this.generateObjDiff(oldArr[y1], newArr[y1], `${path_}/${y1}`);
+      } else {
+        if ((this.jsonPatch[lastIndex]?.path == `${path_}/${y1}` 
+        && this.jsonPatch[lastIndex]?.op == 'delete')) {
+          this.jsonPatch.pop();
+          this.jsonPatch.push({
+            op: 'replace',
+            path: `${path_}/${y1}`,
+            value: newArr[y1]
+          });
+        } else {
+          this.jsonPatch.push({
+            op: 'add',
+            path: `${path_}/${y1}`,
+            value: newArr[y1]
+          });
+        }
+      }
+    } else if(y1 == y2) {
+      this.jsonPatch.push({
+        op: 'delete',
+        path: `${path_}/${x1}`
+      });
+    }
+  }
   walkMiddleSnake(oldArr, newArr, path_) {
     const path = this.findPath(0, 0, oldArr.length, newArr.length, oldArr, newArr);
     if (!path || path.length == 0) return;
 
-    const callbackFunc = (x1, y1, x2, y2) => {
-      if (x1 == x2) {
-        if (typeof newArr[y1] == 'object' && !Array.isArray(newArr[y1]) && 
-          (this.jsonPatch[this.jsonPatch.length - 1].path == `${path_}/${y1}` 
-          && this.jsonPatch[this.jsonPatch.length - 1].op == 'delete')) {
-        // if there is a delete at same index and the type is object check for partial update
-            this.jsonPatch.pop();
-            this.generateObjDiff(oldArr[y1], newArr[y1], `${path_}/${y1}`);
-        } else {
-          if ((this.jsonPatch[this.jsonPatch.length - 1].path == `${path_}/${y1}` 
-          && this.jsonPatch[this.jsonPatch.length - 1].op == 'delete')) {
-            this.jsonPatch.pop();
-            this.jsonPatch.push({
-              op: 'replace',
-              path: `${path_}/${y1}`,
-              value: newArr[y1]
-            });
-          } else {
-            this.jsonPatch.push({
-              op: 'add',
-              path: `${path_}/${y1}`,
-              value: newArr[y1]
-            });
-          }
-        }
-      } else if(y1 == y2) {
-        this.jsonPatch.push({
-          op: 'delete',
-          path: `${path_}/${x1}`
-        });
-      }
-    };
-
     for(var i = 0; i < path.length - 1; i++) {
       let pair1 = path[i];
       const pair2 = path[i + 1];
-      pair1 = this.walkDiagonal(pair1, pair2, oldArr, newArr, callbackFunc);
+      pair1 = this.walkDiagonal(pair1, pair2, oldArr, newArr);
       
       const val1 = (pair2[0] - pair1[0]);
       const val2 = (pair2[1] - pair1[1]);
 
       if (val1 < val2) {
-        callbackFunc(pair1[0], pair1[1], pair1[0], pair1[1] + 1);
+        this.callbackFunc(pair1[0], pair1[1], pair1[0], pair1[1] + 1, oldArr, newArr, path_);
         pair1[1]++;
       } else if (val1 > val2) {
-        callbackFunc(pair1[0], pair1[1], pair1[0] + 1, pair1[1]);
+        this.callbackFunc(pair1[0], pair1[1], pair1[0] + 1, pair1[1], oldArr, newArr, path_);
         pair1[0]++;
       }
-      this.walkDiagonal(pair1, pair2, oldArr, newArr, callbackFunc);
+      this.walkDiagonal(pair1, pair2, oldArr, newArr);
     }
   }
-  walkDiagonal (pair1, pair2, oldArr, newArr, callbackFunc) {
+  walkDiagonal (pair1, pair2, oldArr, newArr) {
     while (pair1[0] < pair2[0] && pair1[1] < pair2[1] && this.comparisonOperation(oldArr[pair1[0]], newArr[pair1[1]])) {
       // callbackFunc(pair1[0], pair1[1], pair1[0] + 1, pair1[1] + 1);
       pair1[0]++;

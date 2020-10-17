@@ -152,6 +152,11 @@ module.exports = function(_env, args) {
           changeOrigin: true,
           pathRewrite: { '^/api': '' },
           target: 'http://localhost:5000'
+        },
+        '/api/post': {
+          changeOrigin: true,
+          pathRewrite: { '^/api': '' },
+          target: 'http://localhost:5001'
         }
       }
     }

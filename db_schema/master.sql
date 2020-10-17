@@ -11,10 +11,8 @@ USE topselfnews_db;
 -- and drop the table user if exists
 -- create a new one
 
-USE topselfnews_db;
 DROP TABLE IF EXISTS user;
 CREATE TABLE user (
-    id INT UNSIGNED AUTO_INCREMENT NOT NULL,
     uuid BINARY(16) NOT NULL,
     strategy_id TEXT NOT NULL,
     strategy_type VARCHAR(8) NOT NULL,
@@ -25,22 +23,20 @@ CREATE TABLE user (
     profile_pic_url TEXT,
     created_at DATETIME NOT NULL,
     last_logged_at DATETIME,
-    PRIMARY KEY(id)
+    PRIMARY KEY(uuid)
 );
 
 
 DROP TABLE IF EXISTS user_to_post;
 CREATE TABLE user_to_post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    author_id INT UNSIGNED NOT NULL,
+    author_id BINARY(16) NOT NULL,
     full_story JSON NOT NULL,
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY (author_id) REFERENCES user(id)
+    FOREIGN KEY (author_id) REFERENCES user(uuid)
 );
 
-
-USE topselfnews_db;
 DROP TABLE IF EXISTS post;
 CREATE TABLE post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,

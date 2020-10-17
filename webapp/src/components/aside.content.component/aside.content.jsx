@@ -64,7 +64,7 @@ const AsideContent = (props) => {
             <ul className="ul">
               { list.map((entry, index) => {
                 return (
-                  <Article entry={entry} index={index} />
+                  <Article key={index} entry={entry} index={index} />
                 );
               }) }
             </ul>

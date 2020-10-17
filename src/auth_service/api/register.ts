@@ -10,7 +10,6 @@ import { convertTime } from '../utils/general';
 import { Buffer } from 'buffer';
 
 const UNDEF = undefined,
-   ID = 'id',
    STRATEGY_ID = 'strategy_id',
    // USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo',
    // REFRESH_TOKEN_URL = 'https://oauth2.googleapis.com/token',
@@ -58,7 +57,7 @@ registerRouter.get('/google', passport.authenticate('google',{
 
 registerRouter.get('/protected', utils.verifyAccessToken, (req, res) => {
    res.send('YOU ARE AUTHORIZED');
-})
+});
 
 // auth google redirect
 registerRouter.get('/google/redirect', passport.authenticate('google', {session: false}), (req: any, res: Response, next:NextFunction) => { 

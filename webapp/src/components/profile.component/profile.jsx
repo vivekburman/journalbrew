@@ -38,9 +38,7 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
 			</ul> :
 			<div>
 				 <span className="sign-in-btn" onClick={ () => isLoginPageOpen ? hideLogin() : showLogin() }>Sign in</span>
-			  { isLoginPageOpen && <div className="login-container">
-			    <Login hideFunc={hideLogin} isOpen={isLoginPageOpen}/>
-			  </div>}
+			  { isLoginPageOpen && <Login />}
 			</div>
       }
     </>

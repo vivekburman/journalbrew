@@ -30,21 +30,21 @@ TODO: Style it,
 
 class Accordian extends Component {
   render() {
-    const {collapseAccordian} = this.props;
+    const {collapseAccordian, currentUser} = this.props;
     const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 929) ? 'show-list' : 'hide-list';
     return (
       <div className={'accordian-list-container ' + shouldOpen}
         onClick={collapseAccordian}>
         <div className="accordian-list" >
           <SimpleBar style={{paddingBottom: '60px', boxSizing: 'content-box', maxHeight: '99vh'}}>
-            <div className="accordian-list-item">
+            {currentUser && <div className="accordian-list-item">
               <Link to="/new-story" className="link">
                 <div className="accordian-item">
                   <img src={story} className="item-img" alt="list-item-icon" />
                   <span className="item-name">New Story</span>
                 </div>
               </Link>
-            </div>
+            </div>}
             <div className="accordian-list-item external-item">
               <Link to={`/full-story?${'history'}`} className="link">
                 <div className="accordian-item">
@@ -121,9 +121,10 @@ class Accordian extends Component {
     );
   }
 }
-const mapStateToProps = (state) => ({
-  windowWidth: state.window.windowSize,
-  shouldOpen: state.accordian.isOpen,
+const mapStateToProps = ({window, accordian, user}) => ({
+  windowWidth: window.windowSize,
+  shouldOpen: accordian.isOpen,
+	currentUser: user.currentUser
 });
 const mapDispatchToProps = (dispatch) => ({
   collapseAccordian: (e) => dispatch(closeAccordian(e)),

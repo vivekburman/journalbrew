@@ -1,6 +1,11 @@
 const { USER, USER_LOGIN, USER_LOGOUT } = require("./user.action");
 
-const handleSetCurrentUser = (state={}, action) => {
+const INITIAL_STATE = {
+  currentUser: false
+};
+
+
+const handleSetCurrentUser = (state=INITIAL_STATE, action) => {
   switch(action.type) {
     case USER:
       return {

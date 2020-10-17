@@ -11,9 +11,9 @@ const PublishPreview = (props) => {
       <li>
         <img src={ upload } alt="upload" className="icon-img" />	
       </li>
-      <li onClick={props.showPreview}>
+      {/* <li onClick={props.showPreview}>
         <img src={ preview } alt="preview" className="icon-img" />
-      </li>
+      </li> */}
     </ul>
   );
 }
