@@ -123,16 +123,16 @@ export default class JSONDiff {
     }
   }
   modCalc(x, y) {
-    return ((x % y) + y) % y;
+    return (x + y) % y;
   }
   forwardShortestEdit(box, vForward, vBackward, i, oldArr, newArr) {
     for (var k = i; k >= -i; k-=2) {
       let c = k - box.delta;
       let px, x;
-      if (k == -i || (k != i && vForward[this.modCalc(k - 1, vForward.length - 1)] < vForward[this.modCalc(k + 1, vForward.length - 1)])) { // this is wrong
-        px = x = vForward[this.modCalc(k + 1, vForward.length - 1)]
+      if (k == -i || (k != i && vForward[this.modCalc(k - 1, vForward.length)] < vForward[this.modCalc(k + 1, vForward.length)])) {
+        px = x = vForward[this.modCalc(k + 1, vForward.length)]
       } else {
-        px = vForward[this.modCalc(k - 1, vForward.length - 1)];
+        px = vForward[this.modCalc(k - 1, vForward.length)];
         x = px + 1;
       }
       let y = box.top + (x - box.left) - k;
@@ -141,8 +141,8 @@ export default class JSONDiff {
         x = x + 1;
         y = y + 1;
       }
-      vForward[this.modCalc(k, vForward.length - 1)] = x;
-      if (box.delta % 2 != 0 && c >= -(i - 1) && c <= (i - 1) && y >= vBackward[this.modCalc(c, vBackward.length - 1)]) {
+      vForward[this.modCalc(k, vForward.length)] = x;
+      if (box.delta % 2 != 0 && c >= -(i - 1) && c <= (i - 1) && y >= vBackward[this.modCalc(c, vBackward.length)]) {
         return [
           [px, py],
           [x, y]
@@ -154,20 +154,20 @@ export default class JSONDiff {
     for (var c = i; c >= -i; c-=2) {
       let k = c + box.delta;
       let py, y;
-      if (c == -i || (c != i && vBackward[this.modCalc(c - 1, vBackward.length - 1)] > vBackward[this.modCalc(c + 1, vBackward.length - 1)])) { // this is wrong
-        py = y = vBackward[this.modCalc(c + 1, vBackward.length - 1)]
+      if (c == -i || (c != i && vBackward[this.modCalc(c - 1, vBackward.length)] > vBackward[this.modCalc(c + 1, vBackward.length)])) { 
+        py = y = vBackward[this.modCalc(c + 1, vBackward.length)]
       } else {
-        py = vBackward[this.modCalc(c - 1, vBackward.length - 1)];
+        py = vBackward[this.modCalc(c - 1, vBackward.length)];
         y = py - 1;
       }
       let x = box.left + (y - box.top) + k;
-      let px = (i == 0 || x != px) ? x : x + 1;
+      let px = (i == 0 || y != py) ? x : x + 1;
       while (x > box.left && y > box.top && this.comparisonOperation(oldArr[x - 1], newArr[y - 1])) {
         x = x - 1;
         y = y - 1;
       }
-      vBackward[this.modCalc(c, vBackward.length - 1)] = y;
-      if (box.delta % 2 == 0 && c >= -i && c <= i && x <= vForward[this.modCalc(k, vForward.length - 1)]) {
+      vBackward[this.modCalc(c, vBackward.length)] = y;
+      if (box.delta % 2 == 0 && k >= -i && k <= i && x <= vForward[this.modCalc(k, vForward.length)]) {
         return [
           [x, y],
           [px, py]
@@ -264,7 +264,7 @@ export default class JSONDiff {
   }
   walkDiagonal (pair1, pair2, oldArr, newArr) {
     while (pair1[0] < pair2[0] && pair1[1] < pair2[1] && this.comparisonOperation(oldArr[pair1[0]], newArr[pair1[1]])) {
-      // callbackFunc(pair1[0], pair1[1], pair1[0] + 1, pair1[1] + 1);
+      // this.callbackFunc(pair1[0], pair1[1], pair1[0] + 1, pair1[1] + 1, oldArr, newArr, path_);
       pair1[0]++;
       pair1[1]++;
     }

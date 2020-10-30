@@ -5,11 +5,13 @@ import {connect} from 'react-redux';
 import axios from 'axios';
 import silentRefresh from '../../helpers/silentRefresh';
 import { setPostInfo } from '../../reducers/post/post.action';
+import { setCurrentUser } from '../../reducers/user/user.action';
 
 const createOrUpdatePostREST = (data, token, postId=null) => {
   if (postId) {
     return axios.patch('api/post/update-post', {
-      storypatchData: data
+      storypatchData: data,
+      postId: postId
     },  {
       headers: {
         'Authorization': token
@@ -45,12 +47,7 @@ class CreateOrUpdatePost extends Component {
       if (e.response.status == 401) {
         silentRefresh(props.setCurrentUser).then(() => {
           // try to do same again
-          createOrUpdatePost(props.postInfo?.postId ? jsonPatch : newEditorData, props.currentUser.token, props.postInfo?.postId).then(({data}) => {
-            if (data.post_id) {
-              // update post_id
-              props.setPostInfo({...props.postInfo, postId: data.post_id});
-            }
-          });
+          this.handleSave(newEditorData, jsonPatch);
         }); // if it fails then props.currentUser will be false so, it will automatically show login modal
       }
     });

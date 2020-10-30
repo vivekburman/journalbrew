@@ -6,7 +6,12 @@ const oldJSONData = {
           data: {
               text: 'its create test'
           }
-      }
+      },  {
+        type: 'paragraph',
+        data: {
+            text: 'its update test'
+        }
+    }
   ],
   "version" : 0
 };
@@ -16,13 +21,13 @@ const newJSONData = {
     {
         type: 'paragraph',
         data: {
-            text: 'its create test'
+            text: 'its create test 22'
         }
     },  {
-        type: 'paragraph',
-        data: {
-            text: 'its update test'
-        }
+      type: 'paragraph',
+      data: {
+          text: 'its update test'
+      }
     }
   ],
   "version" : 0
