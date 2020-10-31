@@ -22,7 +22,7 @@ const start = (port:number | string):Promise<Error | Application> => {
             app.use(morgan('combined'));
         } else {
             console.log('--Starting in DEV mode --');
-            app.use(morgan('dev'));
+            app.use(morgan('combined'));
         }
         app.use(async(req, res, next) => {
             next(new createHttpError.NotFound());

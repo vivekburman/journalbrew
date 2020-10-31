@@ -3,9 +3,10 @@ import { dbQuery } from './db.query';
 
 console.log('--Starting Database Connection --');
 interface dbQueryFunc { 
-    insertWithValues(query: string, values:any): Promise<any>,
-    updateWithValues(query: string, values:any): Promise<any>, 
-    selectWithValues(query: string, values:any): Promise<any>, 
+    insertWithValues(query: string, values:any|any[]): Promise<any>,
+    updateWithValues(query: string, values:any|any[]): Promise<any>, 
+    selectWithValues(query: string, values:any|any[]): Promise<any>,
+    updateJSONValues(query:string, values:any|any[]): Promise<any> 
 };
 let dbQueryHandler: dbQueryFunc;
 let db: Connection;

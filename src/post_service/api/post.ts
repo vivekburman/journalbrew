@@ -12,10 +12,7 @@ const AUTHOR_ID = 'author_id',
     FULL_STORY = 'full_story',
     CREATED_AT = 'created_at',
     UUID = 'uuid',
-    JSON_INSERT = 'JSON_INSERT',
-    JSON_ARRAY_INSERT = 'JSON_ARRAY_INSERT',
-    JSON_REPLACE = 'JSON_REPLACE',
-    JSON_REMOVE = 'JSON_REMOVE';
+    ID='id';
 
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string}
 
@@ -48,59 +45,61 @@ function generateSQLStatements(jsonPatch:any[]) {
         // 2. parse the jsonPatch to 3 buckets add, delete, replace
         // 3. fill each bucket of the form array [$'path', 'value']
         // 4. if value is of form object or array replace 'value' -> CAST('value') as JSON 
-    const map = new Map<string, any[]|undefined>([
-        ['add', []],
-        ['replace', []],
-        ['delete', []]
-    ]);
+    const map = [] as Array<string>;
     const parsePath = (path: string) => {
         let result:string = "$";
         const arr = path.split('/').slice(1);
         // if its not a number then we are going to add into JSON Object, else add into JSON Array
-        arr.forEach((item, index) => {
-            result += Number.isInteger(item) ? `[${item}]` : index == 0 ? `${item}` : `.${item}`;
+        arr.forEach((item) => {
+            result += Number.isNaN(+item) ? `.${item}` : `[${item}]`;
         });
-        return {mode: Number.isNaN(arr[arr.length - 1]) ? 'object' : 'array', jsonPath: result};
+        return result;
     }
-    jsonPatch.forEach((item: {'op': string, 'path': string, value: any}) => {
-        const {mode, jsonPath} = parsePath(item.path);
+    jsonPatch.forEach((item: {'op': string, 'path': string, value: any}, index) => {
+        const jsonPath = parsePath(item.path);
         switch(item.op) {
             case 'add':
-                map.set('add', map.get('add')?.concat(jsonPath, Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
-                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : item.value));
+                map.push(`JSON_SET(${FULL_STORY}, '${jsonPath}', ${Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
+                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : `${Number.isNaN(+item.value) ? `"${item.value}"` : item.value}`})`);
                 break;
             case 'replace':
-                map.set('replace', map.get('replace')?.concat(jsonPath, Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
-                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : item.value));
+                map.push(`JSON_REPLACE(${FULL_STORY}, '${jsonPath}', ${Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
+                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : `${Number.isNaN(+item.value) ? `"${item.value}"` : item.value}`})`);
                 break;
             case 'delete':
-                map.set('delete', map.get('delete')?.concat(jsonPath));
+                map.push(`JSON_REMOVE(${FULL_STORY}, '${jsonPath}')`);
                 break;
             default:
                 return;
         }
     });
-    
+    return map;
 }
+
 
 postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
     try {
         const req = req_ as RequestWithPayload;
         const payload:User = req['payload'] as User;
         const db = Database.getDBQueryHandler();
-        const jsonPatch = req.body;
-        console.log(req.body);
-        await db.updateWithValues(
-            `UPDATE user_to_post SET data=? WHERE ${AUTHOR_ID}=?`, {
-
-                [AUTHOR_ID]: Buffer.from(uuidParse(payload['id']))
-            }
-        );
+        const jsonPatch:{storypatchData: any, postId: number} = req.body;
+        const sqlQuery = {
+            query: 'UPDATE user_to_post SET ',
+            values: [] as Array<any>
+        };
+        const authorID = Buffer.from(uuidParse(payload['id']));
+        generateSQLStatements(jsonPatch.storypatchData).forEach(item => {
+            sqlQuery.query += `${FULL_STORY}=${item},`;
+        });
+        sqlQuery.query = `${sqlQuery.query.slice(0, -1)} WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
+        sqlQuery.values.push(authorID, jsonPatch.postId);
+        console.log(sqlQuery.query);
+        await db.updateJSONValues(sqlQuery.query, sqlQuery.values);
         res.status(200).json({
             success: true
         });
-    } catch(e) {
-
+    } catch(err) {
+        next(err);
     } 
 });
 
