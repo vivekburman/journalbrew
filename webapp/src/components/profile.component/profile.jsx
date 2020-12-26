@@ -14,6 +14,16 @@ import { UserAvatar } from '../avatar.component/avatar';
 
 const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification, isNotificationDropDownOpen,
   hideNotification, hideProfileDropDown, showProfileDropDown, hideLogin, showLogin, isLoginPageOpen}) => {
+
+	const toggleNotification = () => {
+		isNotificationDropDownOpen ? hideNotification() : showNotification();
+	}
+	const toggleProfileDropDown = () => {
+		isProfileDropDownOpen ? hideProfileDropDown() : showProfileDropDown();
+	}
+	const toggleSignIn = () => {
+		isLoginPageOpen ? hideLogin() : showLogin(); 
+	}
   return (
     <>
       { currentUser ?
@@ -22,22 +32,20 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
 			    <Route exact path={['/full-story', '/user-profile', '/opinions', '/', '/payment-history-&-insights']}>
 			      <li className="notification-icon-wrapper outline-none">
 			        <img src={ bell } alt="notifications" className="icon-img outline-none"
-			          onClick={() => isNotificationDropDownOpen ? hideNotification() : showNotification()} />
+			          onClick={toggleNotification} />
 			        <Notification hideFunc={hideNotification} isOpen={isNotificationDropDownOpen}/>
 			      </li>
 			    </Route>
 			  </Switch>
 			  <li className="profile-wrapper margin-left-8">
-					<span tabIndex={0} onClick={ () => {
-						isProfileDropDownOpen ? hideProfileDropDown() : showProfileDropDown();
-			      }}>
+					<span tabIndex={0} onClick={toggleProfileDropDown}>
 				    <UserAvatar url={ currentUser.profilePicUrl } size={35}/>
 					</span>
 			    <ProfileDropDown hideFunc={hideProfileDropDown} hidePointer={true} isOpen={isProfileDropDownOpen} />
 			  </li>
 			</ul> :
 			<div>
-				 <span className="sign-in-btn" onClick={ () => isLoginPageOpen ? hideLogin() : showLogin() }>Sign in</span>
+				 <span className="btn-primary sign-in-btn" onClick={toggleSignIn}>Sign in</span>
 			  { isLoginPageOpen && <Login />}
 			</div>
       }

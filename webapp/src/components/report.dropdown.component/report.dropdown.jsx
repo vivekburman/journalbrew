@@ -6,11 +6,14 @@ import { hideReportDropDown } from '../../reducers/click/report.dialog.action';
 
 const ReportDropDown = (props) => {
 const {hideReportDropDown, location } = props;
-  return (
+const _toggleDD = () => {
+  hideReportDropDown(location);
+}  
+return (
     <>
       <ul 
         className="report-list-wrapper"
-        onClick={() => hideReportDropDown(location)}>
+        onClick={_toggleDD}>
         <li className="report-list-item">Report this news</li>
         <li className="report-list-item">Mute this Author</li>
         <li className="report-list-item">Unfollow this Author</li>

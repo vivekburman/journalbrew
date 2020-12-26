@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const dotenv = require('dotenv-webpack');
 
 module.exports = function(_env, args) {
   const isProduction = args.mode === 'production';
@@ -97,6 +98,7 @@ module.exports = function(_env, args) {
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       isDevelopment && new BundleAnalyzerPlugin(),
+      new dotenv()
     ].filter(Boolean),
     optimization: {
       minimize: isProduction,

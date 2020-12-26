@@ -16,6 +16,18 @@ class SearchNLogoComponent extends Component {
   goToHome = () => {
     this.props.history.push("/");
   }
+  _openSearchBar = () => {
+    windowWidth < 768 && openSearchBar();
+  }
+  _toggleFocus = () =>{
+    this.ref.current && this.ref.current.classList.add('on-focus');
+    this.searchIconRef.current && this.searchIconRef.current.classList.add('on-focus');
+  }
+  _toggleBlur = () => {
+    this.ref.current && this.ref.current.classList.remove('on-focus');
+    this.searchIconRef.current && this.searchIconRef.current.classList.remove('on-focus');
+    setTimeout(() => handleSearchRequest(''), 100);
+  }
   render() {
     const {searchText='', windowWidth,
       handleSearchRequest, isSearchBarOpen,
@@ -35,9 +47,7 @@ class SearchNLogoComponent extends Component {
                       onClick={closeSearchBar}/>
                     <img src={search} alt="search-icon" ref={this.searchIconRef}
                       className="icon-img icon-img-search"
-                      onClick={() => {
-                        windowWidth < 768 && openSearchBar();
-                      }} />
+                      onClick={this._openSearchBar} />
                     <input
                       ref = {this.ref}
                       className={`search-input outline-none ${windowWidth < 768 && (isSearchBarOpen ? 'expand-search' : 'collapse-search')}`}
@@ -45,15 +55,8 @@ class SearchNLogoComponent extends Component {
                       placeholder={placeholder}
                       onChange= {(e) => handleSearchRequest(e.target.value)}
                       value={searchText}
-                      onFocus={() => {
-                        this.ref.current && this.ref.current.classList.add('on-focus');
-                        this.searchIconRef.current && this.searchIconRef.current.classList.add('on-focus');
-                      }}
-                      onBlur={() => {
-                        this.ref.current && this.ref.current.classList.remove('on-focus');
-                        this.searchIconRef.current && this.searchIconRef.current.classList.remove('on-focus');
-                        setTimeout(() => handleSearchRequest(''), 100);
-                      }}
+                      onFocus={this._toggleFocus}
+                      onBlur={this._toggleBlur}
                     />
                   </div>
                   { (windowWidth > 768 || isSearchBarOpen) && searchText.length > 0 && <SearchSuggestion /> }

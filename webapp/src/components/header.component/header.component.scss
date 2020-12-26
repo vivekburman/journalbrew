@@ -70,6 +70,7 @@ nav ul {
     display: none;
 }
 .top-nav {
+    align-items: center;
     @extend %flex-row-nowrap;
 }
 @media (min-width: 992px) {

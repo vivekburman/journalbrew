@@ -9,6 +9,12 @@ import { connect } from 'react-redux';
 import { showReportDropDown, hideReportDropDown } from '../../reducers/click/report.dialog.action';
 
 const SocialShare = (props) => {
+  const checkCondition = () => {
+    return props.activeLocation === props.location;
+  }
+  const toggleDD = () => {
+    props.isReportDropDownOpen ? props.hideReportDropDown(props.location) : props.showReportDropDown(props.location);
+  }
   return(
     <div className="flex flex-row-nowrap">
       <Link to=''>
@@ -22,10 +28,10 @@ const SocialShare = (props) => {
       </Link>
       <div className="pos-rel">
         <img src={threeDots} alt="report" className="icon-img" 
-        onClick= {() => props.isReportDropDownOpen ? props.hideReportDropDown(props.location) : props.showReportDropDown(props.location)}  />
+        onClick= {toggleDD}  />
         <ReportDropDown isOpen= {props.isReportDropDownOpen} 
           hideFunc={props.hideReportDropDown}
-          checkCondition = {() => props.activeLocation === props.location }
+          checkCondition = {checkCondition}
           {...props}/>
       </div>
     </div>

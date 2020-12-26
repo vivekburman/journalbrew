@@ -36,9 +36,11 @@ const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
   //   const _ref = refs.current[counter];
   //   _ref.animationPause();
   // }
-  
+  const handleClick = () => {
+    showCompletePost(postID);
+  }; 
   return (
-    <li className="news-item" onClick={() => showCompletePost(postID)} >
+    <li className="news-item" onClick={handleClick} >
       <Link to={`/full-story?${postID}` } className="news-item-link">
         <div className="news-thumbnail">
           <img src={ dummy } alt="Images" className="news-image flex"/>

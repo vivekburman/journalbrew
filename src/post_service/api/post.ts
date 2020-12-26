@@ -1,18 +1,51 @@
-import { json, NextFunction, Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import createHttpError from "http-errors";
 import { v4 as uuidv4, parse as uuidParse, stringify as uuidStringify } from 'uuid';
 import { RequestWithPayload } from "../../auth_service/utils";
 import { convertTime } from "../../auth_service/utils/general";
 import { utils } from "../../auth_service/utils/jwtUtils";
 import { Database } from "../../database";
+import Busboy from 'busboy';
+import fs from 'fs';
+import path from 'path';
+import PQueue from 'p-queue';
+import awsSdk from 'aws-sdk';
 
 const postRouter: Router = Router();
+const thumbSize = 1024 * 1024 * 2;
+interface PublishForm {
+    postId: number|string, 
+    summary: string, 
+    title: string, 
+    location: string, 
+    tags: Array<string>,
+    type: string
+}
+enum ArticleType {
+    ARTICLE = "ARTICLE",
+    OPINION = "OPINION",
+    EOD = "EOD"
+}
+enum PublishStatus {
+    UNDER_REVIEW = "underReview",
+    PUBLISHED = "published",
+    DISCARDED = "discarded",
+    REMOVED = "removed"
+}
 
 const AUTHOR_ID = 'author_id',
     FULL_STORY = 'full_story',
     CREATED_AT = 'created_at',
     UUID = 'uuid',
-    ID='id';
+    ID='id',
+    TITLE= 'title',
+    THUMBNAIL='thumbnail',
+    SUMMARY='summary',
+    TAGS='tags',
+    LOCATION='location',
+    TYPE='type',
+    FULL_STORY_ID='full_story_id',
+    PUBLISH_STATUS='publish_status';
 
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string}
 
@@ -93,7 +126,6 @@ postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, 
         });
         sqlQuery.query = `${sqlQuery.query.slice(0, -1)} WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
         sqlQuery.values.push(authorID, jsonPatch.postId);
-        console.log(sqlQuery.query);
         await db.updateJSONValues(sqlQuery.query, sqlQuery.values);
         res.status(200).json({
             success: true
@@ -103,8 +135,159 @@ postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, 
     } 
 });
 
-postRouter.get('/publish-post', () => {
+postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const busboy = new Busboy({
+            headers: req_.headers,
+            limits: {
+                files: 1,
+                fileSize: thumbSize
+            }
+        });
+        let limit_reach = false;
+        const chunks: any[] = [];
+        const req = req_ as RequestWithPayload;
+        const payload:User = req['payload'] as User;
+        const db = Database.getDBQueryHandler();
+        const formPayload: PublishForm = {} as PublishForm;
+        let fieldParesed = 0;
+        let _encoding='', _mimeType='';
+        const workQueue = new PQueue({concurrency: 1});
+        
+        const s3 = new awsSdk.S3({
+            accessKeyId: process.env.AWS_S3_THUMBS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_S3_THUMBS_SECRET_KEY
+        });
 
+        const handleErrorBusBoy = async (fn: Function) => {
+            workQueue.add(async () => {
+                try {
+                    await fn();
+                } catch(err) {
+                    req_.unpipe(busboy);
+                    workQueue.pause();
+                    next(err);
+                }
+            });
+        };
+
+        busboy.on('field', (fieldname, val) => {
+            handleErrorBusBoy(() => {
+                switch(fieldname) {
+                    case 'postId':
+                        if (val == null || val == undefined || Number.isNaN(+val)) {
+                            throw new createHttpError.InternalServerError('postId not found');
+                        }
+                        fieldParesed++;
+                        formPayload.postId = val;
+                        break;
+                    case 'title':
+                        if (val == null || val == undefined || val.length == 0 || val.length > 150) {
+                            throw new createHttpError.InternalServerError('title is null or exceeds 150 char length');
+                        }
+                        fieldParesed++;
+                        formPayload.title = val;
+                        break;
+                    case 'summary':
+                        if (val == null || val == undefined || val.length == 0 || val.length > 150) {
+                            throw new createHttpError.InternalServerError('summary is null or exceeds 150 char length');
+                        }
+                        fieldParesed++;
+                        formPayload.summary = val;
+                        break;
+                    case 'location':
+                        if (val == null || val == undefined || val.length == 0 || val.length > 50) {
+                            throw new createHttpError.InternalServerError('location is null or exceeds 50 char length');
+                        }
+                        fieldParesed++;
+                        formPayload.location = val;
+                        break;
+                    case 'tags':
+                        if (val == null || val == undefined || val.length == 0 || val.length > 5
+                            || val.findIndex((e:string) => typeof e != 'string') != -1) {
+                            throw new createHttpError.InternalServerError('tags is null or exceeds 5 array length or make sure its all string');
+                        }
+                        fieldParesed++;
+                        formPayload.tags = val;
+                        break;
+                    case 'type':
+                        if (val == null || val == undefined || !(val in ArticleType)) {
+                            throw new createHttpError.InternalServerError('type is null or not supported');
+                        }
+                        fieldParesed++;
+                        formPayload.type = val;
+                        break;
+                }
+            });
+        });
+        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+            _mimeType = mimetype;
+            _encoding = encoding;
+            handleErrorBusBoy(() => {
+                if (fieldParesed != 6) {
+                    throw new createHttpError.InternalServerError('fields must be parsed first');
+                } else {
+                    const fileTypes = /png/;
+                    const extname = fileTypes.test(filename);
+                    const mimeType = fileTypes.test(mimetype);
+                    if (extname && mimeType) {
+                        file.on('data', (data) => {
+                            chunks.push(data);
+                        });
+                        
+                        file.on('limit', () => {
+                            chunks.length = 0;
+                            limit_reach = true;
+                        });
+                    }
+                }
+            })
+        });
+        busboy.on('finish', () => {
+            handleErrorBusBoy(() => {
+                if (limit_reach) {
+                    throw new createHttpError[415];
+                } else {
+                    // save image to firebase, then save to DB, then delete the file from uploads
+                    // save to s3
+                    const params: awsSdk.S3.Types.PutObjectRequest = {
+                        Bucket: `${process.env.AWS_S3_THUMBS_BUCKETNAME}/thumbs`,
+                        Key: `${formPayload.postId}.png`,
+                        Body: Buffer.concat(chunks),
+                        ContentType: _mimeType,
+                        ContentEncoding: _encoding,
+                        ACL: 'public-read'
+                    };
+                    s3.upload(params, async (err, _res) => {
+                        if(err) throw new createHttpError.InternalServerError('something went wrong in s3: ' + err.message);
+                        else {
+                            //save to DB
+                            await db.insertWithValues(
+                                "INSERT INTO `post` SET ?", {
+                                    [TITLE]: formPayload.title,
+                                    [THUMBNAIL]: _res.Location,
+                                    [SUMMARY]: formPayload.summary,
+                                    [TAGS]: JSON.stringify(formPayload.tags),
+                                    [LOCATION]: formPayload.location,
+                                    [TYPE]: formPayload.type,
+                                    [FULL_STORY_ID]: formPayload.postId,
+                                    [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
+                                    [AUTHOR_ID]: Buffer.from(uuidParse(payload['id'])),
+                                    [CREATED_AT]: convertTime()
+                                } 
+                            );
+                            res.status(200).json({
+                                success: true
+                            });
+                        }  
+                    });
+                }
+            });
+        })
+        req_.pipe(busboy);
+    } catch(err) {
+        next(err);
+    } 
 });
 
 postRouter.get('/view-post', () => {
