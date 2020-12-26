@@ -35,14 +35,14 @@ const Login = ({ hideLogin, allowToClose=true }) => {
             <img src={google} alt="google" className="login-logo"/>
             <div>Continue with Google</div>
           </a>
-          <a href="/api/auth/facebook" onClick={saveLastVisitedRoute} className="link login-options-item flex flex-row-nowrap align-items-center">
+          {/* <a href="/api/auth/facebook" onClick={saveLastVisitedRoute} className="link login-options-item flex flex-row-nowrap align-items-center">
             <img src={facebook} alt="facebook" className="login-logo"/>
             <div>Continue with Facebook</div>
           </a>
           <a href="/api/auth/twitter" onClick={saveLastVisitedRoute} className="link login-options-item flex flex-row-nowrap align-items-center">
             <img src={twitter} alt="twitter" className="login-logo"/>
             <div>Continue with Twitter</div>
-          </a>
+          </a> */}
         </div>
       </div>
     </div>

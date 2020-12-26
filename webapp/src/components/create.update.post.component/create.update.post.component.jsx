@@ -74,4 +74,4 @@ const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (payload) => dispatch(setCurrentUser(payload)),
   setPostInfo: payload => dispatch(setPostInfo(payload))
 });
-export default  connect(mapStateToProps, mapDispatchToProps)(CreateOrUpdatePost);
+export default  connect(mapStateToProps, mapDispatchToProps)(withAuth(CreateOrUpdatePost));
