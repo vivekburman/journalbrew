@@ -1,10 +1,12 @@
-import express, { Request, Response, NextFunction, Application } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
+import * as http from 'http';
+import * as https from 'https';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import createHttpError from 'http-errors';
 import * as postRoutes from '../api';
 
-const start = (port:number | string):Promise<Error | Application> => {
+const start = (port:number | string):Promise<Error | http.Server | https.Server > => {
     return new Promise((resolve, reject) => {
         if(!port) {
             throw new Error('The server must be started with an available port');
@@ -37,7 +39,7 @@ const start = (port:number | string):Promise<Error | Application> => {
             });
         });
         // start the server
-        app.listen(port, () => resolve(app));
+        resolve(app.listen(port));
     });
 }
 

@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction, Application } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import { initPassport } from './passport.config';
@@ -7,9 +7,11 @@ import CookieParser from 'cookie-parser';
 import passport from 'passport';
 import createHttpError from 'http-errors';
 import { initRedis } from './redis.server';
+import * as http from 'http';
+import * as https from 'https';
 
-const start = (port:number | string):Promise<Error | Application> => {
-    initRedis();
+const start = (port:number | string):Promise<Error | http.Server | https.Server> => {
+    // initRedis();
     initPassport();
     return new Promise((resolve, reject) => {
         if(!port) {
@@ -45,7 +47,7 @@ const start = (port:number | string):Promise<Error | Application> => {
             });
         });
         // start the server
-        app.listen(port, () => resolve(app));
+        resolve(app.listen(port));
     });
 }
 

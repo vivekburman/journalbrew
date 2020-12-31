@@ -18,10 +18,10 @@ import RadioButton from '../radio.button.component/radio.button.component';
 
 const publishPostAPI = (postId, token, formData) => {
   const _formData = new FormData();
-  _formData.append('postId', postId);
+  _formData.append('postId', postId || 1);
   _formData.append('title', formData.title);
   _formData.append('location', formData.location);
-  _formData.append('tags', formData.tags);
+  _formData.append('tags', JSON.stringify(formData.tags));
   _formData.append('summary', formData.summary);
   _formData.append('type', formData.type);
   _formData.append('thumb', formData.thumb);
@@ -49,18 +49,9 @@ const Publish = (props) => {
   const edData = props.editorData || {
     blocks: []
   };
-  let _thumbnail = null, _summary = '';
+  let _thumbnail = null, _summary = '', item = edData.blocks;
   
-  for (let i = 0; i < edData.blocks.length; i++) {
-    if (item.type == 'image') {
-      _thumbnail = data.url;
-    } else if(item.type == 'paragraph') {
-      _summary = data.text;
-    }
-    if (_thumbnail && _summary) {
-      break;
-    }
-  }
+
 
   const ERR_TITLE_LIMIT = 'Title should be within 150 characters.';
   const ERR_EMPTY = 'field cannot be empty.';
@@ -104,6 +95,19 @@ const Publish = (props) => {
     }
   }, []);
 
+  const handleFormLoad = () => {
+    for (let i = 0; i < edData.blocks.length; i++) {
+      if (item[i].type == 'image' && !_thumbnail) {
+        _thumbnail = item[i].data.url;
+      } else if(item[i].type == 'paragraph' && !_summary) {
+        _summary = item[i].data.text;
+      }
+      if (_thumbnail && _summary) {
+        break;
+      }
+    }
+  }
+
   const handleToggle = () => {
     const _toggle = toggle;
     setToggle(!toggle);
@@ -113,9 +117,18 @@ const Publish = (props) => {
     setLocationError('');
     setSummaryError('');
     setTypeError('');
+    setPublishError(false);
     requestAnimationFrame(() => {
       document.body.style.overflow = _toggle ? '' : 'hidden';
     });
+    if (!toggle) {
+      handleFormLoad();
+      setFormSummary(_summary);
+      setFormThumbnail(_thumbnail);
+    } else {
+      _summary = null;
+      _thumbnail = null;
+    }
   }
   const handleInputOverflow = (ref, offset) => {
     requestAnimationFrame(() => {
@@ -195,7 +208,8 @@ const Publish = (props) => {
       title: title,
       location: location,
       tags: tagsList,
-      summary: summary
+      summary: summary,
+      type: type
     }).then(() => {
       // stop spinner and go to homepage
       setSpinner(false);
@@ -330,13 +344,14 @@ const Publish = (props) => {
         toggle &&
         <div className={"publish-form-container " + `${!spinner ? "full-hide" : "partial-hide"}`  }>
           {spinner ? <div className="flex-row-nowrap w-100 h-100 align-items-center justify-content-center">
-            <div className="publish-form publish-uploading">
+            <div className="publish-form publish-uploading flex-column-nowrap">
               <div className="publish-heading">Publishing your news <span>&#128516;</span></div>
               <PropagateLoader
               css={css`
-              top: 23%;
-              display: block;
-              margin: 0 auto;
+              position: relative;
+              left: -15px;
+              align-self: center;
+              top: 42px;
             `}
             color={"#9B9B9B"}
             size={15}/>
@@ -444,7 +459,7 @@ const Publish = (props) => {
                     </div>
                     <div>
                       <div className={`publish-form-input-wrapper flex ${props.windowWidth > 768 ? 'flex-row-nowrap align-items-center' : 'flex-column-nowrap'}`}>
-                        <div class="publish-radio-title">Article Type:</div>
+                        <div className="publish-radio-title">Article Type:</div>
                         <RadioButton options={types} orientation={props.windowWidth > 768 ? 0 : 1} onChange={handleRadioBtnChange}/>
                       </div>
                       <div className={"form-error " + (typeError.length > 0 ? 'err-show' : 'err-hide')}>{typeError}</div>

@@ -1,10 +1,11 @@
 import {server} from './server/server';
 import {config} from './config/config';
-import { Application } from 'express';
+import * as http from 'http';
+import * as https from 'https';
 
 const startService = async () => {
     // start the server
-    let app: Error | Application | null = null;
+    let app: Error | http.Server | https.Server | null = null;
     console.log('-- Post Service --');
     try{
         app = await server.start(config.serverSettings.port);
