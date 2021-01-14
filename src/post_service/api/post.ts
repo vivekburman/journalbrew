@@ -11,6 +11,7 @@ import SQL_DB from "../../database";
 
 const postRouter: Router = Router();
 const thumbSize = 1024 * 1024 * 2;
+const imageSize = 1024 * 1024 * 5;
 interface PublishForm {
     postId: number|string, 
     summary: string, 
@@ -130,7 +131,7 @@ postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, 
     } 
 });
 
-postRouter.post('/publish-post', async (req_: Request, res: Response, next:NextFunction) => {
+postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
     try {
         const busboy = new Busboy({
             headers: req_.headers,
@@ -235,6 +236,8 @@ postRouter.post('/publish-post', async (req_: Request, res: Response, next:NextF
                             chunks.length = 0;
                             limit_reach = true;
                         });
+                    } else {
+                        next(new createHttpError.InternalServerError('thumbnail is not proper image only supports .png'));
                     }
                 }
             })
@@ -242,9 +245,8 @@ postRouter.post('/publish-post', async (req_: Request, res: Response, next:NextF
         busboy.on('finish', () => {
             handleErrorBusBoy(async () => {
                 if (limit_reach) {
-                    next(new createHttpError[415]);
+                    next(new createHttpError[413]);
                 } else {
-                    // save image to firebase, then save to DB, then delete the file from uploads
                     // save to s3
                     const params: awsSdk.S3.Types.PutObjectRequest = {
                         Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
@@ -296,5 +298,92 @@ postRouter.get('/view-post', () => {
 });
 postRouter.delete('/delete-post', () => {
 
+});
+postRouter.post('/upload-media/image', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const busboy = new Busboy({
+            headers: req_.headers,
+            limits: {
+                files: 1,
+                fileSize: imageSize
+            }
+        });
+        const workQueue = new PQueue({concurrency: 1});
+        
+        const s3 = new awsSdk.S3({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        });
+
+        const handleErrorBusBoy = async (fn: Function) => {
+            workQueue.add(async () => {
+                try {
+                    await fn();
+                } catch(err) {
+                    req_.unpipe(busboy);
+                    workQueue.pause();
+                    next(err);
+                }
+            });
+        };
+        let _mimeType='', _encoding='', limit_reach = false, _filename='';
+        const chunks: any[] = [];
+        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+            _mimeType = mimetype;
+            _encoding = encoding;
+            _filename = filename;
+            handleErrorBusBoy(() => {
+                try {
+                    const fileTypes = /png/;
+                    const extname = fileTypes.test(filename);
+                    const mimeType = fileTypes.test(mimetype);
+                    if (extname && mimeType) {
+                        file.on('data', (data) => {
+                            chunks.push(data);
+                        });
+                        
+                        file.on('limit', () => {
+                            chunks.length = 0;
+                            limit_reach = true;
+                        });
+                    } else {
+                        throw new createHttpError.InternalServerError('only supported .png format');
+                    }
+                }catch(err) {
+                    next(err);
+                }
+            });
+        });
+        busboy.on('finish', () => {
+            handleErrorBusBoy(() => {
+                if (limit_reach) {
+                    next(new createHttpError[413]);
+                } else {
+                    const params: awsSdk.S3.Types.PutObjectRequest = {
+                        Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+                        Key: `images/${_filename}_${Date.now()}.png`,
+                        Body: Buffer.concat(chunks),
+                        ContentType: _mimeType,
+                        ContentEncoding: _encoding,
+                        ACL: 'public-read'
+                    };
+                    s3.upload(params, async (err, _res) => {
+                        if (err) {
+                            next(new createHttpError.InternalServerError('unable to store image to s3'));
+                        } else {    
+                            res.status(200).json({
+                                success: true,
+                                url: _res.Location
+                            });
+                        }
+                    });
+                }
+            })
+        });
+        req_.pipe(busboy);
+    }catch(err) {
+        next(err);
+    }
 });
 export default postRouter;

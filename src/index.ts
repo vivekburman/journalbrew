@@ -12,11 +12,11 @@ import * as https from 'https';
 const servers: Array<Error | null | http.Server | https.Server> = [];
 
 const closeAllServers = () => {
+    console.log('closing all servers');
     servers.forEach((i) => {
         i && (i instanceof http.Server || i instanceof https.Server) && i.close();
     });
 }
-
 
 process.on('uncaughtException', (err) => {
     console.log('Uncaught Exception = ', err);

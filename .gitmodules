@@ -13,3 +13,6 @@
 [submodule "webapp/src/_internal/editor.js"]
 	path = webapp/src/_internal/editor.js
 	url = https://github.com/vivekburman/editor.js.git
+[submodule "webapp/src/_internal/image"]
+	path = webapp/src/_internal/image
+	url = https://github.com/editor-js/image.git

@@ -66,8 +66,9 @@ class CreateOrUpdatePost extends Component {
   }
 }
 
-const mapStateToProps = ({post}) => ({
-  postInfo: post.postInfo
+const mapStateToProps = ({post, user}) => ({
+  postInfo: post.postInfo,
+  currentUser: user.currentUser
 });
 
 const mapDispatchToProps = (dispatch) => ({

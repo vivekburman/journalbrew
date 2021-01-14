@@ -11,7 +11,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 const start = (port:number | string):Promise<Error | http.Server | https.Server> => {
-    // initRedis();
+    initRedis();
     initPassport();
     return new Promise((resolve, reject) => {
         if(!port) {

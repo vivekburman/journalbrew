@@ -13,12 +13,12 @@ import { css } from "@emotion/core";
 import PropagateLoader from "react-spinners/PropagateLoader";
 import { withRouter } from 'react-router';
 import imageCompression from 'browser-image-compression';
-import {convertToPng} from '../../helpers/convertToPng';
+import {convertToPng, getPngName} from '../../helpers/convertToPng';
 import RadioButton from '../radio.button.component/radio.button.component';
 
 const publishPostAPI = (postId, token, formData) => {
   const _formData = new FormData();
-  _formData.append('postId', postId || 1);
+  _formData.append('postId', postId);
   _formData.append('title', formData.title);
   _formData.append('location', formData.location);
   _formData.append('tags', JSON.stringify(formData.tags));
@@ -100,7 +100,7 @@ const Publish = (props) => {
       if (item[i].type == 'image' && !_thumbnail) {
         _thumbnail = item[i].data.url;
       } else if(item[i].type == 'paragraph' && !_summary) {
-        _summary = item[i].data.text;
+        _summary = item[i].data.text.slice(0, 150);
       }
       if (_thumbnail && _summary) {
         break;
@@ -310,6 +310,8 @@ const Publish = (props) => {
     setLoader(true);
     if (_file.size > thumbSize) {
       compressedFile = await compressImage(_file);
+      const filename = getPngName(compressedFile.name);
+      compressedFile = new File([compressedFile], filename, {type: 'image/png', lastModified: Date.now()});
     } else {
       compressedFile = await convertToPng(_file);
     }

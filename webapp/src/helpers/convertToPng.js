@@ -28,3 +28,9 @@ export async function convertToPng(data) {
     reader.readAsDataURL(data);
   });
 }
+
+export const getPngName = (name) => {
+  const arr = name.split('.');
+  arr[arr.length - 1] = 'png';
+  return arr.join('.');
+}
