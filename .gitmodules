@@ -15,4 +15,7 @@
 	url = https://github.com/vivekburman/editor.js.git
 [submodule "webapp/src/_internal/image"]
 	path = webapp/src/_internal/image
-	url = https://github.com/editor-js/image.git
+	url = https://github.com/vivekburman/image.git
+[submodule "webapp/src/_internal/editorjs-video"]
+	path = webapp/src/_internal/editorjs-video
+	url = https://github.com/vivekburman/editorjs-video.git
