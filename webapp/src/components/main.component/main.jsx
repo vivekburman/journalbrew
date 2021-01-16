@@ -1,18 +1,11 @@
 import React, {Component} from 'react';
 import './main.component.scss';
 import {Switch, Route} from 'react-router-dom';
-import loadable from '@loadable/component';
-
-const UserProfile = loadable(() => import('../loadable.component/loadableUserProfile'));
-
-const NewsFeed = loadable(() => import('../loadable.component/loadableNewsFeed'));
-
-const CreateOrUpdatePost = loadable(() => import('../loadable.component/LoadableCreateOrUpdatePost'));
-
-const FullNews = loadable(() => import('../loadable.component/loadableFullNews'));
-
-const PaymentInsights = loadable(() => import('../loadable.component/loadablePaymentInsights'));
-
+import UserProfile from '../loadable.component/UserProfile.lazy';
+import NewsFeed from '../loadable.component/NewsFeed.lazy';
+import CreateOrUpdatePost from '../loadable.component/CreateOrUpdatePost.lazy';
+import FullNews from '../loadable.component/FullNews.lazy';
+import PaymentInsights from '../loadable.component/PaymentInsights.lazy';
 class Main extends Component {
   render() {
     return (

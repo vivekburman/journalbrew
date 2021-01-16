@@ -97,7 +97,7 @@ module.exports = function(_env, args) {
         inject: true,
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-      isDevelopment && new BundleAnalyzerPlugin(),
+      new BundleAnalyzerPlugin(),
       new dotenv()
     ].filter(Boolean),
     optimization: {
@@ -122,10 +122,10 @@ module.exports = function(_env, args) {
       ],
       splitChunks: {
         chunks: 'all',
-        minSize: 10000,
-        maxSize: 2500000,
-        maxInitialRequests: 20,
-        maxAsyncRequests: 20,
+        minSize: 0,
+        // maxSize: 2500000,
+        maxInitialRequests: 10,
+        maxAsyncRequests: 10,
         cacheGroups: {
           vendors: {
             test: /[\\/]node_modules[\\/]/,

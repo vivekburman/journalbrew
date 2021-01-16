@@ -386,4 +386,81 @@ postRouter.post('/upload-media/image', utils.verifyAccessToken, (req_: Request, 
         next(err);
     }
 });
+postRouter.post('/upload-media/video', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const busboy = new Busboy({
+            headers: req_.headers,
+            limits: {
+                files: 1
+            }
+        });
+        const workQueue = new PQueue({concurrency: 1});
+        
+        const s3 = new awsSdk.S3({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        });
+
+        const handleErrorBusBoy = async (fn: Function) => {
+            workQueue.add(async () => {
+                try {
+                    await fn();
+                } catch(err) {
+                    req_.unpipe(busboy);
+                    workQueue.pause();
+                    next(err);
+                }
+            });
+        };
+        let _mimeType='', _encoding='', limit_reach = false, _filename='';
+        const chunks: any[] = [];
+        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+            _mimeType = mimetype;
+            _encoding = encoding;
+            _filename = filename;
+            handleErrorBusBoy(() => {
+                try {
+                    const fileTypes = /mp4/;
+                    const extname = fileTypes.test(filename);
+                    const mimeType = fileTypes.test(mimetype);
+                    if (extname && mimeType) {
+                        file.on('data', (data) => {
+                            chunks.push(data);
+                        });
+                    } else {
+                        throw new createHttpError.InternalServerError('only supported .mp4 format');
+                    }
+                }catch(err) {
+                    next(err);
+                }
+            });
+        });
+        busboy.on('finish', () => {
+            handleErrorBusBoy(() => {
+                const params: awsSdk.S3.Types.PutObjectRequest = {
+                    Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+                    Key: `videos/${_filename}_${Date.now()}.mp4`,
+                    Body: Buffer.concat(chunks),
+                    ContentType: _mimeType,
+                    ContentEncoding: _encoding,
+                    ACL: 'public-read'
+                };
+                s3.upload(params, async (err, _res) => {
+                    if (err) {
+                        next(new createHttpError.InternalServerError('unable to store video to s3'));
+                    } else {    
+                        res.status(200).json({
+                            success: true,
+                            url: _res.Location
+                        });
+                    }
+                });
+            })
+        });
+        req_.pipe(busboy);
+    }catch(err) {
+        next(err);
+    }
+});
 export default postRouter;

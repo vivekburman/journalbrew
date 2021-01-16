@@ -1,9 +1,10 @@
 const uploadFileOrURL = () => {
   onmessage = (e) => {
-    const {fileOrURL, token, baseURL} = e.data;
+    const {fileOrURL, token, baseURL, type } = e.data;
     const _formData = new FormData();
     _formData.append('media', fileOrURL);
-    fetch(`${baseURL}/api/post/upload-media/image`, {
+
+    fetch(`${baseURL}/api/post/upload-media/${type == 1 ? 'image' : 'video'}`, {
       method: 'POST',
       body: _formData,
       headers: {

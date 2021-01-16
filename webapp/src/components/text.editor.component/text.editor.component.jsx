@@ -19,11 +19,23 @@ class TextEditor extends Component {
     this.instanceRef = createRef(null);
     this.EDITOR_JS_TOOLS = {...EDITOR_JS_TOOLS};
     this.EDITOR_JS_TOOLS.image.config = {
+      ...this.EDITOR_JS_TOOLS.image.config,
       uploader : {
         uploadByFile: this.handleEditorImageUpload,
-        uploadByURL: this.handleEditorImageUpload
-      }
-    }
+        // uploadByURL: this.handleEditorImageUpload
+      },
+      defaultElements: ['withBorder', 'stretched', 'withBackground'],
+      onRemove: data => console.log('Deleted', data)
+    };
+    this.EDITOR_JS_TOOLS.video.config = {
+      ...this.EDITOR_JS_TOOLS.video.config,
+      uploader : {
+        uploadByFile: this.handleEditorVideoUpload,
+        // uploadByURL: this.handleEditorImageUpload
+      },
+      defaultElements: ['withBorder', 'stretched', 'withBackground'],
+      onRemove: data => console.log('Deleted', data)
+    };
   }
   compressImage = (file) => {
     const options = {
@@ -61,7 +73,32 @@ class TextEditor extends Component {
       worker.postMessage({
         fileOrURL: file,
         token: currentUser.token,
-        baseURL: window.location.origin
+        baseURL: window.location.origin,
+        type: 1
+      });
+    });
+  }
+  handleEditorVideoUpload = (fileOrURL) => {
+    const {currentUser} = this.props;
+    if (!currentUser) {
+      return Promise.reject({
+        'success': 0,
+        'file': {
+          'url': null
+        }
+      });
+    }
+    return new Promise(async (resolve, reject) => {
+      const worker = new Worker(workerScript);
+      worker.addEventListener('message', (e) => {
+        const data = e.data;
+        return data.success == 1 ? resolve(data) : reject(data);
+      });
+      worker.postMessage({
+        fileOrURL,
+        token: currentUser.token,
+        baseURL: window.location.origin,
+        type: 0
       });
     });
   }
