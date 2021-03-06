@@ -71,59 +71,50 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
          const profilePicUrl = profile.photos[0]?.value || null;
          const email = profile.emails[0]?.value;
          await db.connect();
-         db.selectWithValues(`SELECT ${UUID}, ${STRATEGY_ID} FROM user WHERE ${EMAIL}=?`, [profile.emails[0].value])
-         .then((data): Promise<string|{id:string}|null> => {            
-            if(data[0].length) {
-               const strategyId = data[0][0].strategy_id;
-               return encryptDecrypt.compare(profile.id, strategyId).then(res => res ? {id: uuidStringify(data[0][0].uuid)} : null);
-            } else {
-               // create a hash to encrypt strategy_id
-               return encryptDecrypt.encrypt(profile.id);
-            }
-         })
-         .then(async (data: string | {id:string} | null) => {
-            if (typeof data == 'string') {
-               const uuid = uuidv4();
-               const time = convertTime();
-               await db.insertWithValues("INSERT INTO `user` SET ?", {
-                  [STRATEGY_ID]: data,
-                  [STRATEGY_TYPE]: 'google',
-                  [FIRST_NAME]: firstName,
-                  [LAST_NAME]: lastName,
-                  [MIDDLE_NAME]: middleName,
-                  [PROFILE_PIC_URL]: profilePicUrl,
-                  [EMAIL]: email,
-                  [UUID]: Buffer.from(uuidParse(uuid)),
-                  [CREATED_AT]: time
-               });
-               return uuid;
-            } else if (data) {
-               return data.id;
-            }
-            throw new createHttpError.BadRequest('Invalid OAuth Credentials');
-         })
-         .then((data: string) => {
-            const tokenObj = {email: profile.emails[0].value, id:data};
-            const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
-            const refreshTokenJWT = utils.issueRefreshTokenJWT(tokenObj);
-            refreshTokenJWT.then((response) => {
-               res.cookie('refresh_token', response.token, {
-                  httpOnly: true,
-                  maxAge: response.expiresInMs
-               });
-               res.status(200).json({success: true, access_token: accessTokenJWT.token, 
-                  expiresIn: accessTokenJWT.expires,
-                  username: profile.displayName,
-                  profilePicUrl: profilePicUrl
-               });
+         let data = await db.selectWithValues(`SELECT ${UUID}, ${STRATEGY_ID} FROM user WHERE ${EMAIL}=?`, [profile.emails[0].value])
+         if(data[0].length) {
+            const strategyId = data[0][0].strategy_id;
+            data = await encryptDecrypt.compare(profile.id, strategyId).then(res => res ? {id: uuidStringify(data[0][0].uuid)} : null);
+         } else {
+            // create a hash to encrypt strategy_id
+            data = await encryptDecrypt.encrypt(profile.id);
+         }
+         if (typeof data == 'string') {
+            const uuid = uuidv4();
+            const time = convertTime();
+            await db.insertWithValues("INSERT INTO `user` SET ?", {
+               [STRATEGY_ID]: data,
+               [STRATEGY_TYPE]: 'google',
+               [FIRST_NAME]: firstName,
+               [LAST_NAME]: lastName,
+               [MIDDLE_NAME]: middleName,
+               [PROFILE_PIC_URL]: profilePicUrl,
+               [EMAIL]: email,
+               [UUID]: Buffer.from(uuidParse(uuid)),
+               [CREATED_AT]: time
             });
-         }).catch((err: Error) => {
-            next(err);
-         });  
+            data = uuid;
+         } else if (data) {
+            data =  data.id;
+         } else {
+            throw new createHttpError.BadRequest('Invalid OAuth Credentials');
+         }
+         const tokenObj = {email: profile.emails[0].value, id:data};
+         const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
+         data = await utils.issueRefreshTokenJWT(tokenObj);
+         res.cookie('refresh_token', data.token, {
+            httpOnly: true,
+            maxAge: data.expiresInMs
+         });
+         res.status(200).json({success: true, access_token: accessTokenJWT.token, 
+            expiresIn: accessTokenJWT.expires,
+            username: profile.displayName,
+            profilePicUrl: profilePicUrl
+         });
       }  
    } catch(err) {
       next(err);
-   }finally{
+   }finally {
       db.close();
    }
 });
@@ -137,40 +128,34 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
       }
       const tokenObj = await utils.verifyRefreshToken(refreshToken);
       if (!tokenObj.id) throw new createHttpError.BadRequest();
-      await db.connect();
-      db.selectWithValues(`SELECT ${EMAIL}, ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL} FROM user WHERE ${UUID}=?`, [Buffer.from(uuidParse(tokenObj.id))])
-         .then((data: any) => {
-            if(!data[0].length) {
-               throw new createHttpError.Unauthorized();
-            }
-            return {
-               [FIRST_NAME]: data[0][0][FIRST_NAME], 
-               [MIDDLE_NAME]: data[0][0][MIDDLE_NAME], 
-               [LAST_NAME]:  data[0][0][LAST_NAME],
-               [PROFILE_PIC_URL]: data[0][0][PROFILE_PIC_URL],
-               [EMAIL]: data[0][0][EMAIL]
-            };
-         }).then((data: userName & {[PROFILE_PIC_URL]: string, [EMAIL]:string}) => {
-            const token = {...tokenObj, email: data[EMAIL]};
-            const accessTokenJWT = utils.issueAccessTokenJWT(token)
-            const refreshTokenJWT = utils.issueRefreshTokenJWT(token);
-            refreshTokenJWT.then((response) => {
-               res.cookie('refresh_token', response.token, {
-                  httpOnly: true,
-                  maxAge: response.expiresInMs
-               });
-               res.status(200).json({success: true, access_token: accessTokenJWT.token, 
-                  expiresIn: accessTokenJWT.expires,
-                  username: getConsolidatedName(data),
-                  profilePicUrl: data[PROFILE_PIC_URL] 
-               });
-            });
-         }).catch((err: Error) => {
-            next(err);
-         });
+      await db.connect()
+      let data = await db.selectWithValues(`SELECT ${EMAIL}, ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL} FROM user WHERE ${UUID}=?`, [Buffer.from(uuidParse(tokenObj.id))])
+      if(!data[0].length) {
+         throw new createHttpError.Unauthorized();
+      }
+      data = {
+         [FIRST_NAME]: data[0][0][FIRST_NAME], 
+         [MIDDLE_NAME]: data[0][0][MIDDLE_NAME], 
+         [LAST_NAME]:  data[0][0][LAST_NAME],
+         [PROFILE_PIC_URL]: data[0][0][PROFILE_PIC_URL],
+         [EMAIL]: data[0][0][EMAIL]
+      };
+      const token = {...tokenObj, email: data[EMAIL]};
+      const accessTokenJWT = utils.issueAccessTokenJWT(token)
+      const response = await utils.issueRefreshTokenJWT(token);
+      res.cookie('refresh_token', response.token, {
+         httpOnly: true,
+         maxAge: response.expiresInMs
+      });
+      res.status(200).json({success: true, access_token: accessTokenJWT.token, 
+         expiresIn: accessTokenJWT.expires,
+         username: getConsolidatedName(data),
+         profilePicUrl: data[PROFILE_PIC_URL] 
+      });
+      
    } catch(err) {
       next(err);
-   }finally{
+   } finally {
       db.close();
    }
 });

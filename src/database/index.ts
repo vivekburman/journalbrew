@@ -26,24 +26,32 @@ class SQL_DB {
     constructor(connect?: boolean) {
         connect && this.connect();
     }
-    connect = async () => {
-        try {
-            this.db = await mysql.createConnection(this.CONFIG);
-        } catch(err) {
-            // console.log('DB connection error');
-            // console.log('Closing DB');
-            this.db?.end();
-            throw err;
-        }
-        // console.log('DB Connected!');
+    connect = () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                this.db = await mysql.createConnection(this.CONFIG);
+                resolve(1);
+            } catch(err) {
+                // console.log('DB connection error');
+                // console.log('Closing DB');
+                this.db?.end();
+                reject(err);
+            }
+        });
     }
     close = () => {
         this.db?.end();
         // console.log('Closing DB');
     }
-    initalizeTransc = () => this.db?.beginTransaction();
-    rollbackTransc = () => this.db?.rollback();
-    commitTransc = () => this.db?.commit();
+    initalizeTransc = () => {
+        return this.db?.beginTransaction();
+    }
+    rollbackTransc = () => {
+        return this.db?.rollback();
+    }
+    commitTransc = () => {
+        return this.db?.commit();
+    }
     insertWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any> => {
         if (query.startsWith('Insert') || query.startsWith('INSERT')) {
             return this.db?.query(query, values)
@@ -99,25 +107,28 @@ class SQL_DB {
                 switch(type) {
                     case this.TYPES.INSERT:
                         res = await this.insertWithValues(query, values);
+                        break;
                     case this.TYPES.UPDATE:
                         res = await this.updateWithValues(query, values);
+                        break;
                     case this.TYPES.SELECT:
                         res = await this.selectWithValues(query, values);
+                        break;
                     case this.TYPES.UPDATE_JSON:
                         res = await this.updateJSONValues(query, values);
+                        break;
                 }
                 if (res) {
-                    this.commitTransc();
+                    await this.commitTransc();
                 }
-            }catch(err) {
-                this.rollbackTransc();
-                return Promise.reject(err);
-            }finally {
                 this.close();
                 return res;
+            }catch(err) {
+                await this.rollbackTransc();
+                this.close();
+                return Promise.reject(err);
             }
         }
-        return res;
     }
 }
 export default SQL_DB;

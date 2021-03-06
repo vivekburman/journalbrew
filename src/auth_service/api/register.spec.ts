@@ -20,7 +20,6 @@ import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken';
 import { RequestWithPayload } from '../utils';
 import sinonChai from 'sinon-chai';
 import sinon from 'sinon';
-import { request } from 'http';
 import { v4 as uuidv4 } from 'uuid';
 
 const token = uuidv4();
