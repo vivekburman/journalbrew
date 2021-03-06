@@ -14,7 +14,7 @@ const createTags = (tags=[], readOnly, handleCrossClick) => {
     else {
       return (
         <span key={item} className="tag tag-closeable">
-          <span>{item}</span>
+          <span title={item} className="tag-text">{item}</span>
           <i className="tag-cross" data-index={index} onClick={_handleCrossClick}>&times;</i>
         </span>
       );

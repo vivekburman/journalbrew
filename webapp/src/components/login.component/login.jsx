@@ -1,7 +1,7 @@
 import React from 'react';
 import google from '../../images/login/google.svg';
-import facebook from '../../images/login/facebook.svg';
-import twitter from '../../images/login/twitter.svg';
+// import facebook from '../../images/login/facebook.svg';
+// import twitter from '../../images/login/twitter.svg';
 import './login.component.scss';
 import { hideLogin } from '../../reducers/click/login.action';
 import { useLocation } from 'react-router';

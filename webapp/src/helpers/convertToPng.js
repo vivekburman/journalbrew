@@ -29,6 +29,23 @@ export async function convertToPng(data) {
   });
 }
 
+export async function convertURLToImage(imageURL) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = imageURL;
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const res = canvas.toDataURL();
+      resolve(res);
+    }
+  });
+}
+
 export const getPngName = (name) => {
   const arr = name.split('.');
   arr[arr.length - 1] = 'png';

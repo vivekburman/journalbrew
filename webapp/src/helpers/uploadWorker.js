@@ -17,12 +17,14 @@ const uploadFileOrURL = () => {
         postMessage({
           "success": 1,
           "file": {
-            "url": res.url
+            "url": res.url,
+            "key": res.key
           }
         }) : postMessage({
           "success": 0,
           "file": {
-            "url": null
+            "url": null,
+            "key": null
           }
         }); 
     })
@@ -30,7 +32,8 @@ const uploadFileOrURL = () => {
       postMessage({
         "success": 0,
         "file": {
-          "url": null
+          "url": null,
+          "key": null
         }
       });
     });

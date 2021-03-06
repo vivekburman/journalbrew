@@ -22,4 +22,10 @@
     font-weight: bold;
     margin-left: 5px;
   }
+  & .tag-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
 }

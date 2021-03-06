@@ -1,6 +1,9 @@
 import axios from 'axios';
 const silentRefresh = (setCurrentUser) => {
   return new Promise((resolve, reject) => {
+    if (!setCurrentUser || typeof setCurrentUser != 'function') {
+      return reject();
+    }
     axios.post("/api/auth/refresh-token")
     .then(({status, data}) => {
         if(status == 200 && data.success) {
@@ -14,7 +17,6 @@ const silentRefresh = (setCurrentUser) => {
             setCurrentUser(undefined)
             reject();
         }
-  
     }).catch(err => {
         setCurrentUser(undefined);
         console.error(err);

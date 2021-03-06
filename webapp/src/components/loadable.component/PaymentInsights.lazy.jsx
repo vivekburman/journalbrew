@@ -1,3 +1,5 @@
-import loadable from '@loadable/component';
-
-export default loadable(() => import(/* webpackChunkName: "PaymentInsights" */ /* webpackMode: "lazy" */ "./loadablePaymentInsights"));
+import loadable from 'react-loadable';
+export default loadable({
+  loader: () => import("./loadablePaymentInsights"),
+  loading: () => null
+});

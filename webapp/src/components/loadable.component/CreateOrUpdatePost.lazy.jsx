@@ -1,3 +1,6 @@
-import loadable from '@loadable/component';
+import loadable from 'react-loadable';
 
-export default loadable(() => import(/* webpackChunkName: "CreateOrUpdatePost" */  /* webpackMode: "lazy" */ "./loadableCreateOrUpdatePost"));
+export default loadable({
+  loader: () => import("./loadableCreateOrUpdatePost"),
+  loading: () => null
+});

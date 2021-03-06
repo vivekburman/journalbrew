@@ -4,7 +4,7 @@ import Delimiter from '@editorjs/delimiter';
 import Header from '@editorjs/header';
 import Image from '../../_internal/image/dist/bundle';
 import Video from '../../_internal/editorjs-video/dist/bundle';
-import Link from '@editorjs/link';
+// import Link from '@editorjs/link';
 import List from '@editorjs/list';
 import Paragraph from '@editorjs/paragraph';
 
@@ -37,15 +37,17 @@ export const EDITOR_JS_TOOLS = {
     inlineToolbar: true,
     config: {
       types: '.mp4',
-      autoplay: false,
+      autoplay: true,
+      mute: true,
+      loop: true,
     },
     shortcut: 'CMD+ALT+V',
   },
-  link: {
-    class: Link,
-    inlineToolbar: true,
-    shortcut: 'CMD+ALT+A',
-  },
+  // link: {
+  //   class: Link,
+  //   inlineToolbar: true,
+  //   shortcut: 'CMD+ALT+A',
+  // },
   list: {
     class: List,
     inlineToolbar: true,

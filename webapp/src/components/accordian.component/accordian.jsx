@@ -37,7 +37,7 @@ class Accordian extends Component {
         onClick={collapseAccordian}>
         <div className="accordian-list" >
           <SimpleBar style={{paddingBottom: '60px', boxSizing: 'content-box', maxHeight: '99vh'}}>
-            {!currentUser && <div className="accordian-list-item">
+            {currentUser && <div className="accordian-list-item">
               <Link to="/new-story" className="link">
                 <div className="accordian-item">
                   <img src={story} className="item-img" alt="list-item-icon" />

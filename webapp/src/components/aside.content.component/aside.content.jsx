@@ -22,55 +22,15 @@ const createSkeleton = (size = 3) => {
   return _skeleton;
 }
 
-
-const dummyData = [
-  {
-    title: 'What has happend... So what will happen next... can we do someting So what will happen next... can we do someting?',
-    name: 'Dummy Name',
-    time: '10:00AM',
-    link: '/'
-  },  {
-    title: 'What has happend... So what will happen next... can we do someting?',
-    name: 'Dummy Name',
-    time: '10:00AM',
-    link: '/'
-  },  {
-    title: 'What has happend... So what will happen next... can we do someting?',
-    name: 'Dummy Name',
-    time: '10:00AM',
-    link: '/',
-  }
-];
 const AsideContent = (props) => {
-  const { list=[...dummyData], location } = props;
-  
-  if (list.length < 1) {
-    return (
-      <div className="aside-container flex-grow-1">
-        <ul className="ul sticky">
-          { createSkeleton() }
-        </ul>
-      </div>
-    );
-  }
+  const { list, location } = props;
 
   return (
     <div className="aside-container flex-grow-1">
-      <EventOfDay isSticky={location.pathname === '/opinions'}/>
       <Switch>
         <Route exact path="/">
-          <div className="aside-item sticky">
-            <h3 className="header">Opinions</h3>
-            <ul className="ul">
-              { list.map((entry, index) => {
-                return (
-                  <Article key={index} entry={entry} index={index} />
-                );
-              }) }
-            </ul>
-            <Link to="/opinions" className="link">
-              <div className="see-more">See More</div>
-            </Link>
+          <EventOfDay isSticky={true}/>
+          <div className="">
           </div>
         </Route>
       </Switch>

@@ -1,3 +1,5 @@
-import loadable from '@loadable/component';
-
-export default loadable(() => import(/* webpackChunkName: "UserProfile" */ /* webpackMode: "lazy" */ "./loadableUserProfile"));
+import loadable from 'react-loadable';
+export default loadable({
+  loader: () => import("./loadableUserProfile"),
+  loading: () => null
+});

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import withAuth from '../hoc/withAuth';
 import TextEditor from '../text.editor.component/text.editor.component';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import silentRefresh from '../../helpers/silentRefresh';
 import { setPostInfo } from '../../reducers/post/post.action';
 import { setCurrentUser } from '../../reducers/user/user.action';
+import withAuth from '../hoc/withAuth';
 
 const createOrUpdatePostREST = (data, token, postId=null) => {
   if (postId) {
@@ -32,7 +32,13 @@ class CreateOrUpdatePost extends Component {
     super(props);
     this.handleSave = this.handleSave.bind(this);
   }
-  handleSave(newEditorData, jsonPatch) {
+  componentDidMount() {
+    this.props.setPostInfo(null);
+  }
+  componentWillUnmount() {
+    this.props.setPostInfo(null);
+  }
+  handleSave(newEditorData, jsonPatch, callbackFunc) {
     const props = this.props;
     // 1. call create-post or update post to create new post
     createOrUpdatePostREST(props.postInfo?.postId ? jsonPatch : newEditorData, props.currentUser?.token, props.postInfo?.postId)
@@ -40,6 +46,7 @@ class CreateOrUpdatePost extends Component {
       if (data.post_id) {
         // update post_id
         props.setPostInfo({...props.postInfo, postId: data.post_id});
+        callbackFunc && callbackFunc();
       }
     })
     .catch((e) => {
@@ -75,4 +82,4 @@ const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (payload) => dispatch(setCurrentUser(payload)),
   setPostInfo: payload => dispatch(setPostInfo(payload))
 });
-export default  connect(mapStateToProps, mapDispatchToProps)(CreateOrUpdatePost);
+export default  connect(mapStateToProps, mapDispatchToProps)(withAuth(CreateOrUpdatePost));

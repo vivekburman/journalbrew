@@ -1,3 +1,6 @@
-import loadable from '@loadable/component';
+import loadable from 'react-loadable';
 
-export default loadable(() => import(/* webpackChunkName: "FullNews" */  /* webpackMode: "lazy" */ "./loadableFullNews"));
+export default loadable({
+  loader: () => import("./loadableFullNews"),
+  loading: () => null
+});

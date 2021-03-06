@@ -1,3 +1,6 @@
-import loadable from '@loadable/component';
+import loadable from 'react-loadable';
 
-export default loadable(() => import(/* webpackChunkName: "OauthCallback" */ /* webpackMode: "lazy" */ "./loadableOauthCallback"));
+export default loadable({
+  loader: () => import("./loadableOauthCallback"),
+  loading: () => null
+});
