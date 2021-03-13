@@ -5,7 +5,7 @@
 USE topselfnews_db;
 DROP TABLE IF EXISTS user;
 CREATE TABLE user (
-    id INT AUTO_INCREMENT NOT NULL,
+    uuid BINARY(16) NOT NULL,
     strategy_id TEXT NOT NULL,
     strategy_type VARCHAR(8) NOT NULL,
     email TEXT NOT NULL,
@@ -15,5 +15,5 @@ CREATE TABLE user (
     profile_pic_url TEXT,
     created_at DATETIME NOT NULL,
     last_logged_at DATETIME,
-    PRIMARY KEY(id)
+    PRIMARY KEY(uuid)
 );

@@ -29,6 +29,9 @@
 .align-items-center {
   align-items: center;
 }
+.align-self-center {
+  align-self: center;
+}
 
 .flex-0 {
   flex-grow: 0;
@@ -130,4 +133,34 @@ padding-top: 8px;
 }
 .float-right {
   float: right;
+}
+.btn-primary {
+  display: inline-block;
+  cursor: pointer;
+  padding: 9px 16px; 
+  font-size: 14px;
+  margin: 0 10px 0 8px;
+  letter-spacing: .30px;
+  @extend %font-roboto;
+  line-height: 16px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 4px;
+  background-color: #272727;
+  outline: none;
+  box-shadow: 0 0 0 1px #dcdcdc18;
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: #4b4b4b;
+  box-shadow: 0 1px 2px 0 #4b4b4b48, 0 1px 3px 1px #4b4b4b0c;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.w-100 {
+  width: 100%;
+}
+.h-100 {
+  height: 100%;
 }

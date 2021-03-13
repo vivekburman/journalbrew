@@ -1,0 +1,219 @@
+@import '../../mainSass/main';
+
+.post-publish-component {
+  margin-right: 4px;
+  & .icon-img {
+    position: relative;
+    top: 4px;
+  }
+}
+
+@media (min-width: 900px) {
+  .post-publish-component {
+    margin-right: 16px;
+  } 
+}
+.publish-body-wrapper {
+  margin-top: 35px;
+}
+.publish-form-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 40;
+  &.full-hide {
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+  &.partial-hide {
+    background-color: rgba(255, 255, 255, 0.65);
+  }
+}
+.form-wrapper {
+  height: calc(100% - 28px);
+  @extend %flex-row-nowrap;
+  padding: 15px;
+  overflow: auto;
+  background-color: #fff;
+}
+.contents-container {
+  max-width: 1024px;
+  width: 100%;
+  margin: auto;
+}
+.publish-error {
+  text-align: center;
+  margin: 0 15px 15px;
+  border-radius: 5px;
+  @extend %font-roboto;
+  color: #d71010d1;
+  font-weight: 500;
+  padding: 8px 15px;
+  background-color: #8484841a;
+}
+.publish-form {
+  @extend %flex-column-nowrap;
+  & .publish-form-input-wrapper {
+    margin: 15px 0;
+  }
+  & .publish-form-input {
+    width: 100%;
+    padding: 5px 0;
+    border: none;
+    border-bottom: 1px solid grey;
+    font-size: 14px;
+    @extend %font-roboto;
+    font-weight: 500;
+    letter-spacing: 1.0px;
+    &.form-image {
+      width: 0;
+      height: 0;
+    }
+    &.form-title {
+      font-size: 16px;
+      resize: none;
+      overflow: hidden;
+      display: block;
+      font-weight: 700;
+    }
+    &.form-summary {
+      resize: none;
+      overflow: hidden;
+      display: block;
+    }
+    &:focus {
+      outline: none;
+      border: none;
+      border-bottom: 1px solid grey;
+    }
+  }
+  .publish-radio-title {
+    color: #75757c;
+    font-weight: 500;
+    @extend %font-roboto;
+  }
+  & .form-submit {
+    float: right;
+    padding: 6px 12px;
+    box-shadow: none;
+    border: none;
+    background-color: #242424;
+    &:hover {
+      box-shadow: none;
+      background-color: #1d1c1c9d;
+    }
+  }
+  .forminput-container {
+    margin: 0 15px;
+    flex-grow: 1;
+    &.child-1 {
+      min-width: 50%;
+    }
+  }
+}
+@media(min-width: 1000px) {
+  .publish-form {
+    flex-direction: row;
+  } 
+}
+.form-image-wrapper {
+  height: 200px;
+  background: #8484841a;
+  position: relative;
+  & .form-image-alt {
+    color: #727272d1;
+    box-sizing: border-box;
+    @extend %font-crimson;
+    font-size: 18px;
+    font-weight: 500;
+    position: absolute;
+    width: 100%;
+    padding: 0 16px;
+    top: 28%;
+  }
+  & .form-loader {
+    top: 47%;
+    left: 42%;
+  }
+}
+.form-input-manual {
+  &:hover {
+    color: rgb(85, 85, 85);
+  }
+}
+.forminput-tag-wrapper {
+  @extend %flex-row-wrap;
+  position: relative;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.05);
+  & .publish-form-input {
+    flex-grow: 1;
+    width: auto;
+    background-color: transparent;
+    border: none;
+    &:focus {
+      border: none;
+    }
+  }
+}
+.thumbnail-img {
+  width: 100%;
+  height: 100%;  
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.remove-img-btn  {
+  @extend %font-roboto;
+  cursor: pointer;
+  box-shadow: 0px 0px 1px 1px #f2f2f24f;
+  background-color: #f2f2f2;
+  visibility: hidden;
+  padding: 4px 16px;
+  border-radius: 4px;
+}
+.remove-btn-wrapper {
+  top: 0;
+  left: 0;
+  position: absolute;
+  @extend %flex-row-wrap;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  &:hover {
+    background-color: #f2f2f283;
+    & .remove-img-btn {
+      visibility: visible;
+    }
+  }
+}
+.form-error {
+  @extend %font-roboto;
+  color: rgba(194, 26, 26, 0.692);
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  margin-top: 4px;
+}
+.err-show {
+  visibility: visible;
+}
+.err-hide {
+  visibility: hidden;
+}
+.publish-uploading {
+  width: 320px;
+  padding: 16px;
+  background: #8484841a;
+  height: 142px;
+  border-radius: 4px;
+  & .publish-heading {
+    color: #727272d1;
+    @extend %font-crimson;
+    font-size: 22px;
+  }
+}

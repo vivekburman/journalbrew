@@ -1,0 +1,48 @@
+@import '../../mainSass/main';
+.radio-btn-wrapper {
+  
+  & .radio-btn-itemwrapper {
+    text-transform: capitalize;
+    @extend %font-roboto;
+  }
+  & .radio-btn-wrapper {
+    padding: 2px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    box-sizing: border-box;
+    margin: 5px 5px 5px 15px;
+    & .radio-btn {
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      background-color: transparent;
+      padding: 2px;
+      border: 2px solid grey;
+      & .radio-btn-fill {
+        border-radius: 50%;
+        background-color: #f28eb0;
+        height: 100%;
+        transform: scale(0); 
+        transition: transform 150ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+        &.active {
+          transform: initial;
+        }
+      }
+    }
+
+    &:hover {
+      background-color: rgba(128, 128, 128, 0.05);
+    }
+    &.active:hover {
+      background-color: #f28eaf17;
+    }
+    &.active .radio-btn {
+      border-color: #f28eb0;
+      transition: border 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      & .radio-btn-fill {
+        transform: initial;
+      }
+    }
+  }
+}

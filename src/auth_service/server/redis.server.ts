@@ -1,12 +1,11 @@
 import redis, { RedisClient } from 'redis';
 import createHttpError from 'http-errors';
-import { response } from 'express';
 
 let client: RedisClient; 
 export const initRedis = () => {
     client =  redis.createClient({
         port: 6379,
-        host: '192.168.0.105',
+        host: '192.168.0.104',
         password: 'topselfnews' 
     });
     

@@ -1,13 +1,31 @@
+@import '../../mainSass/index.scss';
 .tag {
   background-color: rgba(0, 0, 0, 0.05);
   padding: 6px 16px;
   border-radius: 3px;
+  height: 26px;
   color:rgba(0, 0, 0, 0.54);
   font-weight: 400;
   margin: 4px 16px 4px 0;
 }
-.tags-container {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.tag-closeable {
+  @extend %flex-row-nowrap;
+  align-items: center;  
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.10);
+  }
+  & .tag-cross {
+    position: relative;
+    top: 2px;
+    font-size: 22px;
+    font-weight: bold;
+    margin-left: 5px;
+  }
+  & .tag-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
 }

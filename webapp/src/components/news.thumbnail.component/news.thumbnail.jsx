@@ -7,6 +7,7 @@ import { showCompletePost } from '../../reducers/click/showcompletepost.action';
 import { Link } from 'react-router-dom';
 import './news.thumbnail.component.scss';
 import CreatorInfo from '../creator.info.component/creator.info';
+import { Tags } from '../tags.component/tags';
 
 const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
   // const imgRef = useRef();
@@ -36,9 +37,11 @@ const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
   //   const _ref = refs.current[counter];
   //   _ref.animationPause();
   // }
-  
+  const handleClick = () => {
+    showCompletePost(postID);
+  }; 
   return (
-    <li className="news-item" onClick={() => showCompletePost(postID)} >
+    <li className="news-item" onClick={handleClick} >
       <Link to={`/full-story?${postID}` } className="news-item-link">
         <div className="news-thumbnail">
           <img src={ dummy } alt="Images" className="news-image flex"/>
@@ -58,6 +61,7 @@ const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
               <CreatorInfo username={'Mr.Talkbox'} time={'10:30AM'} />
             </div>      
             <div className="menu-section">
+              <Tags readOnly={true} tags={["Opinion"]} />
               <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" />
             </div>
           </div>

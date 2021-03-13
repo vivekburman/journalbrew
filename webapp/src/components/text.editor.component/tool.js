@@ -1,47 +1,66 @@
 import Embed from '@editorjs/embed';
-import List from '@editorjs/list';
-import Header from '@editorjs/header';
-import Quote from '@editorjs/quote';
 import Marker from '@editorjs/marker';
 import Delimiter from '@editorjs/delimiter';
-import SimpleVideo from '../../_internal/simple-video/dist/bundle';
-import SimpleImage from '../../_internal/simple-image/dist/bundle';
-import Table from '../../_internal/table/dist/bundle';
+import Header from '@editorjs/header';
+import Image from '../../_internal/image/dist/bundle';
+import Video from '../../_internal/editorjs-video/dist/bundle';
+// import Link from '@editorjs/link';
+import List from '@editorjs/list';
+import Paragraph from '@editorjs/paragraph';
 
 export const EDITOR_JS_TOOLS = {
-  embed: Embed,
-  table: {
-    class: Table,
+  paragraph: {
+    class: Paragraph,
     inlineToolbar: true,
-    shortcut: 'CMD+ALT+T',
+    shortcut: 'CMD+ALT+P',
+  },
+  header: {
+    class: Header,
+    inlineToolbar: true,
+    shortcut: 'CMD+ALT+H',
   },
   marker: {
     class: Marker,
-    shortcut: 'CMD+ALT+T',
+    inlineToolbar: true,
+    shortcut: 'CMD+ALT+M',
   },
+  image: {
+    class: Image,
+    inlineToolbar: true,
+    config: {
+      types: '.jpg,.png,.jpeg'
+    },
+    shortcut: 'CMD+ALT+I',
+  },
+  video: {
+    class: Video,
+    inlineToolbar: true,
+    config: {
+      types: '.mp4',
+      autoplay: true,
+      mute: true,
+      loop: true,
+    },
+    shortcut: 'CMD+ALT+V',
+  },
+  // link: {
+  //   class: Link,
+  //   inlineToolbar: true,
+  //   shortcut: 'CMD+ALT+A',
+  // },
   list: {
     class: List,
     inlineToolbar: true,
     shortcut: 'CMD+ALT+L',
   },
-  image: SimpleImage,
-  video: SimpleVideo,
-  header: {
-    class: Header,
-    inlineToolbar: ['link'],
-    config: {
-      placeholder: 'Header',
-    },
-    shortcut: 'CMD+ALT+H',
+  embed: {
+    class: Embed,
+    inlineToolbar: false,
+    shortcut: 'CMD+ALT+E',
   },
-  quote: {
-    class: Quote,
-    inlineToolbar: true,
-    config: {
-      quotePlaceholder: 'Enter a blockquote...',
-      captionPlaceholder: 'Quote\'s Author',
-    },
-    shortcut: 'CMD+ALT+Q',
+  delimiter: {
+    class: Delimiter,
+    inlineToolbar: false,
+    shortcut: 'CMD+ALT+D',
   },
-  delimiter: Delimiter,
 };

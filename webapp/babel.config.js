@@ -25,6 +25,7 @@ module.exports = {
           {
             removeImport: true,
           },
+          "emotion"
         ],
         '@babel/plugin-transform-react-inline-elements',
         '@babel/plugin-transform-react-constant-elements',

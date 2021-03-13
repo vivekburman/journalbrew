@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const dotenv = require('dotenv-webpack');
 
 module.exports = function(_env, args) {
   const isProduction = args.mode === 'production';
@@ -97,6 +98,7 @@ module.exports = function(_env, args) {
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       isDevelopment && new BundleAnalyzerPlugin(),
+      new dotenv()
     ].filter(Boolean),
     optimization: {
       minimize: isProduction,
@@ -120,8 +122,8 @@ module.exports = function(_env, args) {
       ],
       splitChunks: {
         chunks: 'all',
-        minSize: 10000,
-        maxSize: 2500000,
+        minSize: 0,
+        // maxSize: 2500000,
         maxInitialRequests: 20,
         maxAsyncRequests: 20,
         cacheGroups: {
@@ -152,6 +154,19 @@ module.exports = function(_env, args) {
           changeOrigin: true,
           pathRewrite: { '^/api': '' },
           target: 'http://localhost:5000'
+        },
+        '/api/post': {
+          changeOrigin: true,
+          pathRewrite: { '^/api': '' },
+          target: 'http://localhost:5001'
+        },
+        '/edit-story/a/api/post': {
+          changeOrigin: true,
+          pathRewrite: function (pathname) {
+            const startIndex = pathname.indexOf("/api/");
+            return pathname.substring(startIndex + 4);
+          },
+          target: 'http://localhost:5001'
         }
       }
     }

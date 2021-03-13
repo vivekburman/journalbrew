@@ -20,7 +20,9 @@ import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken';
 import { RequestWithPayload } from '../utils';
 import sinonChai from 'sinon-chai';
 import sinon from 'sinon';
-import { request } from 'http';
+import { v4 as uuidv4 } from 'uuid';
+
+const token = uuidv4();
 
 // const should_ = chai.should();
 chai.use(chaiHttp);
@@ -55,7 +57,8 @@ describe('Test Cases for Authentication & Authorization and Auth Server', () => 
     let accessToken: {token: string, expires:string}, refreshToken: {token: string, expires:string, expiresInMs: number};
     it('Generate Access Token', (done) => {
         accessToken = utils.issueAccessTokenJWT({
-            email: 'abc@gmail.com'
+            email: 'abc@gmail.com',
+            id: uuidv4()
         });
         expect(accessToken.expires).equal('15m');
         expect(accessToken.token).to.be.a('string');
@@ -77,13 +80,14 @@ describe('Test Cases for Authentication & Authorization and Auth Server', () => 
     });
     it('Generate Refresh Token', async () => {
         refreshToken = await utils.issueRefreshTokenJWT({
-            email: 'abc@gmail.com'
+            email: 'abc@gmail.com',
+            id: token
         });
         expect(refreshToken.expires).to.equal('1y');
     });
     it('Verify Refresh Token', async () => {
         const token = await utils.verifyRefreshToken(refreshToken.token);
-        expect(token.email).to.equal('abc@gmail.com');
+        expect(token.id).to.equal(token);
     });
    it('Check Access Token Expired', () => {
         const token = createToken({

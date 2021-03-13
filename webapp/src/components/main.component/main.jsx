@@ -1,36 +1,23 @@
-/* eslint-disable new-cap */
 import React, {Component} from 'react';
-// import Advertisement from '../advertisement.component/advertisement';
 import './main.component.scss';
 import {Switch, Route} from 'react-router-dom';
-import loadable from '@loadable/component';
-import LoadableNewsFeed from '../loadable.component/loadableNewsFeed';
-
-// const UserProfile = loadable(() => import('../loadable.component/loadableUserProfile'));
-
-const UserProfile = loadable(() => import('../loadable.component/loadableUserProfile'));
-
-const NewsFeed = loadable(() => import('../loadable.component/loadableNewsFeed'));
-
-const TextEditor = loadable(() => import('../loadable.component/loadableTextEditor'));
-
-const FullNews = loadable(() => import('../loadable.component/loadableFullNews'));
-
-const PaymentInsights = loadable(() => import('../loadable.component/loadablePaymentInsights'));
-
+import UserProfile from '../loadable.component/UserProfile.lazy';
+import NewsFeed from '../loadable.component/NewsFeed.lazy';
+import CreateOrUpdatePost from '../loadable.component/CreateOrUpdatePost.lazy';
+import FullNews from '../loadable.component/FullNews.lazy';
+import PaymentInsights from '../loadable.component/PaymentInsights.lazy';
 class Main extends Component {
   render() {
     return (
       <main className="main">
-        <React.Suspense fallback={<></>}>
           <Switch>
             <Route exact path={['/', '/opinions']} component={NewsFeed} />
             <Route exact path="/user-profile" component={UserProfile} />
-            <Route exact path="/new-story" component={TextEditor} />
+            <Route exact path="/new-story" component={CreateOrUpdatePost} />
+            <Route exact path="/edit-story/a/:postId" component={CreateOrUpdatePost} />
             <Route exact path="/full-story" component={FullNews} />
             <Route exact path="/payment-history-&-insights" component={PaymentInsights} />
           </Switch>
-        </React.Suspense>
       </main>
     );
   }

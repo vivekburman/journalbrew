@@ -6,25 +6,10 @@ import updateWindowSize from '../../reducers/window/resize.action';
 import '../../mainSass/index.scss';
 import './home.page.component.scss';
 import { Switch, Route } from 'react-router';
-import loadable from '@loadable/component';
 import { setCurrentUser } from '../../reducers/user/user.action';
-import axios from 'axios';
+import silentRefresh from '../../helpers/silentRefresh';
+import OauthCallback from '../loadable.component/OauthCallback.lazy';
 
-const OauthCallback = loadable(() => import('../loadable.component/loadableOauthCallback'));
-const silentRefresh = (setCurrentUser) => {
-    axios.post("/api/auth/refresh-token")
-    .then(({status, data}) => {
-        if(status == 200 && data.success) {
-          setCurrentUser({
-            name: data.username,
-            profilePicUrl: data.profilePicUrl,
-            token: data.access_token
-          });
-        }
-    }).catch(err => {
-      console.error(err);
-    });
-}
 class HomePage extends Component {
     constructor() {
         super();
@@ -43,8 +28,7 @@ class HomePage extends Component {
     render () {
         return (
             <Switch>
-                <Route exact path="/oauth_callback">
-                    <OauthCallback />
+                <Route exact path="/oauth_callback" component={OauthCallback}>
                 </Route>
                 <Route>
                     <div className="homepage">

@@ -1,7 +1,7 @@
 import passport from 'passport';
-import {Strategy as FacebookStrategy} from 'passport-facebook';
-import {Strategy as LinkedInStrategy} from 'passport-linkedin-oauth2';
-import {Strategy as TwitterStrategy} from 'passport-twitter';
+// import {Strategy as FacebookStrategy} from 'passport-facebook';
+// import {Strategy as LinkedInStrategy} from 'passport-linkedin-oauth2';
+// import {Strategy as TwitterStrategy} from 'passport-twitter';
 import {Strategy as GoogleStartegy} from 'passport-google-oauth20';
 import {config} from '../config/config';
 

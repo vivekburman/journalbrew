@@ -1,13 +1,15 @@
 import {Router, NextFunction, Response, Request} from 'express';
 import passport from 'passport';
-import { Database } from '../../database';
 import { utils } from '../utils/jwtUtils';
 import { encryptDecrypt } from '../utils/encrypt_decrypt';
 import createHttpError from 'http-errors';
 import { delRedis } from '../server/redis.server';
+import { v4 as uuidv4, parse as uuidParse, stringify as uuidStringify } from 'uuid';
+import { convertTime } from '../utils/general';
+import { Buffer } from 'buffer';
+import SQL_DB from '../../database';
 
 const UNDEF = undefined,
-   ID = 'id',
    STRATEGY_ID = 'strategy_id',
    // USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo',
    // REFRESH_TOKEN_URL = 'https://oauth2.googleapis.com/token',
@@ -18,7 +20,8 @@ const UNDEF = undefined,
    PROFILE_PIC_URL = 'profile_pic_url', 
    EMAIL = 'email', 
    CREATED_AT = 'created_at', 
-   LAST_LOGGED_AT = 'last_logged_at';
+   LAST_LOGGED_AT = 'last_logged_at',
+   UUID = 'uuid';
 
    
 type userName = {
@@ -26,11 +29,6 @@ type userName = {
    [MIDDLE_NAME]:string, 
    [LAST_NAME]:string
 }
-
-const convertTime = (time?: number|Date|undefined) => {
-   return time ? new Date(time).toISOString().slice(0, 19).replace('T', ' ') 
-   : new Date().toISOString().slice(0, 19).replace('T', ' ') 
-};
 
 const getName = (name:string) => {
    const name_ = name?.split(' ');
@@ -59,117 +57,107 @@ registerRouter.get('/google', passport.authenticate('google',{
 
 registerRouter.get('/protected', utils.verifyAccessToken, (req, res) => {
    res.send('YOU ARE AUTHORIZED');
-})
+});
 
 // auth google redirect
-registerRouter.get('/google/redirect', passport.authenticate('google', {session: false}), (req: any, res: Response, next:NextFunction) => { 
+registerRouter.get('/google/redirect', passport.authenticate('google', {session: false}), async (req: any, res: Response, next:NextFunction) => { 
+   const db = new SQL_DB();
    try {
       const {profile} = req.user;
-
       if (!profile.emails || !profile.emails[0] || !profile.emails[0].value) {
          throw new createHttpError.BadRequest("Email not Found");
       } else {
          const {firstName, middleName, lastName} = getName(profile.displayName);
          const profilePicUrl = profile.photos[0]?.value || null;
          const email = profile.emails[0]?.value;
-         const db = Database.getDBQueryHandler();
-
-         db.selectWithValues(`SELECT ${ID}, ${STRATEGY_ID} FROM user WHERE ${EMAIL}=?`, [profile.emails[0].value])
-            .then((data): Promise<string|boolean> => {            
-               if(data[0].length) {
-                  const strategyId = data[0][0].strategy_id;
-                  return encryptDecrypt.compare(profile.id, strategyId);
-               } else {
-                  // create a hash to encrypt strategy_id
-                  return encryptDecrypt.encrypt(profile.id);
-               }
-            })
-            .then((data: string | boolean) => {
-               const time = convertTime();
-               if (typeof data == 'string') {
-                  db.insertWithValues(
-                     `INSERT INTO user (${STRATEGY_ID}, ${STRATEGY_TYPE}, ${FIRST_NAME}, 
-                        ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL}, ${EMAIL}, ${CREATED_AT}, ${LAST_LOGGED_AT}) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
-                           data,
-                           'google',
-                           firstName,
-                           middleName,
-                           lastName,
-                           profilePicUrl,
-                           email,
-                           time,
-                           UNDEF
-                  ]);
-               } else if (data) {
-                  return;
-               }
-               throw new createHttpError.BadRequest('Invalid OAuth Credentials');
-            })
-            .then(() => {
-               const tokenObj = {email: profile.emails[0].value};
-               const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
-               const refreshTokenJWT = utils.issueRefreshTokenJWT(tokenObj);
-               refreshTokenJWT.then((response) => {
-                  res.cookie('refresh_token', response.token, {
-                     httpOnly: true,
-                     maxAge: response.expiresInMs
-                  });
-                  res.status(200).json({success: true, access_token: accessTokenJWT.token, 
-                     expiresIn: accessTokenJWT.expires,
-                     username: profile.displayName,
-                     profilePicUrl: profilePicUrl
-                  });
-               });
-            }).catch((err: Error) => {
-               next(err);
-            })  
+         await db.connect();
+         let data = await db.selectWithValues(`SELECT ${UUID}, ${STRATEGY_ID} FROM user WHERE ${EMAIL}=?`, [profile.emails[0].value])
+         if(data[0].length) {
+            const strategyId = data[0][0].strategy_id;
+            data = await encryptDecrypt.compare(profile.id, strategyId).then(res => res ? {id: uuidStringify(data[0][0].uuid)} : null);
+         } else {
+            // create a hash to encrypt strategy_id
+            data = await encryptDecrypt.encrypt(profile.id);
+         }
+         if (typeof data == 'string') {
+            const uuid = uuidv4();
+            const time = convertTime();
+            await db.insertWithValues("INSERT INTO `user` SET ?", {
+               [STRATEGY_ID]: data,
+               [STRATEGY_TYPE]: 'google',
+               [FIRST_NAME]: firstName,
+               [LAST_NAME]: lastName,
+               [MIDDLE_NAME]: middleName,
+               [PROFILE_PIC_URL]: profilePicUrl,
+               [EMAIL]: email,
+               [UUID]: Buffer.from(uuidParse(uuid)),
+               [CREATED_AT]: time
+            });
+            data = uuid;
+         } else if (data) {
+            data =  data.id;
+         } else {
+            throw new createHttpError.BadRequest('Invalid OAuth Credentials');
+         }
+         const tokenObj = {email: profile.emails[0].value, id:data};
+         const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
+         data = await utils.issueRefreshTokenJWT(tokenObj);
+         res.cookie('refresh_token', data.token, {
+            httpOnly: true,
+            maxAge: data.expiresInMs
+         });
+         res.status(200).json({success: true, access_token: accessTokenJWT.token, 
+            expiresIn: accessTokenJWT.expires,
+            username: profile.displayName,
+            profilePicUrl: profilePicUrl
+         });
       }  
    } catch(err) {
       next(err);
+   }finally {
+      db.close();
    }
 });
 
 registerRouter.post('/refresh-token', async (req:Request, res:Response, next:NextFunction) => {
    const refreshToken = req.cookies['refresh_token'];
+   const db = new SQL_DB();
    try {
       if (!refreshToken) {
          throw new createHttpError.BadRequest();
       }
       const tokenObj = await utils.verifyRefreshToken(refreshToken);
-      if (!tokenObj.email) throw new createHttpError.BadRequest()
-      const db = Database.getDBQueryHandler();
-      db.selectWithValues(`SELECT ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL} FROM user WHERE ${EMAIL}=?`, [tokenObj.email])
-         .then((data: any) => {
-            if(!data[0].length) {
-               throw new createHttpError.Unauthorized();
-            }
-            return {
-               [FIRST_NAME]: data[0][0][FIRST_NAME], 
-               [MIDDLE_NAME]: data[0][0][MIDDLE_NAME], 
-               [LAST_NAME]:  data[0][0][LAST_NAME],
-               [PROFILE_PIC_URL]: data[0][0][PROFILE_PIC_URL]
-            };
-         }).then((data: userName & {[PROFILE_PIC_URL]: string}) => {
-            const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
-            const refreshTokenJWT = utils.issueRefreshTokenJWT(tokenObj);
-            refreshTokenJWT.then((response) => {
-               res.cookie('refresh_token', response.token, {
-                  httpOnly: true,
-                  maxAge: response.expiresInMs
-               });
-               res.status(200).json({success: true, access_token: accessTokenJWT.token, 
-                  expiresIn: accessTokenJWT.expires,
-                  username: getConsolidatedName(data),
-                  profilePicUrl: data[PROFILE_PIC_URL] 
-               });
-            });
-         }).catch((err: Error) => {
-            next(err);
-         });
+      if (!tokenObj.id) throw new createHttpError.BadRequest();
+      await db.connect()
+      let data = await db.selectWithValues(`SELECT ${EMAIL}, ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL} FROM user WHERE ${UUID}=?`, [Buffer.from(uuidParse(tokenObj.id))])
+      if(!data[0].length) {
+         throw new createHttpError.Unauthorized();
+      }
+      data = {
+         [FIRST_NAME]: data[0][0][FIRST_NAME], 
+         [MIDDLE_NAME]: data[0][0][MIDDLE_NAME], 
+         [LAST_NAME]:  data[0][0][LAST_NAME],
+         [PROFILE_PIC_URL]: data[0][0][PROFILE_PIC_URL],
+         [EMAIL]: data[0][0][EMAIL]
+      };
+      const token = {...tokenObj, email: data[EMAIL]};
+      const accessTokenJWT = utils.issueAccessTokenJWT(token)
+      const response = await utils.issueRefreshTokenJWT(token);
+      res.cookie('refresh_token', response.token, {
+         httpOnly: true,
+         maxAge: response.expiresInMs
+      });
+      res.status(200).json({success: true, access_token: accessTokenJWT.token, 
+         expiresIn: accessTokenJWT.expires,
+         username: getConsolidatedName(data),
+         profilePicUrl: data[PROFILE_PIC_URL] 
+      });
+      
    } catch(err) {
       next(err);
+   } finally {
+      db.close();
    }
-
 });
 
 registerRouter.delete('/logout', async (req, res, next) => {
@@ -179,7 +167,7 @@ registerRouter.delete('/logout', async (req, res, next) => {
          throw new createHttpError.BadRequest();
       }
       const response = await utils.verifyRefreshToken(refreshToken);
-      await delRedis(response.email);
+      await delRedis(response.id);
       res.sendStatus(204);
    }catch(err) {
       next(err);
