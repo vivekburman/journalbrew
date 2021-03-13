@@ -300,6 +300,32 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
 postRouter.get('/view-post', () => {
 
 });
+postRouter.get('/get-post', utils.verifyAccessToken, async (req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const payload:User = req['payload'] as User;
+        const postId = req.query.postId;
+        if (!postId) {
+            next(new createHttpError.InternalServerError("Post ID is null"));
+        } else {
+            const db = new SQL_DB();
+            const authorID = Buffer.from(uuidParse(payload['id']));
+            const sqlQuery = `SELECT * FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
+            let response = await db.exec(db.TYPES.SELECT, sqlQuery, [authorID, postId]);
+            if (response?.[0]?.[0]?.[FULL_STORY]) {
+                res.status(200).json({
+                    story: response[0][0][FULL_STORY]
+                });
+        
+            } else {
+                next(new createHttpError.InternalServerError("Story not found"));
+            }
+        }
+        
+    }catch(err) {
+        next(err);
+    }
+});
 postRouter.delete('/delete-post', () => {
 
 });

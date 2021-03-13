@@ -1,8 +1,8 @@
 const uploadFileOrURL = () => {
   onmessage = (e) => {
-    const {fileOrURL, token, baseURL, type } = e.data;
+    const {file, token, baseURL, type } = e.data;
     const _formData = new FormData();
-    _formData.append('media', fileOrURL);
+    _formData.append('media', file);
 
     fetch(`${baseURL}/api/post/upload-media/${type == 1 ? 'image' : 'video'}`, {
       method: 'POST',
@@ -13,7 +13,16 @@ const uploadFileOrURL = () => {
     })
     .then(res => res.json())
     .then((res) => {
-      res.success ?
+      if (res.error && res.error.status == 401) {
+        postMessage({
+          "success": -1,
+          "file": {
+            "url": null,
+            "key": null
+          }
+        });
+      } else {
+        res.success ?
         postMessage({
           "success": 1,
           "file": {
@@ -26,9 +35,10 @@ const uploadFileOrURL = () => {
             "url": null,
             "key": null
           }
-        }); 
+        });
+      } 
     })
-    .catch(() => {
+    .catch((e) => {
       postMessage({
         "success": 0,
         "file": {

@@ -97,7 +97,7 @@ module.exports = function(_env, args) {
         inject: true,
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-      new BundleAnalyzerPlugin(),
+      isDevelopment && new BundleAnalyzerPlugin(),
       new dotenv()
     ].filter(Boolean),
     optimization: {
@@ -158,6 +158,14 @@ module.exports = function(_env, args) {
         '/api/post': {
           changeOrigin: true,
           pathRewrite: { '^/api': '' },
+          target: 'http://localhost:5001'
+        },
+        '/edit-story/a/api/post': {
+          changeOrigin: true,
+          pathRewrite: function (pathname) {
+            const startIndex = pathname.indexOf("/api/");
+            return pathname.substring(startIndex + 4);
+          },
           target: 'http://localhost:5001'
         }
       }

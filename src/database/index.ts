@@ -118,7 +118,7 @@ class SQL_DB {
                         res = await this.updateJSONValues(query, values);
                         break;
                 }
-                if (res) {
+                if (res && type != this.TYPES.SELECT) {
                     await this.commitTransc();
                 }
                 this.close();

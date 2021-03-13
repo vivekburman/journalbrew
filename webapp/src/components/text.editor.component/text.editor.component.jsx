@@ -11,6 +11,9 @@ import workerScript from '../../helpers/uploadWorker';
 import imageCompression from 'browser-image-compression';
 import { convertToPng, getPngName } from '../../helpers/convertToPng';
 import Axios from 'axios';
+import silentRefresh from '../../helpers/silentRefresh';
+import { setCurrentUser } from '../../reducers/user/user.action';
+import { withRouter } from 'react-router';
 
 const imageSize = 1024 * 1024 * 5;
 const MEDIA_TYPE = {
@@ -23,6 +26,10 @@ class TextEditor extends Component {
     super(props);
     this.pendingRemove = null;
     this.timer = 0;
+    this.state = {
+      error: false,
+      isEditMode: null
+    };
     this.instanceRef = createRef(null);
     this.EDITOR_JS_TOOLS = {...EDITOR_JS_TOOLS};
     this.EDITOR_JS_TOOLS.image.config = {
@@ -45,10 +52,47 @@ class TextEditor extends Component {
     };
   }
   componentDidMount() {
-    this.props.setEditorData(null);
+    this.editOrNewMode().then(res => {
+      this.props.setEditorData(res);      
+      this.setState({
+        error: false,
+        isEditMode: !!res
+      });
+    }).catch(() => {
+      this.setState({error: true});
+      this.props.setEditorData(null);
+    })
   }
   componentWillUnmount() {
     this.props.setEditorData(null);
+  }
+  getArticleById = (postId, token) => {
+    if (!postId) return;
+    return Axios.get(`api/post/get-post?postId=${postId}`, {
+      headers: {
+        'Authorization': token
+      }
+    });
+  }
+  editOrNewMode = () => {
+    if(this.props.location.pathname.startsWith("/edit-story/a")) {
+      return this.getArticleById(this.props.match.params.postId, this.props.currentUser?.token)
+      .then(({data}) => data.story)
+      .catch(e => {
+        if (e.response.status == 401) {
+          return silentRefresh(this.props.setCurrentUser).then(() => {
+            // try to do same again
+            return this.getArticleById(this.props.match.params.postId, 
+              this.props.currentUser?.token)
+              .then(({data}) => data.story);
+          }).catch(() => {
+            return null;
+          }); // if it fails then props.currentUser will be false so, it will automatically show login modal
+        }
+        return null;
+      });
+    }
+    return Promise.reject(null);
   }
   handleEditorImageUploadByURL = (url) => {
     return Promise.resolve({
@@ -103,40 +147,57 @@ class TextEditor extends Component {
     }
     return imageCompression(file, options);
   }
-  handleEditorImageUpload = (fileOrURL) => {
+  handleEditorImageUpload = (fileObj) => {
     // return a promise
     const {currentUser} = this.props;
     if (!currentUser) {
       return Promise.reject({
         'success': 0,
         'file': {
-          'url': null
+          'url': null,
+          'key': null
         }
       });
     }
     return new Promise(async (resolve, reject) => {
       let file;
-      if (fileOrURL.size > imageSize) {
-        file = await this.compressImage(fileOrURL);
+      if (fileObj.size > imageSize) {
+        file = await this.compressImage(fileObj);
         const filename = getPngName(file.name);
         file= new File([file], filename, {type: 'image/png', lastModified: Date.now()});
       } else {
-        file = await convertToPng(fileOrURL);
+        file = await convertToPng(fileObj);
       }
+      const self = this;
       const worker = new Worker(workerScript);
       worker.addEventListener('message', (e) => {
         const data = e.data;
-        return data.success == 1 ? resolve(data) : reject(data);
+        if (data.success == -1) {
+          silentRefresh(self.props.setCurrentUser).then(() => {
+            if (!self.props.currentUser) {
+              reject({...data, success: 0});
+            } else {
+              worker.postMessage({
+                file: file,
+                token: self.props.currentUser.token,
+                baseURL: window.location.origin,
+                type: 1
+              });
+            }
+          }).catch(() => reject({...data, success: 0}));
+        } else {
+          return data.success == 1 ? resolve(data) : reject(data);
+        }
       });
       worker.postMessage({
-        fileOrURL: file,
+        file: file,
         token: currentUser.token,
         baseURL: window.location.origin,
         type: 1
       });
     });
   }
-  handleEditorVideoUpload = (fileOrURL) => {
+  handleEditorVideoUpload = (fileObj) => {
     const {currentUser} = this.props;
     if (!currentUser) {
       return Promise.reject({
@@ -149,12 +210,29 @@ class TextEditor extends Component {
     }
     return new Promise(async (resolve, reject) => {
       const worker = new Worker(workerScript);
+      const self = this;
+
       worker.addEventListener('message', (e) => {
         const data = e.data;
-        return data.success == 1 ? resolve(data) : reject(data);
+        if (data.success == -1) {
+          silentRefresh(self.props.setCurrentUser).then(() => {
+            if (!self.props.currentUser) {
+              reject({...data, success: 0});
+            } else {
+              worker.postMessage({
+                file: file,
+                token: self.props.currentUser.token,
+                baseURL: window.location.origin,
+                type: 1
+              });
+            }
+          }).catch(() => reject({...data, success: 0}));
+        } else {
+          return data.success == 1 ? resolve(data) : reject(data);
+        }
       });
       worker.postMessage({
-        fileOrURL,
+        file: fileObj,
         token: currentUser.token,
         baseURL: window.location.origin,
         type: 0
@@ -170,25 +248,37 @@ class TextEditor extends Component {
       const diff = new JSONDiff({...self.props.editorData, time: 0, version: 0}, {...newEditorData, time: 0, version: 0});
       diff.generateObjDiff();
       self.props.setEditorData(newEditorData);
-      diff.jsonPatch.length && self.props.handleSave(newEditorData, diff.jsonPatch, () => {
-        if (self.pendingRemove) {
-          // remove it
-          self.deleteMedia(self.pendingRemove.data, self.pendingRemove.type);
-        }
-      });
+      if (self.checkForMeaningfulUpdate(diff.jsonPatch)) {
+        self.props.handleSave(newEditorData, diff.jsonPatch, () => {
+          if (self.pendingRemove) {
+            // remove it
+            self.deleteMedia(self.pendingRemove.data, self.pendingRemove.type);
+          }
+        });
+      }
     }, 500);
   }
-
+  checkForMeaningfulUpdate = (jsonPatch) => {
+    if (jsonPatch.length == 0) return;
+    // TODO: cleanup data that is left empty
+    return true;
+  }
   render() {
     const defaultPlaceholder = 'Let the world know what happend!';
     const saveEditorData = this.saveEditorData;
+    const {error, isEditMode} = this.state;
     return (
       <article className='text-editor-container outline-none'>
-        <EditorJs data={this.props.editorData}
+        {error ? 
+        <div>404 ERROR</div>
+        : isEditMode === null ? 
+        <></>
+        :<EditorJs 
+          data={this.props.editorData}
           onChange={saveEditorData}
           tools={ EDITOR_JS_TOOLS }
           instanceRef = { (instance) => (this.instanceRef.current = instance) }
-          placeholder={defaultPlaceholder} />
+          placeholder={defaultPlaceholder} />}
       </article>
     );
   }
@@ -199,6 +289,7 @@ const mapStateToProps = ({editorData, user, post}) => ({
   currentUser: user.currentUser
 });
 const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (payload) => dispatch(setCurrentUser(payload)),
   setEditorData: (payload) => dispatch(setEditorData(payload))
 });
-export default connect(mapStateToProps, mapDispatchToProps)(TextEditor);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(TextEditor));
