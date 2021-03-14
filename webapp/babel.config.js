@@ -1,11 +1,10 @@
 module.exports = {
-  sourceType: 'unambiguous',
   presets: [
     '@babel/preset-typescript',
     [
       '@babel/preset-env',
       {
-        modules: 'commonjs',
+        modules: false,
       },
     ],
     '@babel/preset-react',

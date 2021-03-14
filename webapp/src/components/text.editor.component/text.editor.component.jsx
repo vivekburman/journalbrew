@@ -220,7 +220,7 @@ class TextEditor extends Component {
               reject({...data, success: 0});
             } else {
               worker.postMessage({
-                file: file,
+                file: fileObj,
                 token: self.props.currentUser.token,
                 baseURL: window.location.origin,
                 type: 1

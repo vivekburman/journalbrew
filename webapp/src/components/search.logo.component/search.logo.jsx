@@ -17,7 +17,7 @@ class SearchNLogoComponent extends Component {
     this.props.history.push("/");
   }
   _openSearchBar = () => {
-    windowWidth < 768 && openSearchBar();
+    this.props.windowWidth < 768 && openSearchBar();
   }
   _toggleFocus = () =>{
     this.ref.current && this.ref.current.classList.add('on-focus');
