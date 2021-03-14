@@ -14,6 +14,7 @@ import Axios from 'axios';
 import silentRefresh from '../../helpers/silentRefresh';
 import { setCurrentUser } from '../../reducers/user/user.action';
 import { withRouter } from 'react-router';
+import { axiosGet } from '../../helpers/httpReq';
 
 const imageSize = 1024 * 1024 * 5;
 const MEDIA_TYPE = {
@@ -68,7 +69,7 @@ class TextEditor extends Component {
   }
   getArticleById = (postId, token) => {
     if (!postId) return;
-    return Axios.get(`api/post/get-post?postId=${postId}`, {
+    return axiosGet(`api/post/get-post?postId=${postId}`, {
       headers: {
         'Authorization': token
       }
@@ -92,7 +93,7 @@ class TextEditor extends Component {
         return null;
       });
     }
-    return Promise.reject(null);
+    return Promise.resolve(null);
   }
   handleEditorImageUploadByURL = (url) => {
     return Promise.resolve({
@@ -235,7 +236,7 @@ class TextEditor extends Component {
         file: fileObj,
         token: currentUser.token,
         baseURL: window.location.origin,
-        type: 0
+        type: 1
       });
     });
   }

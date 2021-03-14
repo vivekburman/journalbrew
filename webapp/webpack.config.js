@@ -160,14 +160,6 @@ module.exports = function(_env, args) {
           changeOrigin: true,
           pathRewrite: { '^/api': '' },
           target: 'http://localhost:5001'
-        },
-        '/edit-story/a/api/post': {
-          changeOrigin: true,
-          pathRewrite: function (pathname) {
-            const startIndex = pathname.indexOf("/api/");
-            return pathname.substring(startIndex + 4);
-          },
-          target: 'http://localhost:5001'
         }
       }
     }
