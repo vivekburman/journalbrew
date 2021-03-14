@@ -236,7 +236,7 @@ class TextEditor extends Component {
         file: fileObj,
         token: currentUser.token,
         baseURL: window.location.origin,
-        type: 1
+        type: 0
       });
     });
   }
