@@ -9,6 +9,7 @@ const silentRefresh = (setCurrentUser) => {
         if(status == 200 && data.success) {
           setCurrentUser({
             name: data.username,
+            userId: data.userId,
             profilePicUrl: data.profilePicUrl,
             token: data.access_token
           });

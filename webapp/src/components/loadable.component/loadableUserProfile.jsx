@@ -1,4 +1,4 @@
-import {Dashboard} from '../dashboard.component/dashboard';
+import Dashboard from '../user.dashboard.component/dashboard';
 import React from 'react';
 
 const UserProfile = () => {

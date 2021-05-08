@@ -38,7 +38,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
       <h1 className="profile-heading">Menu</h1>
     </li>}
     <li className="profile-list-item-wrapper">
-      <Link to="/user-profile" className="profile-item-link">
+      <Link to={`/user-profile/${currentUser.userId}`} className="profile-item-link">
         <div className="profile-list-item">
           <UserAvatar size={50} url={ currentUser.profilePicUrl }/>
           <div className="flex flex-column-nowrap profile-list-info">

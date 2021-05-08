@@ -12,7 +12,8 @@ const OauthCallback = ({ setCurrentUser, history }) => {
         setCurrentUser({
           name: data.username,
           profilePicUrl: data.profilePicUrl,
-          token: data.access_token
+          token: data.access_token,
+          userId: data.userId
         });
         const lastVisitedPage = localStorage.getItem(TSNEnum.LAST_VISITED_PAGE_BEFORE_LOGIN);
         lastVisitedPage && history.push(lastVisitedPage);

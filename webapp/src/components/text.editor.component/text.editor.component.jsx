@@ -209,7 +209,7 @@ class TextEditor extends Component {
         }
       });
     }
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const worker = new Worker(workerScript);
       const self = this;
 
@@ -224,7 +224,7 @@ class TextEditor extends Component {
                 file: fileObj,
                 token: self.props.currentUser.token,
                 baseURL: window.location.origin,
-                type: 1
+                type: 0
               });
             }
           }).catch(() => reject({...data, success: 0}));
