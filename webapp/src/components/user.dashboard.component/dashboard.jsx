@@ -36,7 +36,7 @@ const Dashboard = ({ windowWidth, currentUser }) => {
       axiosGet(`api/user-info/personal-info/${userID}`)
       .then(({data}) => {
         setPersonalInfo(data.personalInfo);
-        getPublishedPostsList();
+        // getPublishedPostsList();
       })
       .catch((e) => {
         setError(404);

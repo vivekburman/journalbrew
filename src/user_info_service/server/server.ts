@@ -1,32 +1,22 @@
 import express, { Request, Response, NextFunction } from 'express';
-import morgan from 'morgan';
-import helmet from 'helmet';
-import { initPassport } from './passport.config';
-import * as authRoutes from '../api';
-import CookieParser from 'cookie-parser';
-import passport from 'passport';
-import createHttpError from 'http-errors';
-import { initRedis } from './redis.server';
 import * as http from 'http';
 import * as https from 'https';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import createHttpError from 'http-errors';
+import * as userInfoRouter from '../api';
 
-const start = (port:number | string):Promise<Error | http.Server | https.Server> => {
-    initRedis();
-    initPassport();
+const start = (port:number | string):Promise<Error | http.Server | https.Server > => {
     return new Promise((resolve, reject) => {
         if(!port) {
             throw new Error('The server must be started with an available port');
         }
         const app = express();
-        app.use(CookieParser());
         app.use(helmet());
-        app.use(passport.initialize());
         app.use(express.json());
         app.use(express.urlencoded({extended: true}));
-        
         // add all routes here.
-        authRoutes.registerRoutes(app);
-
+        userInfoRouter.registerRoutes(app);
         if (process.env.NODE_ENV?.trim() == 'production') {
             console.log('--Starting in PROD mode --');
             app.use(morgan('combined'));

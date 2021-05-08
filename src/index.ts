@@ -6,6 +6,7 @@ generateKeyPair();
 
 import { authService } from './auth_service';
 import { postService } from './post_service';
+import { userInfoService } from './user_info_service';
 import * as http from 'http';
 import * as https from 'https';
 
@@ -31,7 +32,8 @@ process.on('SIGINT', () => {
 
 Promise.all([
     authService.startService(),
-    postService.startService()
+    postService.startService(),
+    userInfoService.startService()
 ])
 .then(res => {
     res.forEach((i) => servers.push(i));
