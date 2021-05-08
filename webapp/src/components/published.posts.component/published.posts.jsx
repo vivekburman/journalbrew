@@ -4,7 +4,7 @@ import ShowFeed from '../show.feed.component/show.feed';
 const PublishedPostsList = ({ windowWidth, posts, loading }) => {
   return (
     <>
-      <ShowFeed windowWidth/>
+      <ShowFeed windowWidth={windowWidth} loading={loading} feeds={posts}/>
     </>
   );
 }

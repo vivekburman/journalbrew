@@ -4,24 +4,7 @@ import './personal.info.component.scss';
 import {UserAvatar} from '../avatar.component/avatar'; 
 import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
-
-const getUserName = (firstName, middleName, lastName) => {
-  let username = `${firstName}`
-  if (middleName) username += " " + middleName;
-  if (lastName) username += " " + lastName;
-  return username;
-}
-
-const monthNames =["Jan","Feb","Mar","Apr",
-"May","Jun","Jul","Aug",
-"Sep", "Oct","Nov","Dec"];
-
-const getDateOfJoining = (date) => {
-  if (!date) return "";
-
-  const doj = new Date(date);
-  return `${doj.getDate()}-${monthNames[doj.getMonth()]}-${doj.getFullYear()}`;
-}
+import { getDisplayName, getDateOfJoining } from '../../helpers/util';
 
 const PersonalInfo = (props) => {
   const {personalInfo, windowSize, loading } = props;
@@ -52,9 +35,9 @@ const PersonalInfo = (props) => {
           :
           <div className="flex flex-row-nowrap justify-content-between">
             <div>
-              <h1 className="username">{getUserName(personalInfo.firstName, personalInfo.middleName, personalInfo.lastName)}</h1>
+              <h1 className="username">{getDisplayName(personalInfo.firstName, personalInfo.middleName, personalInfo.lastName)}</h1>
               <div className="flex flex-row-nowrap align-items-center">
-                <img src={calendar} className="icon-img calendar-img" alt="calendar"/>
+                <img src={calendar} className="icon-img calendar-img cursor-default" alt="calendar"/>
                 <time className="time">{getDateOfJoining(personalInfo.createdAt)}</time>
               </div>
             </div>

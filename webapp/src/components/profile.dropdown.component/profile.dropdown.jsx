@@ -11,6 +11,7 @@ import './profile.dropdown.component.scss';
 import withFocusBlur from '../focus.blur.hoc.component/focus.blur';
 import { logoutUser } from '../../reducers/user/user.action';
 import axios from 'axios';
+import { getDisplayName } from '../../helpers/util';
 
 const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentUser }) => {
 
@@ -20,16 +21,6 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
         logoutUser();
       }
     });
-  }
-  const getDisplayName = ({name}) => {
-    let displayName = name['first_name'];
-    if (name['middle_name']) {
-      displayName += ` ${name['middle_name']}`
-    }
-    if (name['last_name']) {
-      displayName += ` ${name['last_name']}`
-    }
-    return displayName;
   }
   return (
   <ul className="profile-list-wrapper">
@@ -42,7 +33,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
         <div className="profile-list-item">
           <UserAvatar size={50} url={ currentUser.profilePicUrl }/>
           <div className="flex flex-column-nowrap profile-list-info">
-            <span>{getDisplayName(currentUser)}</span>
+            <span>{getDisplayName(currentUser.firstName, currentUser.middleName, currentUser.lastName)}</span>
             <span className="see-profile">See your Profile</span>
           </div>
         </div>
