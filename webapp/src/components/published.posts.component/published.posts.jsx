@@ -11,7 +11,8 @@ class PublishedPostsList extends Component {
 
   constructor(props) {
     super(props);
-    this.sliderSize = 40;
+    this.allData = [];
+    this.sliderSize = 20;
     this.getRangeData = this.getRangeData.bind(this);
   }
 
@@ -59,8 +60,16 @@ class PublishedPostsList extends Component {
   
   getRangeData (start, end) {
     const userID = this.props.userID;
+    if (this.allData.length) {
+      const lastData = this.allData[this.allData.length - 1];
+      const _end = Math.min(lastData.totalCount - 1, end);
+      if (_end <= lastData[DATA_INDEX]) {
+        return Promise.resolve({data: this.allData.slice(start, _end), isLast: lastData.totalCount - 1 <= end});
+      }
+    }
     return getPublishedPosts(userID, start, end)
     .then(({data}) => {
+      this.allData = [...this.allData, ...data.postsList];
       return {data: data.postsList, isLast: data.postsList.length && data.postsList[0].totalCount - 1 <= end};
     });
   }
