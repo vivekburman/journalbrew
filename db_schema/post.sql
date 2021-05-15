@@ -3,11 +3,11 @@ USE topselfnews_db;
 DROP TABLE IF EXISTS post;
 CREATE TABLE post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    title TEXT NOT NULL,
+    title VARCHAR(150) NOT NULL,
     thumbnail TEXT,
-    summary TEXT NOT NULL,
+    summary VARCHAR(150) NOT NULL,
     tags JSON NOT NULL,
-    location VARCHAR(255) NOT NULL,
+    location VARCHAR(50) NOT NULL,
     likes INT UNSIGNED DEFAULT 0,
     views INT UNSIGNED DEFAULT 0,
     type ENUM('article', 'opinion', 'eod') NOT NULL,

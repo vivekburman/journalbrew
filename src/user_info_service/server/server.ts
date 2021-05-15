@@ -12,11 +12,6 @@ const start = (port:number | string):Promise<Error | http.Server | https.Server 
             throw new Error('The server must be started with an available port');
         }
         const app = express();
-        app.use(helmet());
-        app.use(express.json());
-        app.use(express.urlencoded({extended: true}));
-        // add all routes here.
-        userInfoRouter.registerRoutes(app);
         if (process.env.NODE_ENV?.trim() == 'production') {
             console.log('--Starting in PROD mode --');
             app.use(morgan('combined'));
@@ -24,6 +19,12 @@ const start = (port:number | string):Promise<Error | http.Server | https.Server 
             console.log('--Starting in DEV mode --');
             app.use(morgan('combined'));
         }
+        app.use(helmet());
+        app.use(express.json());
+        app.use(express.urlencoded({extended: true}));
+        // add all routes here.
+        userInfoRouter.registerRoutes(app);
+
         app.use(async(req, res, next) => {
             next(new createHttpError.NotFound());
         });

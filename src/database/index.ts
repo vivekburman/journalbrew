@@ -12,6 +12,7 @@ enum QUERY_TYPES {
     UPDATE =  'UPDATE',
     SELECT =  'SELECT',
     UPDATE_JSON = 'UPDATE_JSON',
+    CTE_SELECT = 'CTE_SELECT',
 }
 
 class SQL_DB {
@@ -74,6 +75,14 @@ class SQL_DB {
         }
         return Promise.reject('Not a valid Update Query');
     }
+    cteQueryWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
+        return this.db?.query(query, values)
+        .catch(err => {
+            console.log('CTE Query failed');
+            this.logError(query,values, err);
+            throw new createHttpError.InternalServerError('SQL Exception');
+        });
+    }
     selectWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
         if (query.startsWith('SELECT') || query.startsWith('select')) {
             return this.db?.query(query, values)
@@ -117,8 +126,11 @@ class SQL_DB {
                     case this.TYPES.UPDATE_JSON:
                         res = await this.updateJSONValues(query, values);
                         break;
+                    case this.TYPES.CTE_SELECT:
+                        res = await this.cteQueryWithValues(query, values);
+                        break;
                 }
-                if (res && type != this.TYPES.SELECT) {
+                if (res && (type != this.TYPES.SELECT && type != this.TYPES.CTE_SELECT) ) {
                     await this.commitTransc();
                 }
                 this.close();

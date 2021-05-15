@@ -18,6 +18,13 @@ const start = (port:number | string):Promise<Error | http.Server | https.Server>
             throw new Error('The server must be started with an available port');
         }
         const app = express();
+        if (process.env.NODE_ENV?.trim() == 'production') {
+            console.log('--Starting in PROD mode --');
+            app.use(morgan('combined'));
+        } else {
+            console.log('--Starting in DEV mode --');
+            app.use(morgan('combined'));
+        }
         app.use(CookieParser());
         app.use(helmet());
         app.use(passport.initialize());
@@ -26,14 +33,6 @@ const start = (port:number | string):Promise<Error | http.Server | https.Server>
         
         // add all routes here.
         authRoutes.registerRoutes(app);
-
-        if (process.env.NODE_ENV?.trim() == 'production') {
-            console.log('--Starting in PROD mode --');
-            app.use(morgan('combined'));
-        } else {
-            console.log('--Starting in DEV mode --');
-            app.use(morgan('combined'));
-        }
         app.use(async(req, res, next) => {
             next(new createHttpError.NotFound());
         });
