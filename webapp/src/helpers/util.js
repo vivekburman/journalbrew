@@ -20,6 +20,8 @@ const getDateOfJoining = (date) => {
   return `${doj.getDate()}-${monthNames[doj.getMonth()]}-${doj.getFullYear()}`;
 }
 
+
+
 export {
   getDisplayName,
   getDateOfJoining

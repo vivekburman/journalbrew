@@ -29,6 +29,12 @@
 .align-items-center {
   align-items: center;
 }
+.align-items-stretch {
+  align-items: stretch;
+}
+.align-content-spacebetween {
+  align-content: space-between;
+}
 .align-self-center {
   align-self: center;
 }
@@ -52,7 +58,9 @@
 .cursor-default {
   cursor: default !important;
 }
-
+.display-none {
+  display: none;
+}
 
 
 
@@ -96,8 +104,11 @@
 .outline-none:focus {
   outline: none;
 }
-.pos-rel {
+.position-relative {
   position: relative;
+}
+.position-absolute {
+  position: absolute;
 }
 .link {
   color: #000;
@@ -108,7 +119,7 @@
 .text-align-center {
   text-align: center;
 }
-.ul {
+.ul-default {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -118,6 +129,12 @@
 }
 .padding-8 {
   padding: 8px;
+}
+.margin-top-0 {
+  margin-top: 0;
+}
+.margin-top-5 {
+  margin-top: 5;
 }
 .margin-top-15 {
   margin-top: 15px;
@@ -137,9 +154,7 @@ padding-top: 8px;
 .margin-0 {
   margin: 0;
 }
-.margin-top-0 {
-  margin-top: 0;
-}
+
 .margin-auto {
   margin-left: auto;
   margin-right: auto;

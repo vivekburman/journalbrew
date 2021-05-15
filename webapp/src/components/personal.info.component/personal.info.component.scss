@@ -1,15 +1,11 @@
 @import '../../mainSass/main';
 .personal-info-container {
   margin: 8px 16px;
-  @extend %flex-row-nowrap;
   align-items: center;
 }
 .personal-info-img-container {
   margin: 0;
   padding: 0;
-}
-.personal-info-details {
-  flex-grow: 2;
 }
 .personal-info-details .username {
   font-size: 24px;

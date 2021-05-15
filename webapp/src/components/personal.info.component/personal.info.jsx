@@ -38,7 +38,7 @@ const PersonalInfo = (props) => {
               <h1 className="username">{getDisplayName(personalInfo.firstName, personalInfo.middleName, personalInfo.lastName)}</h1>
               <div className="flex flex-row-nowrap align-items-center">
                 <img src={calendar} className="icon-img calendar-img cursor-default" alt="calendar"/>
-                <time className="time">{getDateOfJoining(personalInfo.createdAt)}</time>
+                <time className="time">Joined {getDateOfJoining(personalInfo.createdAt)}</time>
               </div>
             </div>
             <UserAvatar url={personalInfo.profilePicUrl} size={size}/> 

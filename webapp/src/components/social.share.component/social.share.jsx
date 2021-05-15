@@ -26,7 +26,7 @@ const SocialShare = (props) => {
       <Link to=''>
         <img src={linkedIn} alt="linkedIn" className="icon-img"/>
       </Link>
-      <div className="pos-rel">
+      <div className="position-relative">
         <img src={threeDots} alt="report" className="icon-img" 
         onClick= {toggleDD}  />
         <ReportDropDown isOpen= {props.isReportDropDownOpen} 

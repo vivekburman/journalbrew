@@ -1,0 +1,9 @@
+.infinte-scroll-wrapper {
+  & .list-item-wrapper {
+    top: 0;
+    left: 0;
+  }
+  & .visible-hidden {
+    visibility: hidden;
+  }
+}
