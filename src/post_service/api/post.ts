@@ -46,7 +46,7 @@ const AUTHOR_ID = 'author_id',
     PUBLISH_STATUS='publish_status',
     MEDIA_URL = 'media_url';
 
-type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string}
+type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
 postRouter.post('/create-post', utils.verifyAccessToken, async (req_:Request, res: Response, next:NextFunction) => {
     // 1. if user is invalid / null  return
@@ -149,6 +149,7 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
         let limit_reach = false;
         const chunks: any[] = [];
         const req = req_ as RequestWithPayload;
+        const payload: User = req['payload'] as User;
         const db = new SQL_DB();
         const formPayload: PublishForm = {} as PublishForm;
         let fieldParesed = 0;
@@ -277,7 +278,8 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                                         [TYPE]: formPayload.type,
                                         [FULL_STORY_ID]: formPayload.postId,
                                         [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
-                                        [CREATED_AT]: convertTime()
+                                        [CREATED_AT]: convertTime(),
+                                        [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
                                     } 
                                 );
                                 res.status(200).json({

@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
-import { getDisplayName } from '../../helpers/util';
-import { getPublishedPosts } from '../../services/postService';
+import { getDrafts } from '../../services/postService';
+import silentRefresh from '../../helpers/silentRefresh';
 import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 import NewsThumbnail from '../news.thumbnail.component/news.thumbnail';
 
 const DATA_INDEX = "dataIndex",
   UNIQUE_ID="id";
-class PublishedPostsList extends Component {
-
+class DraftPostsList extends Component {
   constructor(props) {
     super(props);
     this.allData = [];
@@ -26,18 +25,14 @@ class PublishedPostsList extends Component {
             <div className="w-100 padding-8 flex-column-nowrap justify-content-between">
               <Skeleton />
               <div style={{margin: '15px 0'}}></div>
-              <Skeleton count={4}/>
-              <Skeleton circle={true} height={30} width={30} />
+              <Skeleton count={3}/>
             </div>
-            <Skeleton height={200} width={200}/>
           </div>
           <div className="w-100 h-100 news-item-loader-mobile">
-            <Skeleton height={150}/>
             <div className="news-item-loader-details margin-top-5">
               <Skeleton />
               <div style={{margin: '15px 0'}}></div>
               <Skeleton count={2}/>
-              <Skeleton circle={true} height={30} width={30} />
             </div>
           </div>
         </li>
@@ -45,33 +40,37 @@ class PublishedPostsList extends Component {
     }
     return <ul className="ul-default">{feedList}</ul>;
   }
-  
   getListItemDOM = (data, index) => {
-    const personalInfo = this.props.personalInfo;
     return <NewsThumbnail 
       key={index} 
       showCreator={false}
-      profilePicUrl={personalInfo.profilePicUrl}
-      username={getDisplayName(personalInfo.firstName, personalInfo.middleName, personalInfo.lastName)}
-      postID={data.id} 
       time={data.createdAt}
+      postID={data.id} 
       title={data.title}
       summary={data.summary}
-      thumbnail={data.thumbnail}
-      type={data.type}
       />
   }
-
   getPosts = (userID, start, end) => {
-    return getPublishedPosts(userID, start, end)
+    const self = this;
+    return getDrafts(userID, start, end, this.props.currentUser?.token)
     .then(({data}) => {
       this.allData = [...this.allData, ...data.postsList];
       return {data: data.postsList, isLast: data.postsList.length && data.postsList[0].totalCount - 1 <= end};
     }).catch((e) => {
+      // 2. if fails call silent refresh
+      if (e.response.status == 401) {
+        silentRefresh(self.props.setCurrentUser).then(() => {
+          // try to do same again
+          return self.getPosts(userID, start, end);
+        }).catch((e) => {
+          return Promise.reject();
+        }); 
+      } else {
+        // something went wrong
         return Promise.reject();
+      }
     });
   }
-  
   getRangeData (start, end) {
     const userID = this.props.userID;
     if (this.allData.length) {
@@ -87,15 +86,16 @@ class PublishedPostsList extends Component {
     return(
       <div>
         <h1>Nothing to show here</h1>
-        <p>You have no articles published yet &#128578;</p>
+        <p>You have no articles in draft. &#128578;</p>
       </div>
     );
   }
-
   render() {
+    const {windowWidth} = this.props;
     return (
       <div className="main-feed-list-wrapper margin-top-0 padding-right-8 padding-left-8">
           <InfiniteScroll 
+            windowWidth={windowWidth}
             dataIndex={DATA_INDEX}
             sliderSize={this.sliderSize}
             getLoadingUI = {this.getSkeletonUI}
@@ -108,9 +108,12 @@ class PublishedPostsList extends Component {
     );
   }
 }
-
+const mapStateToProps = ({user, window}) => ({
+  currentUser: user.currentUser,
+  windowWidth: window.windowSize
+});
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (payload) => dispatch(setCurrentUser(payload)),
 });
 
-export default connect(null, mapDispatchToProps)(PublishedPostsList);
+export default connect(mapStateToProps, mapDispatchToProps)(DraftPostsList);

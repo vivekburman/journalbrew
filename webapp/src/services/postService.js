@@ -1,7 +1,8 @@
 import { axiosPost } from '../helpers/httpReq';
 
 const  getPublishedPosts = (userID, start, end) => {
-  return axiosPost(`api/user-info/published-posts/${userID}`, {
+  return axiosPost(`api/user-info/published-posts/`, {
+    userId: userID,
     filter: {
       rangeStart: start,
       rangeEnd: end
@@ -9,16 +10,52 @@ const  getPublishedPosts = (userID, start, end) => {
   });
 }
 
-const getUnpublishedPosts = () => {
-
+const getUnderReviewPosts = (userID, start, end, token) => {
+  return axiosPost(`api/user-info/underreview-posts/`, {
+    userId: userID,
+    filter: {
+      rangeStart: start,
+      rangeEnd: end
+    }
+  }, {
+    headers: {
+      'Authorization': token
+    }
+  });
 }
 
-const getBookmarks = () => {
-
+const getBookmarks = (userID, start, end, token) => {
+  return axiosPost(`api/user-info/bookmarks/`, {
+    userId: userID,
+    filter: {
+      rangeStart: start,
+      rangeEnd: end
+    }
+  }, {
+    headers: {
+      'Authorization': token
+    }
+  });
 }
+
+const getDrafts = (userID, start, end, token) => {
+  return axiosPost(`api/user-info/drafts/`, {
+    userId: userID,
+    filter: {
+      rangeStart: start,
+      rangeEnd: end
+    }
+  }, {
+    headers: {
+      'Authorization': token
+    }
+  });
+}
+
 
 export {
   getBookmarks,
   getPublishedPosts,
-  getUnpublishedPosts
+  getDrafts,
+  getUnderReviewPosts
 }

@@ -1,3 +1,4 @@
+@import '../../mainSass/main';
 .infinte-scroll-wrapper {
   & .list-item-wrapper {
     top: 0;
@@ -5,5 +6,8 @@
   }
   & .visible-hidden {
     visibility: hidden;
+  }
+  & .empty-state-wrapper {
+    @extend %font-roboto;
   }
 }

@@ -19,15 +19,20 @@ const EMAIL = "email",
     JOINED_AT = "created_at",
     UUID = "uuid",
     AUTHOR_ID = 'author_id',
+    USER_UUID = 'user_uuid',
     CREATED_AT = 'created_at',
     ID='id',
     TITLE= 'title',
     THUMBNAIL='thumbnail',
     TYPE='type',
     FULL_STORY_ID='full_story_id',
+    FULL_STORY = 'full_story',
     PUBLISH_STATUS='publish_status',
     SUMMARY='summary',
+    BOOKMARK_POST_ID='bookmark_post_id',
     QUERY_SIZE = 50;
+
+type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
 userInfoRouter.get('/personal-info/:userId', async (req_: Request, res: Response, next:NextFunction) => {
     try {
@@ -58,10 +63,10 @@ userInfoRouter.get('/personal-info/:userId', async (req_: Request, res: Response
     }
 });
 
-userInfoRouter.post('/published-posts/:userId', async (req_: Request, res: Response, next:NextFunction) => {
+userInfoRouter.post('/published-posts', async (req_: Request, res: Response, next:NextFunction) => {
     try {
         const req = req_ as RequestWithPayload;
-        const userID = req.params.userId || null;
+        const userID = req.body.userId || null;
         const rangeStart = req.body.filter?.rangeStart;
         const rangeEnd = req.body.filter?.rangeEnd;
 
@@ -75,16 +80,54 @@ userInfoRouter.post('/published-posts/:userId', async (req_: Request, res: Respo
             const _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
             const db = new SQL_DB();
             const response = await db.exec(db.TYPES.CTE_SELECT, 
-            `WITH CTE AS (SELECT post.${ID}, 
-            ROW_NUMBER() OVER(ORDER BY post.${CREATED_AT} DESC) - 1 AS dataIndex, 
+            `WITH CTE AS (SELECT ${ID}, 
+            ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
             COUNT(*) OVER() AS totalCount, 
-            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, post.${CREATED_AT} 
-            FROM post INNER JOIN user_to_post
-            ON user_to_post.${ID} = post.${FULL_STORY_ID} 
-            WHERE user_to_post.${AUTHOR_ID} = ?
+            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt
+            FROM post
+            WHERE post.${AUTHOR_ID} = ?
             AND ${PUBLISH_STATUS} = 'published' 
-            ORDER BY post.${CREATED_AT} DESC)
+            ORDER BY ${CREATED_AT} DESC)
             SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
+            [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
+            res.status(200).json({
+                postsList: response[0]
+            });
+        }
+    }catch(error) {
+        next(error);
+    }
+});
+
+userInfoRouter.post('/underreview-posts', utils.verifyAccessToken,  async (req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const payload:User = req['payload'] as User;
+        const userID = req.body.userId || null;
+        const rangeStart = req.body.filter?.rangeStart;
+        const rangeEnd = req.body.filter?.rangeEnd;
+
+        if (!userID || userID == "") {
+            throw new createHttpError.BadRequest("User ID not found in query param");
+        } else if (payload.id != userID) {
+            throw new createHttpError[404];
+        } else if (!Number.isInteger(rangeStart) || rangeStart < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeStart not defined");
+        } else if (!Number.isInteger(rangeEnd) || rangeEnd < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeEnd not defined");
+        } else {
+            const _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.CTE_SELECT, 
+                `WITH CTE AS (SELECT ${ID}, 
+                ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
+                COUNT(*) OVER() AS totalCount, 
+                ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt
+                FROM post
+                WHERE post.${AUTHOR_ID} = ?
+                AND ${PUBLISH_STATUS} = 'underReview' 
+                ORDER BY ${CREATED_AT} DESC)
+                SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
             [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
             res.status(200).json({
                 postsList: response[0]
@@ -96,12 +139,114 @@ userInfoRouter.post('/published-posts/:userId', async (req_: Request, res: Respo
     }
 });
 
-userInfoRouter.get('/unpublished-posts/:userId', utils.verifyAccessToken,  (req_: Request, res: Response, next:NextFunction) => {
+userInfoRouter.post('/bookmarks', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const payload:User = req['payload'] as User;
+        const userID = req.body.userId || null;
+        const rangeStart = req.body.filter?.rangeStart;
+        const rangeEnd = req.body.filter?.rangeEnd;
 
+        if (!userID || userID == "") {
+            throw new createHttpError.BadRequest("User ID not found in query param");
+        } else if (payload.id != userID) {
+            throw new createHttpError[404];
+        } else if (!Number.isInteger(rangeStart) || rangeStart < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeStart not defined");
+        } else if (!Number.isInteger(rangeEnd) || rangeEnd < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeEnd not defined");
+        } else {
+            const _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.CTE_SELECT, 
+                `WITH CTE AS (SELECT bookmark.${ID}, 
+                ROW_NUMBER() OVER(ORDER BY bookmark.${CREATED_AT} DESC) - 1 AS dataIndex, 
+                COUNT(*) OVER() AS totalCount, 
+                ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, post.${CREATED_AT} AS createdAt
+                FROM bookmark INNER JOIN post
+                ON bookmark.${BOOKMARK_POST_ID} = post.${ID}
+                WHERE ${USER_UUID} = ?
+                ORDER BY bookmark.${CREATED_AT} DESC)
+                SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
+            [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
+            res.status(200).json({
+                postsList: response[0]
+            });
+        }
+
+    }catch(error) {
+        next(error);
+    }
 });
 
-userInfoRouter.get('/bookmarks/:userId', utils.verifyAccessToken, (req_: Request, res: Response, next:NextFunction) => {
+userInfoRouter.post('/drafts', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const payload:User = req['payload'] as User;
+        const userID = req.body.userId || null;
+        const rangeStart = req.body.filter?.rangeStart;
+        const rangeEnd = req.body.filter?.rangeEnd;
 
+        if (!userID || userID == "") {
+            throw new createHttpError.BadRequest("User ID not found in query param");
+        } else if (payload.id != userID) {
+            throw new createHttpError[404];
+        } else if (!Number.isInteger(rangeStart) || rangeStart < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeStart not defined");
+        } else if (!Number.isInteger(rangeEnd) || rangeEnd < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeEnd not defined");
+        } else {
+            const _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.CTE_SELECT, 
+                `WITH CTE AS (SELECT ${ID}, 
+                ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
+                COUNT(*) OVER() AS totalCount, ${FULL_STORY} AS fullStory, ${CREATED_AT} AS createdAt
+                FROM user_to_post 
+                WHERE ${AUTHOR_ID} = ?
+                ORDER BY ${CREATED_AT} DESC)
+                SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
+            [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
+            
+            let result: { title: string; summary: string; created_at: string }[] = [];
+
+            if (response[0].length) {
+                result = Array.from(response[0]).map((i: any) => {
+                    const blocks = i.fullStory.blocks || [];
+                    let title = "", summary = "";
+                    for (let i = 0; i < blocks.length; i++) {
+                        if (blocks[i].type === "header" || blocks[i].type === "paragraph") {
+                            const data = blocks[i].data || {};
+                            if (data.hasOwnProperty("text")) {
+                                title.length ? (summary = data.text) : (title = data.text);
+                                break;
+                            }
+                        }  
+                    }
+                    if (!title) {
+                        title = "Empty Title !!!!";
+                    }
+                    if (!summary) {
+                        summary = "Empty Summary !!!!";
+                    }
+                    return {
+                        title,
+                        totalCount: i.totalCount,
+                        summary,
+                        [CREATED_AT]: i["createdAt"],
+                        dataIndex: i.dataIndex,
+                        id: i.id
+                    };
+                });
+            }       
+            res.status(200).json({
+                postsList: result
+            });
+        }
+
+    }catch(error) {
+        next(error);
+    }
 });
 
 

@@ -21,6 +21,11 @@
 }
 .time {
   @extend %font-roboto;
-  font-size: 17px;
+  font-size: 14px;
   color: grey;
+}
+@media (min-width: 536px) {
+  .time {
+    font-size: 16px;
+  }
 }

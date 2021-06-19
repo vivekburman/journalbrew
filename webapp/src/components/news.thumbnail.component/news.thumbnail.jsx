@@ -8,8 +8,10 @@ import { Link } from 'react-router-dom';
 import './news.thumbnail.component.scss';
 import CreatorInfo from '../creator.info.component/creator.info';
 import { Tags } from '../tags.component/tags';
+import Moment from 'react-moment';
+import moment from 'moment';
 
-const NewsFeedThumbnail = ({ postID, showCompletePost, title, summary, thumbnail, type, username, time }) => {
+const NewsFeedThumbnail = ({ postID, showCompletePost, title, summary, thumbnail, type, username, time, bookmark, showCreator, profilePicUrl }) => {
   const handleClick = () => {
     showCompletePost(postID);
   };
@@ -17,30 +19,33 @@ const NewsFeedThumbnail = ({ postID, showCompletePost, title, summary, thumbnail
   return (
     <div className="news-item" onClick={handleClick} >
       <Link to={`/full-story?${postID}` } className="news-item-link">
-        <div className="news-thumbnail">
-          <img src={ thumbnail || dummy } alt="Images" className="news-image flex"/>
-        </div>
-        <div className="news-details flex-column-nowrap align-content-spacebetween justify-content-between">
-          <div>
+        {thumbnail ? <div className="news-thumbnail">
+          <img src={ thumbnail } alt="Images" className="news-image flex"/>
+        </div> : <></>}
+        <div className="news-details flex-column-nowrap align-content-spacebetween justify-content-between w-100">
+          <div className="margin-bottom-15">
             <h1 className="news-title">
-              {title || "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam commodi, voluptatem magnam rem quia consequuntur provident officia iusto corrupti error sint voluptatibus, temporibus cumque sapiente modi ad saepe maiores explicabo!"}
+              {title}
             </h1>
             <p className="news-snapshot">
-              {summary || "Lorem ipsum dolor sit, amet consectetur adipisicing elit.\
-              Eveniet inventore illo voluptatibus, eum itaque unde ea rem amet aliquam qui. Sed,\
-              repellendus placeat iure harum itaque delectus id necessitatibus ullam?"}
+              {summary}
             </p>
           </div>
           <div className="flex flex-row-nowrap align-items-center justify-content-between">
-            <div className="creator-info">
-              <img className="creator-pic" src={ profilePlaceholder } alt="Creator Profile Pic"/>
-              <CreatorInfo username={username} time={'10:30AM'} />
-            </div>      
+              <div className="creator-info">
+                {!showCreator ? <Moment fromNow date={time} />
+                : 
+                <>
+                  <img className="creator-pic" src={ profilePicUrl } alt="Creator Profile Pic"/>
+                  <CreatorInfo username={username} time={time} />
+                </>}
+            </div>
             <div className="menu-section flex-row-nowrap align-items-center">
-              <div>
+              {type ? <div>
                 <Tags readOnly={true} tags={[type]} />
               </div>
-              <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" />
+              : <></>}
+              {bookmark ? <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" /> : <></>}
             </div>
           </div>
         </div>

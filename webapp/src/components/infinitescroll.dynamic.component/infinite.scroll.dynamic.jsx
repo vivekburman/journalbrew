@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react';
 import Proptypes from 'prop-types';
 import './infinite.scroll.dynamic.component.scss';
+import { connect } from 'react-redux';
 const N = 15;
 class InfiniteScroll extends Component {
   constructor(props) {
@@ -27,6 +28,7 @@ class InfiniteScroll extends Component {
     this.state = {
       data: [],
       loading: true,
+      isEmpty: false
     };
     this.SCROLL_MODES = {
       'TOP': "top",
@@ -50,7 +52,7 @@ class InfiniteScroll extends Component {
           <li
           key={data[i][this.props.uniqueId]} 
           id={i === 0 ? this.SCROLL_MODES.TOP : i === (this.sliderSize - 1) ? this.SCROLL_MODES.BOTTOM : ''}
-          className="list-item-wrapper position-absolute visible-hidden"
+          className="list-item-wrapper position-absolute visible-hidden w-100"
           ref={this.getReference(i)}>
             {
               this.props.getListItemDOM(data[i], i)
@@ -115,9 +117,19 @@ class InfiniteScroll extends Component {
     }
   }
   async componentDidMount() {
-    const {data, isLast} = await this.props.getRangeData(this.boundary.start, this.boundary.end);
-    this.setDynamicDataToState(data, isLast);
+    try {
+      const {data, isLast} = await this.props.getRangeData(this.boundary.start, this.boundary.end);
+      this.setDynamicDataToState(data, isLast);
+    } catch(e) {
+      // nothing found empty
+      this.setState({
+        data: [], 
+        loading: false,
+        isEmpty: true
+      });
+    }
   }
+
   componentDidUpdate() {
     this.positionElements();
     if (!this.observer) {
@@ -173,23 +185,30 @@ class InfiniteScroll extends Component {
     const _stateData = this.state.data;
     const _fetchEnd = _stateData[0][dataIndex];
     const _fetchStart = Math.max(0, _fetchEnd - elementsToBeSwapped);
-    let {data} = await this.props.getRangeData(_fetchStart, _fetchEnd);
-    if (data.length === 0) {
+    try {
+      let {data} = await this.props.getRangeData(_fetchStart, _fetchEnd);
+      if (data.length === 0) {
+        this.setState({loading: false});
+        this.elementsSwapped = 0;
+      } else {
+          const isFirst = data[0][dataIndex] === 0;
+          if (isFirst) {
+            elementsToBeSwapped = data.length;
+          }
+          data = [...data, ...this.state.data.slice(0, this.sliderSize - elementsToBeSwapped)];
+          const _start = data[0][dataIndex];
+          const _end = data[data.length - 1][dataIndex] + 1;
+  
+          if (this.isUpdateNeeded(_start, _end)) {
+            this.updateState(_start, _end, data);
+            this.elementsSwapped = elementsToBeSwapped;           
+          this.elementsSwapped = elementsToBeSwapped;           
+            this.elementsSwapped = elementsToBeSwapped;           
+          }
+      }
+    } catch(e) {
       this.setState({loading: false});
       this.elementsSwapped = 0;
-    } else {
-        const isFirst = data[0][dataIndex] === 0;
-        if (isFirst) {
-          elementsToBeSwapped = data.length;
-        }
-        data = [...data, ...this.state.data.slice(0, this.sliderSize - elementsToBeSwapped)];
-        const _start = data[0][dataIndex];
-        const _end = data[data.length - 1][dataIndex] + 1;
-
-        if (this.isUpdateNeeded(_start, _end)) {
-          this.updateState(_start, _end, data);
-          this.elementsSwapped = elementsToBeSwapped;           
-        }
     }
   }
   getOutOfViewportElementsTop = () => {
@@ -295,16 +314,23 @@ class InfiniteScroll extends Component {
   }
 
   setDynamicDataToState = (data, isLast) => {
-    this.setState({data: data, loading: false, isLast, addNewHeight: true});
+    this.setState({data: data, loading: false, isLast, addNewHeight: true, isEmpty: data.length == 0});
   }
 
   render () {
-    const {data, loading} = this.state;
+    const {data, loading, isEmpty} = this.state;
     return (
       <div className="infinte-scroll-wrapper">
         {
           data.length === 0 && loading ?
           this.props.getLoadingUI() : 
+          isEmpty ? 
+          <div className="empty-state-wrapper flex-row-wrap justify-content-center">
+            {
+              this.props.emptyStateUI()
+            }
+          </div>
+          :
           <ul className="ul-default position-relative"
           ref={this.rootRef}>
             {
@@ -320,6 +346,7 @@ class InfiniteScroll extends Component {
 
 InfiniteScroll.propTypes = {
   sliderSize: Proptypes.number,
+  emptyStateUI: Proptypes.func,
   dataIndex: Proptypes.string,
   getRangeData: Proptypes.func,
   getListItemDOM: Proptypes.func,
