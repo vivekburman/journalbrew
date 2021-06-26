@@ -36,7 +36,7 @@ class TextEditor extends Component {
     this.EDITOR_JS_TOOLS.image.config = {
       ...this.EDITOR_JS_TOOLS.image.config,
       uploader : {
-        uploadByFile: this.handleEditorImageUpload,
+        // uploadByFile: this.handleEditorImageUpload,
         uploadByUrl: this.handleEditorImageUploadByURL
       },
       defaultElements: ['withBorder', 'stretched', 'withBackground'],
@@ -45,7 +45,7 @@ class TextEditor extends Component {
     this.EDITOR_JS_TOOLS.video.config = {
       ...this.EDITOR_JS_TOOLS.video.config,
       uploader : {
-        uploadByFile: this.handleEditorVideoUpload,
+        // uploadByFile: this.handleEditorVideoUpload,
         uploadByUrl: this.handleEditorVideoUploadByURL
       },
       defaultElements: ['withBorder', 'stretched', 'withBackground'],

@@ -33,8 +33,6 @@ class SQL_DB {
                 this.db = await mysql.createConnection(this.CONFIG);
                 resolve(1);
             } catch(err) {
-                // console.log('DB connection error');
-                // console.log('Closing DB');
                 this.db?.end();
                 reject(err);
             }
