@@ -1,9 +1,10 @@
-import Embed from '@editorjs/embed';
+// import Embed from '@editorjs/embed';
 import Marker from '@editorjs/marker';
 import Delimiter from '@editorjs/delimiter';
 import Header from '@editorjs/header';
 import Image from '../../_internal/image/dist/bundle';
 import Video from '../../_internal/editorjs-video/dist/bundle';
+import Embed from '../../_internal/embed/dist/bundle';
 // import Link from '@editorjs/link';
 import List from '@editorjs/list';
 import Paragraph from '@editorjs/paragraph';
@@ -57,6 +58,14 @@ export const EDITOR_JS_TOOLS = {
     class: Embed,
     inlineToolbar: false,
     shortcut: 'CMD+ALT+E',
+    config: {
+      services: {
+        youtube: true,
+        twitter: true,
+        facebook: true,
+        instagram: true,
+      }
+    }
   },
   delimiter: {
     class: Delimiter,
