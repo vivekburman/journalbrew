@@ -5,7 +5,7 @@ let client: RedisClient;
 export const initRedis = () => {
     client =  redis.createClient({
         port: 6379,
-        host: '192.168.0.103',
+        host: '192.168.0.106',
         password: 'topselfnews' 
     });
     

@@ -43,6 +43,7 @@ const AUTHOR_ID = 'author_id',
     LOCATION='location',
     TYPE='type',
     FULL_STORY_ID='full_story_id',
+    POST_ID='post_id',
     PUBLISH_STATUS='publish_status',
     MEDIA_URL = 'media_url';
 
@@ -76,7 +77,7 @@ postRouter.post('/create-post', utils.verifyAccessToken, async (req_:Request, re
 });
 
 function generateSQLStatements(jsonPatch:any[]) {
-            // 1. get pointer to that object
+    // 1. get pointer to that object
         // 2. parse the jsonPatch to 3 buckets add, delete, replace
         // 3. fill each bucket of the form array [$'path', 'value']
         // 4. if value is of form object or array replace 'value' -> CAST('value') as JSON 
@@ -113,29 +114,39 @@ function generateSQLStatements(jsonPatch:any[]) {
 
 
 postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
+    const db = new SQL_DB();
     try {
         const req = req_ as RequestWithPayload;
         const payload:User = req['payload'] as User;
-        const db = new SQL_DB();
         const jsonPatch:{storypatchData: any, postId: number} = req.body;
+        const authorID = Buffer.from(uuidParse(payload['id']));
+        await db.connect();
+        // if story is already published user cannot do it
+        const response = await db.selectWithValues(
+            `SELECT * from user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=? AND ${POST_ID} IS NULL`,
+            [authorID, jsonPatch.postId]);
+        if (response?.[0]?.length != 1) {
+            throw new createHttpError.InternalServerError('Cannot be to Edited');
+        }
         const sqlQuery = {
             query: 'UPDATE `user_to_post` SET ',
             values: [] as Array<any>
         };
-        const authorID = Buffer.from(uuidParse(payload['id']));
         generateSQLStatements(jsonPatch.storypatchData).forEach(item => {
             sqlQuery.query += `${FULL_STORY}=?,`;
             sqlQuery.values.push({toSqlString: function () { return item }});
         });
         sqlQuery.query = `${sqlQuery.query.slice(0, -1)} WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
         sqlQuery.values.push(authorID, jsonPatch.postId);
-        await db.exec(db.TYPES.UPDATE_JSON, sqlQuery.query, sqlQuery.values);
+        await db.updateJSONValues(sqlQuery.query, sqlQuery.values);
         res.status(200).json({
             success: true
         });
     } catch(err) {
         next(err);
-    } 
+    }finally {
+        db.close();
+    }
 });
 
 postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
@@ -313,7 +324,7 @@ postRouter.get('/get-post', utils.verifyAccessToken, async (req_: Request, res: 
         } else {
             const db = new SQL_DB();
             const authorID = Buffer.from(uuidParse(payload['id']));
-            const sqlQuery = `SELECT * FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
+            const sqlQuery = `SELECT * FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=? AND ${POST_ID} IS NULL`;
             let response = await db.exec(db.TYPES.SELECT, sqlQuery, [authorID, postId]);
             if (response?.[0]?.[0]?.[FULL_STORY]) {
                 res.status(200).json({

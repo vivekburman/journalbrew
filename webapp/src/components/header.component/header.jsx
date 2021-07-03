@@ -23,7 +23,7 @@ const Header = () => {
       <SearchNLogoComponent />
       <nav className="top-nav">
         <Switch>
-          <Route exact path="/new-story">
+          <Route exact path={["/new-story", "/edit-story/:postId"]}>
             <Publish />
           </Route>
         </Switch>

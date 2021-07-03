@@ -34,7 +34,8 @@ CREATE TABLE user_to_post (
     full_story JSON NOT NULL,
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY (author_id) REFERENCES user(uuid)
+    FOREIGN KEY (author_id) REFERENCES user(uuid),
+    FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 DROP TABLE IF EXISTS post;

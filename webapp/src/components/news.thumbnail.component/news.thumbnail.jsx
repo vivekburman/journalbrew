@@ -1,24 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import dummy from '../../images/dummy.jpeg';
-import profilePlaceholder from '../../images/profile-pic-placeholder.png';
-import bookmark from '../../images/bookmark.svg';
+import bookmarkImg from '../../images/bookmark.svg';
 import { showCompletePost } from '../../reducers/click/showcompletepost.action';
 import { Link } from 'react-router-dom';
 import './news.thumbnail.component.scss';
 import CreatorInfo from '../creator.info.component/creator.info';
 import { Tags } from '../tags.component/tags';
 import Moment from 'react-moment';
-import moment from 'moment';
 
-const NewsFeedThumbnail = ({ postID, showCompletePost, title, summary, thumbnail, type, username, time, bookmark, showCreator, profilePicUrl }) => {
+const MODES = {
+  1: '/full-story?',
+  2: '/edit-story/'
+}
+
+
+
+const NewsFeedThumbnail = ({ postID, showCompletePost, title, summary, thumbnail, type, username, time, bookmark, showCreator, profilePicUrl, mode = 1 }) => {
   const handleClick = () => {
     showCompletePost(postID);
   };
 
   return (
-    <div className="news-item" onClick={handleClick} >
-      <Link to={`/full-story?${postID}` } className="news-item-link">
+    <div className="news-item cursor-pointer" onClick={handleClick} >
+      <Link to={`${MODES[mode]}${postID}` } className="news-item-link">
         {thumbnail ? <div className="news-thumbnail">
           <img src={ thumbnail } alt="Images" className="news-image flex"/>
         </div> : <></>}
@@ -45,7 +49,7 @@ const NewsFeedThumbnail = ({ postID, showCompletePost, title, summary, thumbnail
                 <Tags readOnly={true} tags={[type]} />
               </div>
               : <></>}
-              {bookmark ? <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" /> : <></>}
+              {bookmark ? <img src={ bookmarkImg } className="icon-img bookmark-link" alt="Bookmark" /> : <></>}
             </div>
           </div>
         </div>
