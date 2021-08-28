@@ -15,7 +15,8 @@ const MODES = {
 }
 
 const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type, 
-  username, time, bookmark, showCreator, profilePicUrl, showMenu, mode = 1 }) => {
+  username, time, bookmark, showCreator, profilePicUrl, showMenu, 
+  onDeleteMenuClick, onEditMenuClick, mode = 1 }) => {
   
   const [isMenuDropdownOpen, setMenuDropdown] = useState(false);
   const history = useHistory();
@@ -30,6 +31,13 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
     e && e.stopPropagation();
     setMenuDropdown(false);
   };
+
+  const onEditClick = () => {
+    onEditMenuClick(postID, MODES[mode]);
+  }
+  const onDeleteClick = () => {
+    onDeleteMenuClick(postID);
+  }
 
   return (
     <div className="news-item cursor-pointer">
@@ -49,6 +57,8 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
                   <img src={threeDots} alt="menu" className="icon-img" 
                   onClick={toggleDD} />
                   <PostDropdown 
+                  onDeleteMenuClick={onDeleteClick}
+                  onEditMenuClick={onEditClick}
                   isOpen={isMenuDropdownOpen}
                   hideFunc={hideDropDown}/>
               </div>

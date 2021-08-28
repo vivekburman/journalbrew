@@ -1,4 +1,4 @@
-import { axiosPost, axiosGet, axiosPatch } from '../helpers/httpReq';
+import { axiosPost, axiosGet, axiosPatch, axiosDelete } from '../helpers/httpReq';
 
 const getPublishedPosts = (userID, start, end) => {
   return axiosPost(`api/user-info/published-posts/`, {
@@ -81,6 +81,17 @@ const createPostById = (data, token) => {
   });
 }
 
+const deleteDraft = (draftID, userID, token) => {
+  return axiosDelete('api/user-info/draft/delete', {
+    userId: userID,
+    draftId: draftID
+  }, {
+    headers: {
+      'Authorization': token
+    }
+  })
+}
+
 export {
   getBookmarks,
   getPublishedPosts,
@@ -88,5 +99,6 @@ export {
   getUnderReviewPosts,
   getDraftById,
   updatePostById,
-  createPostById
+  createPostById,
+  deleteDraft
 }

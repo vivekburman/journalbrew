@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
-import { getDrafts } from '../../services/postService';
+import { deleteDraft, getDrafts } from '../../services/postService';
 import silentRefresh from '../../helpers/silentRefresh';
 import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 import NewsThumbnail from '../news.thumbnail.component/news.thumbnail';
+import { withRouter } from 'react-router-dom';
 
 const DATA_INDEX = "dataIndex",
   UNIQUE_ID="id";
@@ -14,6 +15,8 @@ class DraftPostsList extends Component {
     this.allData = [];
     this.sliderSize = 20;
     this.getRangeData = this.getRangeData.bind(this);
+    this.onDeleteMenuClick = this.onDeleteMenuClick.bind(this);
+    this.onEditMenuClick = this.onEditMenuClick.bind(this);
   }
 
   getSkeletonUI = () => {
@@ -40,10 +43,18 @@ class DraftPostsList extends Component {
     }
     return <ul className="ul-default">{feedList}</ul>;
   }
+  onDeleteMenuClick = (postID) => {
+    deleteDraft(postID, this.props.userID, this.props.currentUser?.token);
+  }
+  onEditMenuClick = (postID, path) => {
+    this.props.history.push(`${path}${postID}`);
+  }
   getListItemDOM = (data, index) => {
     return <NewsThumbnail 
       key={index} 
       showMenu={true}
+      onDeleteMenuClick={this.onDeleteMenuClick}
+      onEditMenuClick={this.onEditMenuClick}
       mode={2}
       showCreator={false}
       time={data.createdAt}
@@ -118,4 +129,4 @@ const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (payload) => dispatch(setCurrentUser(payload)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(DraftPostsList);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(DraftPostsList));

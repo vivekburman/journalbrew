@@ -4,7 +4,7 @@ import './post.dropdown.scss';
 
 const PostDropDown = (props) => {
 
-  const { hideFunc } = props;
+  const { hideFunc, onDeleteMenuClick, onEditMenuClick } = props;
 
   const _toggleDD = () => {
     hideFunc();
@@ -14,8 +14,8 @@ const PostDropDown = (props) => {
         <ul 
           className="post-list-wrapper"
           onClick={_toggleDD}>
-          <li className="post-list-item">Edit Draft</li>
-          <li className="post-list-item">Delete Draft</li>
+          <li className="post-list-item" onClick={onEditMenuClick}>Edit Draft</li>
+          <li className="post-list-item" onClick={onDeleteMenuClick}>Delete Draft</li>
         </ul>
       </>
     );
