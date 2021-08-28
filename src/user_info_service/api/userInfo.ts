@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import createHttpError from "http-errors";
+import { userInfo } from "os";
 import { parse as uuidParse } from 'uuid';
 import { RequestWithPayload } from "../../auth_service/utils";
 import { utils } from "../../auth_service/utils/jwtUtils";
@@ -249,6 +250,68 @@ userInfoRouter.post('/drafts', utils.verifyAccessToken, async (req_: Request, re
     }
 });
 
+userInfoRouter.delete('/draft/delete', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const userID = req.body.userId || null;
+        const draftID = req.body.draftId || null;
+        if (!userID || userID == "") {
+            throw new createHttpError.BadRequest("User ID not found in query param");
+        } else if (!draftID && !Number.isInteger(draftID)) {
+            throw new createHttpError[404];
+        } else {
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.DELETE, 
+                `DELETE FROM user_to_post 
+                WHERE ${ID}=?
+                AND ${AUTHOR_ID}=?`,
+            [draftID, Buffer.from(uuidParse(userID))]);
+            if (response.affectedRows == 1) {
+                res.status(200).json({
+                    success: true
+                });
+            } else {
+                res.status(500).json({
+                    success: false
+                });
+            }
+        }
 
+    }catch(error) {
+        next(error);
+    }
+});
+
+userInfoRouter.delete('/bookmark/delete', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const userID = req.body.userId || null;
+        const bookmarkID = req.body.bookmarkId || null;
+        if (!userID || userID == "") {
+            throw new createHttpError.BadRequest("User ID not found in query param");
+        } else if (!bookmarkID && !Number.isInteger(bookmarkID)) {
+            throw new createHttpError[404];
+        } else {
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.DELETE, 
+                `DELETE FROM bookmark 
+                WHERE ${ID}=?
+                AND ${USER_UUID}=?`,
+            [bookmarkID, Buffer.from(uuidParse(userID))]);
+            if (response.affectedRows == 1) {
+                res.status(200).json({
+                    success: true
+                });
+            } else {
+                res.status(500).json({
+                    success: false
+                });
+            }
+        }
+
+    }catch(error) {
+        next(error);
+    } 
+});
 
 export default userInfoRouter;

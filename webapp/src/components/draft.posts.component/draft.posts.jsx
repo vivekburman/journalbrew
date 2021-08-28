@@ -43,6 +43,7 @@ class DraftPostsList extends Component {
   getListItemDOM = (data, index) => {
     return <NewsThumbnail 
       key={index} 
+      showMenu={true}
       mode={2}
       showCreator={false}
       time={data.createdAt}

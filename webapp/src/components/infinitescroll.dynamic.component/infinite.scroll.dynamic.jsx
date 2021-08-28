@@ -1,7 +1,6 @@
 import React, { Component, createRef } from 'react';
 import Proptypes from 'prop-types';
 import './infinite.scroll.dynamic.component.scss';
-import { connect } from 'react-redux';
 const N = 15;
 class InfiniteScroll extends Component {
   constructor(props) {

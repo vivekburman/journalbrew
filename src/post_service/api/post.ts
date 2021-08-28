@@ -340,9 +340,6 @@ postRouter.get('/get-post', utils.verifyAccessToken, async (req_: Request, res: 
         next(err);
     }
 });
-postRouter.delete('/delete-post', () => {
-
-});
 // postRouter.post('/upload-media/image', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
 //     try {
 //         const req = req_ as RequestWithPayload;

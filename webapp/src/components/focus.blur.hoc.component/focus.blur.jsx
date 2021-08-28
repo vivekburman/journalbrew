@@ -4,16 +4,16 @@ import triangle from '../../images/triangle.svg';
 
 const withFocusBlur = (WrappedComponent) => {
   const WithFocusBlur = (props) => {
-    const [isFocused=false, setFocus] = useState(null);
+    const [isFocused, setFocus] = useState(false);
     const [ref, setRef] = useState(null);
     let timer;
     let condition = true;
     const _onBlur = () => {
       timer = setTimeout(() => {
         if (ref && isFocused) {
-          props.hideFunc(props.location);
+          props.hideFunc();
         }
-      }, 100)
+      }, 500);
     };
   
     const _onFocus = () => {

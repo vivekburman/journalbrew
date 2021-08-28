@@ -5,15 +5,16 @@ import threeDots from '../../images/threeDots.svg';
 import linkedIn from '../../images/linkedIn.svg';
 import { Link } from 'react-router-dom';
 import ReportDropDown from '../report.dropdown.component/report.dropdown';
-import { connect } from 'react-redux';
-import { showReportDropDown, hideReportDropDown } from '../../reducers/click/report.dialog.action';
+import { useState } from 'react';
 
 const SocialShare = (props) => {
-  const checkCondition = () => {
-    return props.activeLocation === props.location;
-  }
+  const [isReportDropDownOpen, setReportDropDown] = useState(false);
+
   const toggleDD = () => {
-    props.isReportDropDownOpen ? props.hideReportDropDown(props.location) : props.showReportDropDown(props.location);
+    setReportDropDown(!isReportDropDownOpen);
+  }
+  const hideReportDropDown = () => {
+    setReportDropDown(false);
   }
   return(
     <div className="flex flex-row-nowrap">
@@ -29,20 +30,12 @@ const SocialShare = (props) => {
       <div className="position-relative">
         <img src={threeDots} alt="report" className="icon-img" 
         onClick= {toggleDD}  />
-        <ReportDropDown isOpen= {props.isReportDropDownOpen} 
-          hideFunc={props.hideReportDropDown}
-          checkCondition = {checkCondition}
+        <ReportDropDown 
+          isOpen = {isReportDropDownOpen} 
+          hideFunc={hideReportDropDown}
           {...props}/>
       </div>
     </div>
   );
 }
-const mapStateToProps = ({ reportDropDown }) => ({
-  isReportDropDownOpen: reportDropDown.isOpen,
-  activeLocation: reportDropDown.activeLocation,
-});
-const mapDispatchToProps = dispatch => ({
-  showReportDropDown: (location) => dispatch(showReportDropDown(location)),
-  hideReportDropDown: (location) => dispatch(hideReportDropDown(location))
-});
-export default connect(mapStateToProps, mapDispatchToProps)(SocialShare);
+export default SocialShare;

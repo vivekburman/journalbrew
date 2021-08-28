@@ -1,5 +1,6 @@
 import mysql, { Connection } from 'mysql2/promise';
 import createHttpError from "http-errors";
+import { query } from 'express';
 // interface dbQueryFunc { 
 //     insertWithValues(query: string, values:any|any[]): Promise<any>,
 //     updateWithValues(query: string, values:any|any[]): Promise<any>, 
@@ -13,6 +14,7 @@ enum QUERY_TYPES {
     SELECT =  'SELECT',
     UPDATE_JSON = 'UPDATE_JSON',
     CTE_SELECT = 'CTE_SELECT',
+    DELETE = 'DELETE',
 }
 
 class SQL_DB {
@@ -81,6 +83,17 @@ class SQL_DB {
             throw new createHttpError.InternalServerError('SQL Exception');
         });
     }
+    deleteWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
+        if (query.startsWith('DELETE') || query.startsWith('delete')) {
+            return this.db?.query(query, values)
+            .catch(err => {
+                console.log('Deletion failed');
+                this.logError(query,values, err);
+                throw new createHttpError.InternalServerError('SQL Exception');
+            });
+        }
+        return Promise.reject('Not a valid Delete Query');
+    }
     selectWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
         if (query.startsWith('SELECT') || query.startsWith('select')) {
             return this.db?.query(query, values)
@@ -126,6 +139,9 @@ class SQL_DB {
                         break;
                     case this.TYPES.CTE_SELECT:
                         res = await this.cteQueryWithValues(query, values);
+                        break;
+                    case this.TYPES.DELETE:
+                        res = await this.deleteWithValues(query, values);
                         break;
                 }
                 if (res && (type != this.TYPES.SELECT && type != this.TYPES.CTE_SELECT) ) {
