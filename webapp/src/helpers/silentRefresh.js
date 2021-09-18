@@ -20,10 +20,6 @@ const silentRefresh = (setCurrentUser) => {
             setCurrentUser(undefined)
             reject();
         }
-    }).catch(err => {
-        setCurrentUser(undefined);
-        console.error(err);
-        reject();
     });
   }); 
 }

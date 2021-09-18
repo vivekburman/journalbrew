@@ -1,4 +1,5 @@
 import { axiosPost, axiosGet, axiosPatch, axiosDelete } from '../helpers/httpReq';
+import { getToken } from './tokenService';
 
 const getPublishedPosts = (userID, start, end) => {
   return axiosPost(`api/user-info/published-posts/`, {
@@ -10,7 +11,7 @@ const getPublishedPosts = (userID, start, end) => {
   });
 }
 
-const getUnderReviewPosts = (userID, start, end, token) => {
+const getUnderReviewPosts = (userID, start, end) => {
   return axiosPost(`api/user-info/underreview-posts/`, {
     userId: userID,
     filter: {
@@ -19,12 +20,12 @@ const getUnderReviewPosts = (userID, start, end, token) => {
     }
   }, {
     headers: {
-      'Authorization': token
+      'Authorization': getToken()
     }
   });
 }
 
-const getBookmarks = (userID, start, end, token) => {
+const getBookmarks = (userID, start, end) => {
   return axiosPost(`api/user-info/bookmarks/`, {
     userId: userID,
     filter: {
@@ -33,12 +34,12 @@ const getBookmarks = (userID, start, end, token) => {
     }
   }, {
     headers: {
-      'Authorization': token
+      'Authorization': getToken()
     }
   });
 }
 
-const getDrafts = (userID, start, end, token) => {
+const getDrafts = (userID, start, end) => {
   return axiosPost(`api/user-info/drafts/`, {
     userId: userID,
     filter: {
@@ -47,47 +48,55 @@ const getDrafts = (userID, start, end, token) => {
     }
   }, {
     headers: {
-      'Authorization': token
+      'Authorization': getToken()
     }
   });
 }
 
-const getDraftById = (postId, token) => {
+const getDraftById = (postId) => {
   return axiosGet(`api/post/get-post?postId=${postId}`, {
     headers: {
-      'Authorization': token
+      'Authorization': getToken()
     }
   });
 }
 
-const updatePostById = (data, postId, token) => {
+const updatePostById = (data, postId) => {
   return axiosPatch('api/post/update-post', {
     storypatchData: data,
     postId: postId
   },  {
     headers: {
-      'Authorization': token
+      'Authorization': getToken()
     }
   });
 }
 
-const createPostById = (data, token) => {
+const createPostById = (data) => {
   return axiosPost('api/post/create-post', {
     postStory: data
   }, {
     headers: {
-      'Authorization': token
+      'Authorization': getToken()
     }
   });
 }
 
-const deleteDraft = (draftID, userID, token) => {
+const deleteDraft = (draftID, userID) => {
   return axiosDelete('api/user-info/draft/delete', {
     userId: userID,
     draftId: draftID
   }, {
     headers: {
-      'Authorization': token
+      'Authorization': getToken()
+    }
+  })
+}
+const publishPost = (data) => {
+  return axiosPost('api/post/publish-post', data, {
+    headers: {
+      'Authorization': getToken(),
+      'Content-Type': 'multipart/form-data'
     }
   })
 }
@@ -100,5 +109,6 @@ export {
   getDraftById,
   updatePostById,
   createPostById,
-  deleteDraft
+  deleteDraft,
+  publishPost
 }

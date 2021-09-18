@@ -5,8 +5,6 @@ import { getDisplayName } from '../../helpers/util';
 import { getBookmarks } from '../../services/postService';
 import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 import NewsThumbnail from '../news.thumbnail.component/news.thumbnail';
-import silentRefresh from '../../helpers/silentRefresh';
-
 
 const DATA_INDEX = "dataIndex",
   UNIQUE_ID="id";
@@ -64,19 +62,6 @@ class BookmarksList extends Component {
     .then(({data}) => {
       this.allData = [...this.allData, ...data.postsList];
       return {data: data.postsList, isLast: data.postsList.length && data.postsList[0].totalCount - 1 <= end};
-    }).catch((e) => {
-      // 2. if fails call silent refresh
-      if (e.response.status == 401) {
-        silentRefresh(self.props.setCurrentUser).then(() => {
-          // try to do same again
-          return self.getPosts(userID, start, end);
-        }).catch((e) => {
-          return Promise.reject();
-        });
-      } else {
-        // something went wrong
-        return Promise.reject();
-      }
     });
   }
   getRangeData (start, end) {
@@ -122,9 +107,4 @@ const mapStateToProps = ({user, window}) => ({
   windowWidth: window.windowSize
 });
 
-
-const mapDispatchToProps = (dispatch) => ({
-  setCurrentUser: (payload) => dispatch(setCurrentUser(payload)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(BookmarksList);
+export default connect(mapStateToProps)(BookmarksList);

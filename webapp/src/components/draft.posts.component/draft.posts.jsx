@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
 import { deleteDraft, getDrafts } from '../../services/postService';
-import silentRefresh from '../../helpers/silentRefresh';
 import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 import NewsThumbnail from '../news.thumbnail.component/news.thumbnail';
 import { withRouter } from 'react-router-dom';
@@ -69,19 +68,6 @@ class DraftPostsList extends Component {
     .then(({data}) => {
       this.allData = [...this.allData, ...data.postsList];
       return {data: data.postsList, isLast: data.postsList.length && data.postsList[0].totalCount - 1 <= end};
-    }).catch((e) => {
-      // 2. if fails call silent refresh
-      if (e.response.status == 401) {
-        silentRefresh(self.props.setCurrentUser).then(() => {
-          // try to do same again
-          return self.getPosts(userID, start, end);
-        }).catch((e) => {
-          return Promise.reject();
-        }); 
-      } else {
-        // something went wrong
-        return Promise.reject();
-      }
     });
   }
   getRangeData (start, end) {

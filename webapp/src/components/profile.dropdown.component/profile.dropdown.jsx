@@ -10,13 +10,13 @@ import { hideProfileDropDown } from '../../reducers/click/profile.dropdown.actio
 import './profile.dropdown.component.scss';
 import withFocusBlur from '../focus.blur.hoc.component/focus.blur';
 import { logoutUser } from '../../reducers/user/user.action';
-import axios from 'axios';
 import { getDisplayName } from '../../helpers/util';
+import { logoutCurrentUser } from '../../services/ouathService';
 
 const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentUser }) => {
 
   const userLogout = () => {
-    axios.delete('/api/auth/logout').then((res) => {
+    logoutCurrentUser().then((res) => {
       if (res.status == 204) {
         logoutUser();
       }

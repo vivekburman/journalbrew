@@ -10,8 +10,6 @@ import { connect } from 'react-redux';
 // import workerScript from '../../helpers/uploadWorker';
 import imageCompression from 'browser-image-compression';
 // import { convertToPng, getPngName } from '../../helpers/convertToPng';
-import silentRefresh from '../../helpers/silentRefresh';
-import { setCurrentUser } from '../../reducers/user/user.action';
 import { setPostInfo } from '../../reducers/post/post.action';
 import { withRouter } from 'react-router';    
 import { getDraftById } from '../../services/postService';
@@ -70,27 +68,15 @@ class TextEditor extends Component {
   componentWillUnmount() {
     this.props.setEditorData(null);
   }
-  getArticleById = (postId, token) => {
+  getArticleById = (postId) => {
     if (!postId) return Promise.reject();
-    return getDraftById(postId, token);
+    return getDraftById(postId);
   }
   editOrNewMode = () => {
     if(this.props.location.pathname.startsWith("/edit-story/")) {
       const postId = this.props.match.params.postId;
-      return this.getArticleById(postId, this.props.currentUser?.token)
-      .then(({data}) => ({data: data.story, postId: postId}))
-      .catch(e => {
-        if (e.response.status == 401) {
-          return silentRefresh(this.props.setCurrentUser).then(() => {
-            // try to do same again
-            return this.getArticleById(postId, 
-              this.props.currentUser?.token);
-          }).catch(() => {
-            return null;
-          }); // if it fails then props.currentUser will be false so, it will automatically show login modal
-        }
-        return null;
-      });
+      return this.getArticleById(postId)
+      .then(({data}) => ({data: data.story, postId: postId}));
     }
     return Promise.resolve(1);
   }
@@ -287,7 +273,6 @@ const mapStateToProps = ({editorData, user}) => ({
   currentUser: user.currentUser
 });
 const mapDispatchToProps = (dispatch) => ({
-  setCurrentUser: (payload) => dispatch(setCurrentUser(payload)),
   setEditorData: (payload) => dispatch(setEditorData(payload)),
   setPostInfo: payload => dispatch(setPostInfo(payload))
 });

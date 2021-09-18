@@ -4,9 +4,6 @@ import close from '../../images/close.svg';
 import './publish.component.scss';
 import { connect } from 'react-redux';
 import { Tags } from '../tags.component/tags';
-import axios from 'axios';
-import { setCurrentUser } from '../../reducers/user/user.action';
-import silentRefresh from '../../helpers/silentRefresh';
 import { css } from "@emotion/core";
 import PropagateLoader from "react-spinners/PropagateLoader";
 import { withRouter } from 'react-router';
@@ -15,6 +12,7 @@ import {convertToPng, getPngName} from '../../helpers/convertToPng';
 import RadioButton from '../radio.button.component/radio.button.component';
 import { Component } from 'react';
 import { createRef } from 'react';
+import { publishPost } from '../../services/postService';
 
 const publishPostAPI = (postId, token, formData) => {
   const _formData = new FormData();
@@ -25,13 +23,7 @@ const publishPostAPI = (postId, token, formData) => {
   _formData.append('summary', formData.summary);
   _formData.append('type', formData.type);
   _formData.append('thumb', formData.thumb);
-
-  return axios.post('api/post/publish-post', _formData, {
-    headers: {
-      'Authorization': token,
-      'Content-Type': 'multipart/form-data'
-    }
-  });
+  return publishPost(_formData);
 }
 const ERR_TITLE_LIMIT = 'Title should be within 150 characters.';
 const ERR_EMPTY = 'field cannot be empty.';
@@ -566,7 +558,5 @@ const mapStateToProps = ({editorData, post, user, window}) => ({
   currentUser: user.currentUser,
   windowWidth: window.windowSize,
 });
-const mapDispatchToProps = (dispatch) => ({
-  setCurrentUser: (payload) => dispatch(setCurrentUser(payload))
-});
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Publish));
+
+export default connect(mapStateToProps)(withRouter(Publish));
