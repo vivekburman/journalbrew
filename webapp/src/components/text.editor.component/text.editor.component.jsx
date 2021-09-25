@@ -31,6 +31,7 @@ class TextEditor extends Component {
       error: false,
     };
     this.instanceRef = createRef(null);
+    //bind this
     this.EDITOR_JS_TOOLS = {...EDITOR_JS_TOOLS};
     this.EDITOR_JS_TOOLS.image.config = {
       ...this.EDITOR_JS_TOOLS.image.config,
@@ -76,7 +77,9 @@ class TextEditor extends Component {
     if(this.props.location.pathname.startsWith("/edit-story/")) {
       const postId = this.props.match.params.postId;
       return this.getArticleById(postId)
-      .then(({data}) => ({data: data.story, postId: postId}));
+      .then(( { data } ) => {
+        return {data: data.story, postId: postId}
+      });
     }
     return Promise.resolve(1);
   }
@@ -249,21 +252,25 @@ class TextEditor extends Component {
     // TODO: cleanup data that is left empty
     return true;
   }
+
   render() {
     const defaultPlaceholder = 'Let the world know what happend!';
     const saveEditorData = this.saveEditorData;
     const {error} = this.state;
+    const data = this.props.editorData;
     return (
       <article className='text-editor-container outline-none'>
         {error ?
         <Error /> 
         :
+        typeof data === "object" && data.time > 0 ?
         <EditorJs 
-          data={this.props.editorData}
+          data={data}
           onChange={saveEditorData}
-          tools={ EDITOR_JS_TOOLS }
+          tools={ this.EDITOR_JS_TOOLS }
           instanceRef = { (instance) => (this.instanceRef.current = instance) }
-          placeholder={defaultPlaceholder} />}
+          placeholder={defaultPlaceholder} />
+          : <div>Loading</div>}
       </article>
     );
   }
