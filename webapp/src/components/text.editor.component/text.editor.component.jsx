@@ -25,8 +25,14 @@ import Error from '../error.component/error';
 class TextEditor extends Component {
   constructor(props) {
     super(props);
+    this.MODES = {
+      EDIT: 1,
+      NEW: 2,
+      NONE: 3
+    };
     this.pendingRemove = null;
     this.timer = 0;
+    this.currentMode = this.MODES.NONE;
     this.state = {
       error: false,
     };
@@ -75,12 +81,14 @@ class TextEditor extends Component {
   }
   editOrNewMode = () => {
     if(this.props.location.pathname.startsWith("/edit-story/")) {
+      this.currentMode = this.MODES.EDIT;
       const postId = this.props.match.params.postId;
       return this.getArticleById(postId)
       .then(( { data } ) => {
         return {data: data.story, postId: postId}
       });
     }
+    this.currentMode = this.MODES.NEW;
     return Promise.resolve(1);
   }
   handleEditorImageUploadByURL = (url) => {
@@ -263,14 +271,16 @@ class TextEditor extends Component {
         {error ?
         <Error /> 
         :
-        typeof data === "object" && data.time > 0 ?
+        this.currentMode === this.MODES.NONE ? 
+        <></>
+        :
         <EditorJs 
           data={data}
           onChange={saveEditorData}
           tools={ this.EDITOR_JS_TOOLS }
           instanceRef = { (instance) => (this.instanceRef.current = instance) }
           placeholder={defaultPlaceholder} />
-          : <div>Loading</div>}
+        }
       </article>
     );
   }
