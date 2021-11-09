@@ -62,6 +62,7 @@ class TextEditor extends Component {
     this.editOrNewMode().then(res => {
       if (res == null) return this.setState({error: true});
       if (typeof res === "object") {
+        this.currentMode = this.MODES.EDIT;
         this.props.setPostInfo({postId: res.postId});
         this.props.setEditorData(res.data);  
       }    
@@ -81,7 +82,6 @@ class TextEditor extends Component {
   }
   editOrNewMode = () => {
     if(this.props.location.pathname.startsWith("/edit-story/")) {
-      this.currentMode = this.MODES.EDIT;
       const postId = this.props.match.params.postId;
       return this.getArticleById(postId)
       .then(( { data } ) => {

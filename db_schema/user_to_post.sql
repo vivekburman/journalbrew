@@ -9,5 +9,5 @@ CREATE TABLE user_to_post (
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (author_id) REFERENCES user(uuid),
-    FOREIGN KEY (post_id) REFERENCES post(id)
+    FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE
 );

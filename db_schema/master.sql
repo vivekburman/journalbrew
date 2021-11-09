@@ -32,6 +32,7 @@ CREATE TABLE user_to_post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
     author_id BINARY(16) NOT NULL,
     full_story JSON NOT NULL,
+    post_id INT UNSIGNED NULL,
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (author_id) REFERENCES user(uuid),

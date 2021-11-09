@@ -266,7 +266,7 @@ userInfoRouter.delete('/draft/delete', utils.verifyAccessToken, async(req_: Requ
                 WHERE ${ID}=?
                 AND ${AUTHOR_ID}=?`,
             [draftID, Buffer.from(uuidParse(userID))]);
-            if (response.affectedRows == 1) {
+            if (response[0] && response[0].affectedRows == 1) {
                 res.status(200).json({
                     success: true
                 });

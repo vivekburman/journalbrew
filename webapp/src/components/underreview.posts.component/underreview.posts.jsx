@@ -59,7 +59,6 @@ class UnderReviewPostsList extends Component {
       />
   }
   getPosts = (userID, start, end) => {
-    const self = this;
     return getUnderReviewPosts(userID, start, end, this.props.currentUser?.token)
     .then(({data}) => {
       this.allData = [...this.allData, ...data.postsList];

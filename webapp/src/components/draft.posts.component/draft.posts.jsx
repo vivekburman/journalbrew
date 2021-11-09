@@ -42,13 +42,25 @@ class DraftPostsList extends Component {
     }
     return <ul className="ul-default">{feedList}</ul>;
   }
-  onDeleteMenuClick = (postID) => {
-    deleteDraft(postID, this.props.userID, this.props.currentUser?.token);
+  onDeleteMenuClick = async (postID) => {
+     try {
+      const response = await deleteDraft(postID, this.props.userID);
+      // if it passes then remove from infinite scroll
+      return {
+        "status": response.status == 200
+      }; 
+    } catch {
+      // turn ON its pointer events
+        return {
+          "status": false
+        };
+     }
   }
   onEditMenuClick = (postID, path) => {
     this.props.history.push(`${path}${postID}`);
   }
-  getListItemDOM = (data, index) => {
+
+  getListItemDOM = (data, index, removeItemFunc) => {
     return <NewsThumbnail 
       key={index} 
       showMenu={true}
@@ -58,12 +70,12 @@ class DraftPostsList extends Component {
       showCreator={false}
       time={data.createdAt}
       postID={data.id} 
-      title={data.title}
+      title={data.title + data.id}
       summary={data.summary}
+      removeItemFunc={removeItemFunc}
       />
   }
   getPosts = (userID, start, end) => {
-    const self = this;
     return getDrafts(userID, start, end, this.props.currentUser?.token)
     .then(({data}) => {
       this.allData = [...this.allData, ...data.postsList];

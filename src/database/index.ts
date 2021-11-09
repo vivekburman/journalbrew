@@ -57,7 +57,7 @@ class SQL_DB {
         if (query.startsWith('Insert') || query.startsWith('INSERT')) {
             return this.db?.query(query, values)
             .catch(err => {
-                console.log('Insertion failed');
+                console.error('Insertion failed');
                 this.logError(query,values, err);
                 throw new createHttpError.InternalServerError('SQL Exception');
             });
@@ -78,7 +78,7 @@ class SQL_DB {
     cteQueryWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
         return this.db?.query(query, values)
         .catch(err => {
-            console.log('CTE Query failed');
+            console.error('CTE Query failed');
             this.logError(query,values, err);
             throw new createHttpError.InternalServerError('SQL Exception');
         });
@@ -87,7 +87,7 @@ class SQL_DB {
         if (query.startsWith('DELETE') || query.startsWith('delete')) {
             return this.db?.query(query, values)
             .catch(err => {
-                console.log('Deletion failed');
+                console.error('Deletion failed');
                 this.logError(query,values, err);
                 throw new createHttpError.InternalServerError('SQL Exception');
             });
@@ -98,7 +98,7 @@ class SQL_DB {
         if (query.startsWith('SELECT') || query.startsWith('select')) {
             return this.db?.query(query, values)
             .catch(err => {
-                console.log('Selection failed');
+                console.error('Selection failed');
                 this.logError(query,values, err);
                 throw new createHttpError.InternalServerError('SQL Exception');
             });
@@ -108,15 +108,15 @@ class SQL_DB {
     updateJSONValues = (query: string, values: any|any[]) => {
         return this.db?.query(query, values)
             .catch(err => {
-                console.log('Updating JSON values failed');
+                console.error('Updating JSON values failed');
                 this.logError(query,values, err);
                 throw new createHttpError.InternalServerError('SQL Exception');
             });
     }
     logError = (query:string, values: any | any[], err: Error):void => {
-        console.log(`Query: ${query}`);
-        console.log(`Values: ${values}`);
-        console.log(`Error: ${err}`);
+        console.error(`Query: ${query}`);
+        console.error(`Values: ${values}`);
+        console.error(`Error: ${err}`);
     }
     exec = async (type: string, query: string, values: any | any[] | { [param: string]: any }) => {
         let res;

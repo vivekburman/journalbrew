@@ -84,9 +84,10 @@ const createPostById = (data) => {
 
 const deleteDraft = (draftID, userID) => {
   return axiosDelete('api/user-info/draft/delete', {
-    userId: userID,
-    draftId: draftID
-  }, {
+    data: {
+      userId: userID,
+      draftId: draftID
+    },
     headers: {
       'Authorization': getToken()
     }

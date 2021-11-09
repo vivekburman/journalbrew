@@ -20,8 +20,8 @@ function axiosPut(endpoint, data, headers) {
   return Axios.put(getHostURL() + endpoint, data, headers);
 }
 
-function axiosDelete(endpoint, headers) {
-  return Axios.delete(getHostURL() + endpoint, headers);
+function axiosDelete(endpoint, config) {
+  return Axios.delete(getHostURL() + endpoint, config);
 }
 
 function axiosPatch(endpoint, data, headers) {

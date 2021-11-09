@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import bookmarkImg from '../../images/bookmark.svg';
 import './news.thumbnail.component.scss';
 import CreatorInfo from '../creator.info.component/creator.info';
@@ -16,10 +16,13 @@ const MODES = {
 
 const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type, 
   username, time, bookmark, showCreator, profilePicUrl, showMenu, 
-  onDeleteMenuClick, onEditMenuClick, mode = 1 }) => {
+  onDeleteMenuClick, onEditMenuClick,
+  removeItemFunc, mode = 1 }) => {
   
   const [isMenuDropdownOpen, setMenuDropdown] = useState(false);
   const history = useHistory();
+  const rootRef = useRef(null);
+
   const toggleDD = (e) => {
     e.stopPropagation();
     setMenuDropdown(!isMenuDropdownOpen); 
@@ -35,26 +38,33 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
   const onEditClick = () => {
     onEditMenuClick(postID, MODES[mode]);
   }
-  const onDeleteClick = () => {
-    onDeleteMenuClick(postID);
+  const onDeleteClick = async () => {
+    rootRef.current && (rootRef.current.style.pointerEvents = "none");
+    const response = await onDeleteMenuClick(postID);
+    if (response.status) {
+      removeItemFunc(postID);
+    } else {
+      rootRef.current && (rootRef.current.style.pointerEvents = "");
+    }
   }
 
   return (
-    <div className="news-item cursor-pointer">
-      <div onClick={navClick} className="news-item-link">
+    <div className="news-item"
+    ref={rootRef}>
+      <div className="news-item-link">
         {thumbnail ? <div className="news-thumbnail">
           <img src={ thumbnail } alt="Images" className="news-image flex"/>
         </div> : <></>}
         <div className="news-details flex-column-nowrap align-content-spacebetween justify-content-between w-100">
           <div className="margin-bottom-15">
             <div className="flex flex-row-nowrap align-items-center">
-              <h1 className="news-title flex-grow-1" >
+              <h1 className="news-title flex-grow-1  cursor-pointer" onClick={navClick}>
                 {title}
               </h1>
               {
                 showMenu && 
                 <div className="position-relative">
-                  <img src={threeDots} alt="menu" className="icon-img" 
+                  <img src={threeDots} alt="menu" className="icon-img rotate-z-90" 
                   onClick={toggleDD} />
                   <PostDropdown 
                   onDeleteMenuClick={onDeleteClick}
