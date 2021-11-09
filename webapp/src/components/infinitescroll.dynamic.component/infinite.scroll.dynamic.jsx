@@ -197,7 +197,6 @@ class InfiniteScroll extends Component {
   }
 
   getTopNextElements = async (elementsToBeSwapped) => {
-    const self = this;
     if (this.boundary.start == 0) return;
     this.elementsSwapped = 1;
     this.setCurrentScrollMode(this.SCROLL_MODES.TOP);
