@@ -10,9 +10,12 @@ const OauthCallback = ({ setCurrentUser, history }) => {
     .then(({status, data}) => {
       if (status == 200 && data.success) {
         setCurrentUser({
-          name: data.username,
+          firstName: data.firstName,
+          middleName: data.middleName,
+          lastName: data.lastName,
           profilePicUrl: data.profilePicUrl,
-          token: data.access_token
+          token: data.access_token,
+          userId: data.userId
         });
         const lastVisitedPage = localStorage.getItem(TSNEnum.LAST_VISITED_PAGE_BEFORE_LOGIN);
         lastVisitedPage && history.push(lastVisitedPage);

@@ -100,6 +100,7 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
             throw new createHttpError.BadRequest('Invalid OAuth Credentials');
          }
          const tokenObj = {email: profile.emails[0].value, id:data};
+         const userID = data;
          const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
          data = await utils.issueRefreshTokenJWT(tokenObj);
          res.cookie('refresh_token', data.token, {
@@ -108,7 +109,11 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
          });
          res.status(200).json({success: true, access_token: accessTokenJWT.token, 
             expiresIn: accessTokenJWT.expires,
-            username: profile.displayName,
+            username: firstName,
+            firstName: firstName,
+            lastName: lastName,
+            middleName: middleName,
+            userId: userID,
             profilePicUrl: profilePicUrl
          });
       }  
@@ -149,7 +154,10 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
       });
       res.status(200).json({success: true, access_token: accessTokenJWT.token, 
          expiresIn: accessTokenJWT.expires,
-         username: getConsolidatedName(data),
+         userId: tokenObj.id,
+         firstName: data[FIRST_NAME],
+         lastName: data[LAST_NAME],
+         middleName: data[MIDDLE_NAME],
          profilePicUrl: data[PROFILE_PIC_URL] 
       });
       

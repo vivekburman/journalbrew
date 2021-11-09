@@ -1,7 +1,6 @@
 @import '../../mainSass/main';
 
 .homepage {
-    @extend %flex-row-nowrap;
     margin: 0;
 }
 .homepage > div {

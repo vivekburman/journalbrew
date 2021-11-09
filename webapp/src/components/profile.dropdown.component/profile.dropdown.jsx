@@ -10,26 +10,17 @@ import { hideProfileDropDown } from '../../reducers/click/profile.dropdown.actio
 import './profile.dropdown.component.scss';
 import withFocusBlur from '../focus.blur.hoc.component/focus.blur';
 import { logoutUser } from '../../reducers/user/user.action';
-import axios from 'axios';
+import { getDisplayName } from '../../helpers/util';
+import { logoutCurrentUser } from '../../services/ouathService';
 
 const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentUser }) => {
 
   const userLogout = () => {
-    axios.delete('/api/auth/logout').then((res) => {
+    logoutCurrentUser().then((res) => {
       if (res.status == 204) {
         logoutUser();
       }
     });
-  }
-  const getDisplayName = ({name}) => {
-    let displayName = name['first_name'];
-    if (name['middle_name']) {
-      displayName += ` ${name['middle_name']}`
-    }
-    if (name['last_name']) {
-      displayName += ` ${name['last_name']}`
-    }
-    return displayName;
   }
   return (
   <ul className="profile-list-wrapper">
@@ -38,11 +29,11 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
       <h1 className="profile-heading">Menu</h1>
     </li>}
     <li className="profile-list-item-wrapper">
-      <Link to="/user-profile" className="profile-item-link">
+      <Link to={`/user-profile/${currentUser.userId}`} className="profile-item-link">
         <div className="profile-list-item">
           <UserAvatar size={50} url={ currentUser.profilePicUrl }/>
           <div className="flex flex-column-nowrap profile-list-info">
-            <span>{getDisplayName(currentUser)}</span>
+            <span>{getDisplayName(currentUser.firstName, currentUser.middleName, currentUser.lastName)}</span>
             <span className="see-profile">See your Profile</span>
           </div>
         </div>

@@ -8,7 +8,10 @@ const silentRefresh = (setCurrentUser) => {
     .then(({status, data}) => {
         if(status == 200 && data.success) {
           setCurrentUser({
-            name: data.username,
+            firstName: data.firstName,
+            middleName: data.middleName,
+            lastName: data.lastName,
+            userId: data.userId,
             profilePicUrl: data.profilePicUrl,
             token: data.access_token
           });
@@ -17,10 +20,6 @@ const silentRefresh = (setCurrentUser) => {
             setCurrentUser(undefined)
             reject();
         }
-    }).catch(err => {
-        setCurrentUser(undefined);
-        console.error(err);
-        reject();
     });
   }); 
 }

@@ -4,9 +4,10 @@ import './personal.info.component.scss';
 import {UserAvatar} from '../avatar.component/avatar'; 
 import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
+import { getDisplayName, getDateOfJoining } from '../../helpers/util';
 
 const PersonalInfo = (props) => {
-  const {username='Vivek Burman', doj='Jan 15, 2019', windowSize } = props;
+  const {personalInfo, windowSize, loading } = props;
   let size;
   if (windowSize < 768) {
     size = 100;
@@ -16,19 +17,34 @@ const PersonalInfo = (props) => {
   return (
     <div className="personal-info-container">
       <div className="personal-info-details">
-        { username ? <h1 className="username">{username}</h1> : 
-         <div style={{ maxWidth: '150px' }}>
-           <Skeleton height={20}/>
-         </div> }
-        { doj ? <div className="flex flex-row-nowrap align-items-center">
-          <img src={calendar} className="icon-img calendar-img" alt="calendar"/>
-          <time className="time">{doj || 'Jan 15, 2019'}</time>
-        </div> : 
-        <div style={{ lineHeight: 1.5 }}>
-          <Skeleton width={65} />
-        </div> }
+        {
+          loading ? 
+          <div className="flex-row-nowrap justify-content-between">
+            <div className="flex-grow-1 margin-top-15">
+              <div style={{ maxWidth: '200px' }}>
+                <Skeleton height={20}/>
+              </div>
+              <div style={{ lineHeight: 1.5 }}>
+                <Skeleton width={65} />
+              </div>
+            </div>
+            <div>
+              <Skeleton width={size} height={size} circle={true} />
+            </div>
+          </div>
+          :
+          <div className="flex flex-row-nowrap justify-content-between">
+            <div>
+              <h1 className="username">{getDisplayName(personalInfo.firstName, personalInfo.middleName, personalInfo.lastName)}</h1>
+              <div className="flex flex-row-nowrap align-items-center">
+                <img src={calendar} className="icon-img calendar-img cursor-default" alt="calendar"/>
+                <time className="time">Joined {getDateOfJoining(personalInfo.createdAt)}</time>
+              </div>
+            </div>
+            <UserAvatar url={personalInfo.profilePicUrl} size={size}/> 
+          </div>
+        }
       </div>
-      <UserAvatar size={size}/> 
     </div>
   );
 }

@@ -12,9 +12,9 @@ class Main extends Component {
       <main className="main">
           <Switch>
             <Route exact path={['/', '/opinions']} component={NewsFeed} />
-            <Route exact path="/user-profile" component={UserProfile} />
+            <Route exact path="/user-profile/:userId" component={UserProfile} />
             <Route exact path="/new-story" component={CreateOrUpdatePost} />
-            <Route exact path="/edit-story/a/:postId" component={CreateOrUpdatePost} />
+            <Route exact path="/edit-story/:postId" component={CreateOrUpdatePost} />
             <Route exact path="/full-story" component={FullNews} />
             <Route exact path="/payment-history-&-insights" component={PaymentInsights} />
           </Switch>

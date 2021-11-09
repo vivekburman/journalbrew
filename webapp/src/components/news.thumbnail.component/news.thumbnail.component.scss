@@ -1,16 +1,19 @@
 @import '../../mainSass/main';
 
-.news-item {
+.news-item, .news-item-loader {
   box-shadow: 0 1px 0.4px 0px rgba(128, 128, 128, 0.39);
   border-radius: 4px;
   margin-bottom: 4px;
   background-color: #fff;
   border: 1px solid rgba(110, 109, 109, 0.212);
 }
+.news-details {
+  box-sizing: border-box;
+}
 .news-thumbnail {
   min-width: 246.67px;
 }
-@media (min-width: 527px) {
+@media (min-width: 600px) {
   .news-thumbnail {
     order: 2;
     padding: 10px;
@@ -21,9 +24,26 @@
     padding: 0;
   }
 }
-.news-details {
-  padding: 0 8px 8px 8px;
+.news-details, .news-item-loader-details {
+  padding: 0 8px 16px 8px;
 } 
+.news-item-loader-details {
+  line-height: 1.5;
+}
+.news-item-loader-desktop {
+  display: none;
+}
+.news-item-loader-mobile {
+  display: initial;
+}
+@media (min-width: 600px) {
+  .news-item-loader-mobile {
+    display: none;
+  }
+  .news-item-loader-desktop {
+    display: flex;
+  }
+}
 @media (min-width: 768px) {
   .news-item {
     max-width: unset;
@@ -33,7 +53,7 @@
   .news-item:hover {
       box-shadow: 0 1px 0.4px 0px rgba(128, 128, 128, 0.39);   
   }
-  .news-details {
+  .news-thumbnail + .news-details {
       width: 80%;
   }
   .news-thumbnail {
@@ -41,7 +61,7 @@
   }
 }
 @media (min-width: 992px) {
-  .news-details {
+  .news-thumbnail + .news-details {
     width: 70%;
   }
   .news-thumbnail {
@@ -49,7 +69,7 @@
   }
 }
 @media(min-width: 1200px) {
-  .news-details {
+  .news-thumbnail + .news-details {
     width: 80%;
   }
   .news-thumbnail {
@@ -60,12 +80,12 @@
   display: block;
   width: 100%;
   border-radius: 0 4px 0 0;
-  min-height: 100%;
+  height: 200px;
   object-fit: cover;
 }
 @media (min-width: 435px) {
   .news-image {
-    border-radius: 0;;
+    border-radius: 0;
   }
 }
 .news-title {
@@ -84,10 +104,6 @@
   .news-title {
     font-size: 22px;
   }
-}
-.news-details {
-  @extend %flex-column-nowrap;
-  align-content: space-between;
 }
 .creator-pic {
   width: 42px;
@@ -120,7 +136,7 @@
   @extend %flex-column-nowrap;
   cursor: inherit;
 }
-@media (min-width: 527px) {
+@media (min-width: 600px) {
   .news-item-link {
     flex-direction: row;
   }

@@ -1,0 +1,8 @@
+.news-feed-wrapper {
+  justify-content: center;
+}
+@media (min-width: 929px) {
+  .news-feed-wrapper {
+    justify-content: flex-start;
+  }
+}

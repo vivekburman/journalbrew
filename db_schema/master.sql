@@ -32,27 +32,40 @@ CREATE TABLE user_to_post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
     author_id BINARY(16) NOT NULL,
     full_story JSON NOT NULL,
+    post_id INT UNSIGNED NULL,
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY (author_id) REFERENCES user(uuid)
+    FOREIGN KEY (author_id) REFERENCES user(uuid),
+    FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 DROP TABLE IF EXISTS post;
 CREATE TABLE post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    title TEXT NOT NULL,
+    author_id BINARY(16) NOT NULL,
+    title VARCHAR(150) NOT NULL,
     thumbnail TEXT,
-    summary TEXT NOT NULL,
-    tags TINYTEXT NOT NULL,
-    location VARCHAR(255) NOT NULL,
+    summary VARCHAR(150) NOT NULL,
+    tags JSON NOT NULL,
+    location VARCHAR(50) NOT NULL,
     likes INT UNSIGNED DEFAULT 0,
     views INT UNSIGNED DEFAULT 0,
     type ENUM('article', 'opinion', 'eod') NOT NULL,
     full_story_id INT UNSIGNED NOT NULL,
-    publish_status ENUM('published', 'pendingReview', 'underReview', 'draft', 'discarded', 'removed'),
-    reported_by TEXT,
+    publish_status ENUM('published', 'underReview', 'discarded', 'removed'),
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY (full_story_id) REFERENCES user_to_post(id)
+    FOREIGN KEY (full_story_id) REFERENCES user_to_post(id),
+    FOREIGN KEY (author_id) REFERENCES user_to_post(author_id)
 );
 
+DROP TABLE IF EXISTS bookmark;
+CREATE TABLE bookmark (
+    id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    user_uuid BINARY(16) NOT NULL,
+    bookmark_post_id INT UNSIGNED NOT NULL,
+    created_at DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY (user_uuid) REFERENCES user(uuid),
+    FOREIGN KEY (bookmark_post_id) REFERENCES post(id)
+);

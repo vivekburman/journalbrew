@@ -1,77 +1,104 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import dummy from '../../images/dummy.jpeg';
-import profilePlaceholder from '../../images/profile-pic-placeholder.png';
-import bookmark from '../../images/bookmark.svg';
-import { showCompletePost } from '../../reducers/click/showcompletepost.action';
-import { Link } from 'react-router-dom';
+import React, { useRef } from 'react';
+import bookmarkImg from '../../images/bookmark.svg';
 import './news.thumbnail.component.scss';
 import CreatorInfo from '../creator.info.component/creator.info';
 import { Tags } from '../tags.component/tags';
+import Moment from 'react-moment';
+import threeDots from '../../images/threeDots.svg';
+import { useState } from 'react';
+import PostDropdown from '../post.dropdown.component/post.dropdown';
+import { useHistory } from 'react-router';
 
-const NewsFeedThumbnail = ({ postID, showCompletePost }) => {
-  // const imgRef = useRef();
-  // const refs = useRef([]);
-  // let counter = 0;
-  // const resetPreview = () => {
-  //   counter = 0;
-  //   refs.current.forEach(ref => {
-  //     ref.animationReset();
-  //   })
-  // }
-  // const startPreview = (e) => {
-  //   if (counter >= 3) {
-  //     resetPreview(refs);
-  //     return;
-  //   }
-  //   const _ref = refs.current[counter];
-  //   _ref.animationStart(() => {
-  //     startPreview(e, refs, ++counter);
-  //   });
-  // }
-  // const endPreview = (e) => {
-  //   if (counter >= 3) {
-  //     resetPreview(refs);
-  //     return;
-  //   }
-  //   const _ref = refs.current[counter];
-  //   _ref.animationPause();
-  // }
-  const handleClick = () => {
-    showCompletePost(postID);
-  }; 
+const MODES = {
+  1: '/full-story?',
+  2: '/edit-story/'
+}
+
+const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type, 
+  username, time, bookmark, showCreator, profilePicUrl, showMenu, 
+  onDeleteMenuClick, onEditMenuClick,
+  removeItemFunc, mode = 1 }) => {
+  
+  const [isMenuDropdownOpen, setMenuDropdown] = useState(false);
+  const history = useHistory();
+  const rootRef = useRef(null);
+
+  const toggleDD = (e) => {
+    e.stopPropagation();
+    setMenuDropdown(!isMenuDropdownOpen); 
+  }
+  const navClick = () => {
+    history.push(`${MODES[mode]}${postID}`);
+  }
+  const hideDropDown = (e) => {
+    e && e.stopPropagation();
+    setMenuDropdown(false);
+  };
+
+  const onEditClick = () => {
+    onEditMenuClick(postID, MODES[mode]);
+  }
+  const onDeleteClick = async () => {
+    rootRef.current && (rootRef.current.style.pointerEvents = "none");
+    const response = await onDeleteMenuClick(postID);
+    if (response.status) {
+      removeItemFunc(postID);
+    } else {
+      rootRef.current && (rootRef.current.style.pointerEvents = "");
+    }
+  }
+
   return (
-    <li className="news-item" onClick={handleClick} >
-      <Link to={`/full-story?${postID}` } className="news-item-link">
-        <div className="news-thumbnail">
-          <img src={ dummy } alt="Images" className="news-image flex"/>
-        </div>
-        <div className="news-details">
-          <h1 className="news-title">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam commodi, voluptatem magnam rem quia consequuntur provident officia iusto corrupti error sint voluptatibus, temporibus cumque sapiente modi ad saepe maiores explicabo!
-          </h1>
-          <p className="news-snapshot">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-            Eveniet inventore illo voluptatibus, eum itaque unde ea rem amet aliquam qui. Sed,
-            repellendus placeat iure harum itaque delectus id necessitatibus ullam?
-          </p>
+    <div className="news-item"
+    ref={rootRef}>
+      <div className="news-item-link">
+        {thumbnail ? <div className="news-thumbnail">
+          <img src={ thumbnail } alt="Images" className="news-image flex"/>
+        </div> : <></>}
+        <div className="news-details flex-column-nowrap align-content-spacebetween justify-content-between w-100">
+          <div className="margin-bottom-15">
+            <div className="flex flex-row-nowrap align-items-center">
+              <h1 className="news-title flex-grow-1  cursor-pointer" onClick={navClick}>
+                {title}
+              </h1>
+              {
+                showMenu && 
+                <div className="position-relative">
+                  <img src={threeDots} alt="menu" className="icon-img rotate-z-90" 
+                  onClick={toggleDD} />
+                  <PostDropdown 
+                  onDeleteMenuClick={onDeleteClick}
+                  onEditMenuClick={onEditClick}
+                  isOpen={isMenuDropdownOpen}
+                  hideFunc={hideDropDown}/>
+              </div>
+              }
+            </div>
+            <p className="news-snapshot">
+              {summary}
+            </p>
+          </div>
           <div className="flex flex-row-nowrap align-items-center justify-content-between">
-            <div className="creator-info">
-              <img className="creator-pic" src={ profilePlaceholder } alt="Creator Profile Pic"/>
-              <CreatorInfo username={'Mr.Talkbox'} time={'10:30AM'} />
-            </div>      
-            <div className="menu-section">
-              <Tags readOnly={true} tags={["Opinion"]} />
-              <img src={ bookmark } className="icon-img bookmark-link" alt="Bookmark" />
+              <div className="creator-info">
+                {!showCreator ? <Moment fromNow date={time} />
+                : 
+                <>
+                  <img className="creator-pic" src={ profilePicUrl } alt="Creator Profile Pic"/>
+                  <CreatorInfo username={username} time={time} />
+                </>}
+            </div>
+            <div className="menu-section flex-row-nowrap align-items-center">
+              {type ? <div>
+                <Tags readOnly={true} tags={[type]} />
+              </div>
+              : <></>}
+              {bookmark ? <img src={ bookmarkImg } className="icon-img bookmark-link" alt="Bookmark" /> : <></>}
             </div>
           </div>
         </div>
-      </Link>
-    </li>  
+      </div>
+    </div>  
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  showCompletePost: (postID) => dispatch(showCompletePost(postID)),
-});
-export default connect(null, mapDispatchToProps)(NewsFeedThumbnail);
+export default NewsFeedThumbnail;

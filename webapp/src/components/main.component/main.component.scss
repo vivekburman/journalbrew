@@ -1,10 +1,4 @@
-@import '../../mainSass/main';
-
 .main {
-    @extend %flex-row-nowrap;
-    margin: 0;
-    justify-content: space-around;
-    position: relative;
     width: 100%;
     padding-top: 52px;
     max-width: 1400px;

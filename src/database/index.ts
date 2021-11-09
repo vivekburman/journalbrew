@@ -1,5 +1,6 @@
 import mysql, { Connection } from 'mysql2/promise';
 import createHttpError from "http-errors";
+import { query } from 'express';
 // interface dbQueryFunc { 
 //     insertWithValues(query: string, values:any|any[]): Promise<any>,
 //     updateWithValues(query: string, values:any|any[]): Promise<any>, 
@@ -12,6 +13,8 @@ enum QUERY_TYPES {
     UPDATE =  'UPDATE',
     SELECT =  'SELECT',
     UPDATE_JSON = 'UPDATE_JSON',
+    CTE_SELECT = 'CTE_SELECT',
+    DELETE = 'DELETE',
 }
 
 class SQL_DB {
@@ -32,8 +35,6 @@ class SQL_DB {
                 this.db = await mysql.createConnection(this.CONFIG);
                 resolve(1);
             } catch(err) {
-                // console.log('DB connection error');
-                // console.log('Closing DB');
                 this.db?.end();
                 reject(err);
             }
@@ -56,7 +57,7 @@ class SQL_DB {
         if (query.startsWith('Insert') || query.startsWith('INSERT')) {
             return this.db?.query(query, values)
             .catch(err => {
-                console.log('Insertion failed');
+                console.error('Insertion failed');
                 this.logError(query,values, err);
                 throw new createHttpError.InternalServerError('SQL Exception');
             });
@@ -74,11 +75,30 @@ class SQL_DB {
         }
         return Promise.reject('Not a valid Update Query');
     }
+    cteQueryWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
+        return this.db?.query(query, values)
+        .catch(err => {
+            console.error('CTE Query failed');
+            this.logError(query,values, err);
+            throw new createHttpError.InternalServerError('SQL Exception');
+        });
+    }
+    deleteWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
+        if (query.startsWith('DELETE') || query.startsWith('delete')) {
+            return this.db?.query(query, values)
+            .catch(err => {
+                console.error('Deletion failed');
+                this.logError(query,values, err);
+                throw new createHttpError.InternalServerError('SQL Exception');
+            });
+        }
+        return Promise.reject('Not a valid Delete Query');
+    }
     selectWithValues = (query: string, values: any | any[] | { [param: string]: any }):Promise<any>  => {
         if (query.startsWith('SELECT') || query.startsWith('select')) {
             return this.db?.query(query, values)
             .catch(err => {
-                console.log('Selection failed');
+                console.error('Selection failed');
                 this.logError(query,values, err);
                 throw new createHttpError.InternalServerError('SQL Exception');
             });
@@ -88,15 +108,15 @@ class SQL_DB {
     updateJSONValues = (query: string, values: any|any[]) => {
         return this.db?.query(query, values)
             .catch(err => {
-                console.log('Updating JSON values failed');
+                console.error('Updating JSON values failed');
                 this.logError(query,values, err);
                 throw new createHttpError.InternalServerError('SQL Exception');
             });
     }
     logError = (query:string, values: any | any[], err: Error):void => {
-        console.log(`Query: ${query}`);
-        console.log(`Values: ${values}`);
-        console.log(`Error: ${err}`);
+        console.error(`Query: ${query}`);
+        console.error(`Values: ${values}`);
+        console.error(`Error: ${err}`);
     }
     exec = async (type: string, query: string, values: any | any[] | { [param: string]: any }) => {
         let res;
@@ -117,8 +137,14 @@ class SQL_DB {
                     case this.TYPES.UPDATE_JSON:
                         res = await this.updateJSONValues(query, values);
                         break;
+                    case this.TYPES.CTE_SELECT:
+                        res = await this.cteQueryWithValues(query, values);
+                        break;
+                    case this.TYPES.DELETE:
+                        res = await this.deleteWithValues(query, values);
+                        break;
                 }
-                if (res && type != this.TYPES.SELECT) {
+                if (res && (type != this.TYPES.SELECT && type != this.TYPES.CTE_SELECT) ) {
                     await this.commitTransc();
                 }
                 this.close();

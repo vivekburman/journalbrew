@@ -49,7 +49,7 @@ const PaymentHistoryNInsights = (props) => {
       <GrowthGraph totalAmount={totalAmount}/>
       <div className="history-container">
         <h2 className="header">Payment History</h2>
-       <ul className="ul">
+       <ul className="ul-default">
         { createPayments() }
        </ul>
       </div>

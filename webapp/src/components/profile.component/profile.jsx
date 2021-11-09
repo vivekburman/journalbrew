@@ -38,7 +38,7 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
 			    </Route>
 			  </Switch>
 			  <li className="profile-wrapper margin-left-8">
-					<span tabIndex={0} onClick={toggleProfileDropDown}>
+					<span tabIndex={0} onClick={toggleProfileDropDown} className="cursor-pointer">
 				    <UserAvatar url={ currentUser.profilePicUrl } size={35}/>
 					</span>
 			    <ProfileDropDown hideFunc={hideProfileDropDown} hidePointer={true} isOpen={isProfileDropDownOpen} />

@@ -19,3 +19,6 @@
 [submodule "webapp/src/_internal/editorjs-video"]
 	path = webapp/src/_internal/editorjs-video
 	url = https://github.com/vivekburman/editorjs-video.git
+[submodule "webapp/src/_internal/embed"]
+	path = webapp/src/_internal/embed
+	url = https://github.com/vivekburman/embed.git
