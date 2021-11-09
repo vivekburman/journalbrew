@@ -70,7 +70,7 @@ class DraftPostsList extends Component {
       showCreator={false}
       time={data.createdAt}
       postID={data.id} 
-      title={data.title + data.id}
+      title={data.title}
       summary={data.summary}
       removeItemFunc={removeItemFunc}
       />
