@@ -10,14 +10,14 @@ import PostDropdown from '../post.dropdown.component/post.dropdown';
 import { useHistory } from 'react-router';
 
 const MODES = {
-  1: '/full-story?',
+  1: '/full-story/',
   2: '/edit-story/'
 }
 
 const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type, 
   username, time, bookmark, showCreator, profilePicUrl, showMenu, 
   onDeleteMenuClick, onEditMenuClick,
-  removeItemFunc, mode = 1 }) => {
+  removeItemFunc, mode = 1, userID=null }) => {
   
   const [isMenuDropdownOpen, setMenuDropdown] = useState(false);
   const history = useHistory();
@@ -28,7 +28,7 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
     setMenuDropdown(!isMenuDropdownOpen); 
   }
   const navClick = () => {
-    history.push(`${MODES[mode]}${postID}`);
+    history.push(`${MODES[mode]}${userID ? `${userID}/${postID}` : `${postID}` }`);
   }
   const hideDropDown = (e) => {
     e && e.stopPropagation();
@@ -58,7 +58,7 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
         <div className="news-details flex-column-nowrap align-content-spacebetween justify-content-between w-100">
           <div className="margin-bottom-15">
             <div className="flex flex-row-nowrap align-items-center">
-              <h1 className="news-title flex-grow-1  cursor-pointer" onClick={navClick}>
+              <h1 className="news-title flex-grow-1 cursor-pointer" onClick={navClick}>
                 {title}
               </h1>
               {

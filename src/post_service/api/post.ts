@@ -8,6 +8,7 @@ import Busboy from 'busboy';
 import PQueue from 'p-queue';
 import awsSdk from 'aws-sdk';
 import SQL_DB from "../../database";
+import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS } from "../../database/fields";
 
 const postRouter: Router = Router();
 const thumbSize = 1024 * 1024 * 2;
@@ -31,21 +32,6 @@ enum PublishStatus {
     DISCARDED = "discarded",
     REMOVED = "removed"
 }
-
-const AUTHOR_ID = 'author_id',
-    FULL_STORY = 'full_story',
-    CREATED_AT = 'created_at',
-    ID='id',
-    TITLE= 'title',
-    THUMBNAIL='thumbnail',
-    SUMMARY='summary',
-    TAGS='tags',
-    LOCATION='location',
-    TYPE='type',
-    FULL_STORY_ID='full_story_id',
-    POST_ID='post_id',
-    PUBLISH_STATUS='publish_status',
-    MEDIA_URL = 'media_url';
 
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
@@ -311,8 +297,59 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
     } 
 });
 
-postRouter.get('/view-post', () => {
+// Anonymous users
+postRouter.get('/view-post', async (req_: Request, res: Response, next:NextFunction) => {
 
+});
+
+// authusers
+postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
+    const db = new SQL_DB();
+    try {
+        const req = req_ as RequestWithPayload;
+        const payload:User = req['payload'] as User;
+        const postId = req.body.postId;
+        const authorID = req.body.userId;
+        const loginUserID = payload['id'];
+        if (!postId) {
+            next(new createHttpError.InternalServerError("Post ID is null"));
+        } else if (!authorID) {
+            next(new createHttpError.InternalServerError("User ID is null"));
+        } else {
+            const _authorID = Buffer.from(uuidParse(authorID));
+            await db.connect();
+            // 1. get Post and check conditions
+            // 2. get User_To_post of that post
+            // 3. get User info of that post
+            let sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? ${loginUserID === authorID ? "" : `AND ${PUBLISH_STATUS}=${PublishStatus.PUBLISHED}`}`;
+            const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId]);
+            if (responsePost?.[0]?.[0]) {
+                const post = responsePost[0][0];
+                const _response = await Promise.all([
+                    db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
+                    db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [Buffer.from(uuidParse(loginUserID))])
+                ]);
+                const userToPost = _response[0];
+                const user = _response[1];
+                if (userToPost?.[0]?.[0] && user?.[0]?.[0]) {
+                    delete post[FULL_STORY_ID];
+                    res.status(200).json({
+                        postInfo: userToPost[0][0],
+                        authorInfo: user[0][0],
+                        metaInfo: post
+                    });
+                } else {
+                    next(new createHttpError.InternalServerError("Article not found"));
+                }
+            } else {
+                next(new createHttpError.InternalServerError("Article not found"));
+            }
+        }
+    }catch(err) {
+        next(err);
+    }finally {
+        db.close();
+    }
 });
 postRouter.get('/get-post', utils.verifyAccessToken, async (req_: Request, res: Response, next: NextFunction) => {
     try {

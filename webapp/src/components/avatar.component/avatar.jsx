@@ -8,7 +8,7 @@ export const UserAvatar = ({ url, size=100, userName="ABC"}) => {
       {
         url ? <img className="user-avatar-image" src={url} width={`${size}px`} height={`${size}px`}/>
         :
-        <div className="user-avatar-text" style={`backgound-color: ${colorArray[colorID]}; width: ${size}px; height: ${size}px`}>
+        <div className="user-avatar-text" style={{backgoundColor: `${colorArray[colorID]}`, width: `${size}px`, height: `${size}px`}}>
           { userName }
         </div>
       }

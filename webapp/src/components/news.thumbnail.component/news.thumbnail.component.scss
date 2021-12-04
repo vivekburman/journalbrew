@@ -89,7 +89,7 @@
   }
 }
 .news-title {
-  display: -webkit-box;
+  display: -webkit-inline-box;
   color: #000;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;  
@@ -97,7 +97,11 @@
   font-size: 20px;
   line-height: 1.2;
   margin: 4px 0;
+  font-weight: 500;
   @extend %font-roboto;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 @media (min-width: 1200px) {

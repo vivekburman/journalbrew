@@ -31,6 +31,7 @@ const SocialShare = (props) => {
         <img src={threeDots} alt="report" className="icon-img" 
         onClick= {toggleDD}  />
         <ReportDropDown 
+          noFullScreen={true}
           isOpen = {isReportDropDownOpen} 
           hideFunc={hideReportDropDown}
           {...props}/>

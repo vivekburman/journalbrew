@@ -49,28 +49,6 @@ export const renderTemplate = (blocks=[]) => {
           </video>
         );
         break;
-      case 'table':
-        const temp = entity.data.content.map((rows, i) => {
-          return (
-            <tr key={index+i} className="template-tr">
-            {
-              rows.map((data, i) => {
-                return(
-                  <td key={index+i} className="template-td">{parseHTMLToReact(data)}</td>
-                );
-              })
-            }
-            </tr>
-            );
-        });
-        layout.push(
-          <table className="template-table">
-            <tbody>
-              { temp }
-            </tbody>
-          </table>
-        );
-        break;
       case 'quote':
         layout.push(
           <blockquote className="template-blockqoute" title={parseHTMLToReact(entity.data.caption)}>{ parseHTMLToReact(entity.data.text) }</blockquote>

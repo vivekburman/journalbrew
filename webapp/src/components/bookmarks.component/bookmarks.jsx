@@ -54,6 +54,7 @@ class BookmarksList extends Component {
       summary={data.summary}
       thumbnail={data.thumbnail}
       type={data.type}
+      userID={data.authorID}
       />
   }
   getPosts = (userID, start, end) => {

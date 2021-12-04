@@ -5,6 +5,7 @@ import { parse as uuidParse } from 'uuid';
 import { RequestWithPayload } from "../../auth_service/utils";
 import { utils } from "../../auth_service/utils/jwtUtils";
 import SQL_DB from "../../database";
+import { EMAIL, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, JOINED_AT, UUID, ID, CREATED_AT, TITLE, SUMMARY, THUMBNAIL, TYPE, AUTHOR_ID, PUBLISH_STATUS, BOOKMARK_POST_ID, USER_UUID, FULL_STORY, POST_ID } from "../../database/fields";
 
 const userInfoRouter: Router = Router();
 
@@ -12,26 +13,7 @@ const userInfoRouter: Router = Router();
 // 2. get user published posts
 // 3. get user unpublished posts
 // 4. get user bookmarks
-const EMAIL = "email",
-    FIRST_NAME ="first_name",
-    LAST_NAME = "last_name",
-    MIDDLE_NAME = "middle_name",
-    PROFILE_PIC = "profile_pic_url",
-    JOINED_AT = "created_at",
-    UUID = "uuid",
-    AUTHOR_ID = 'author_id',
-    USER_UUID = 'user_uuid',
-    CREATED_AT = 'created_at',
-    ID='id',
-    TITLE= 'title',
-    THUMBNAIL='thumbnail',
-    TYPE='type',
-    FULL_STORY_ID='full_story_id',
-    FULL_STORY = 'full_story',
-    PUBLISH_STATUS='publish_status',
-    SUMMARY='summary',
-    BOOKMARK_POST_ID='bookmark_post_id',
-    QUERY_SIZE = 50;
+const QUERY_SIZE = 50;
 
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
@@ -42,7 +24,7 @@ userInfoRouter.get('/personal-info/:userId', async (req_: Request, res: Response
             throw new createHttpError[404];
         } else {
             const db = new SQL_DB();
-            const response = await db.exec(db.TYPES.SELECT, `SELECT ${EMAIL}, ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC}, ${JOINED_AT} FROM user WHERE ${UUID}=?`,
+            const response = await db.exec(db.TYPES.SELECT, `SELECT ${EMAIL}, ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL}, ${JOINED_AT} FROM user WHERE ${UUID}=?`,
             [Buffer.from(uuidParse(userID))]);
             if (response?.[0]?.[0]?.[EMAIL]) {
                 res.status(200).json({
@@ -51,7 +33,7 @@ userInfoRouter.get('/personal-info/:userId', async (req_: Request, res: Response
                         firstName: response[0][0][FIRST_NAME],
                         lastName: response[0][0][LAST_NAME],
                         middleName: response[0][0][MIDDLE_NAME],
-                        profilePicUrl: response[0][0][PROFILE_PIC],
+                        profilePicUrl: response[0][0][PROFILE_PIC_URL],
                         createdAt: response[0][0][JOINED_AT],
                     }
                 });
@@ -163,7 +145,7 @@ userInfoRouter.post('/bookmarks', utils.verifyAccessToken, async (req_: Request,
                 `WITH CTE AS (SELECT bookmark.${ID}, 
                 ROW_NUMBER() OVER(ORDER BY bookmark.${CREATED_AT} DESC) - 1 AS dataIndex, 
                 COUNT(*) OVER() AS totalCount, 
-                ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, post.${CREATED_AT} AS createdAt
+                ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, post.${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
                 FROM bookmark INNER JOIN post
                 ON bookmark.${BOOKMARK_POST_ID} = post.${ID}
                 WHERE ${USER_UUID} = ?
@@ -205,6 +187,7 @@ userInfoRouter.post('/drafts', utils.verifyAccessToken, async (req_: Request, re
                 COUNT(*) OVER() AS totalCount, ${FULL_STORY} AS fullStory, ${CREATED_AT} AS createdAt
                 FROM user_to_post 
                 WHERE ${AUTHOR_ID} = ?
+                AND ${POST_ID} IS NULL
                 ORDER BY ${CREATED_AT} DESC)
                 SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
             [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);

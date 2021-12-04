@@ -91,12 +91,18 @@
 .full-story-profile-wrapper, .full-story-profile-wrapper-bottom {
   @extend %flex-column-nowrap;
 }
+.full-story-top-items-wrapper {
+  align-items: flex-start;
+}
 
-@media (min-width: 576px) {
+@media (min-width: 435px) {
   .full-story-profile-wrapper {
     flex-direction: row;
   }
-  .social-share-wrapper {
+  .full-story-top-items-wrapper {
+    align-items: flex-end;
+  }
+  .social-share-bottom-wrapper {
     margin-top: 17px;
   }
 }

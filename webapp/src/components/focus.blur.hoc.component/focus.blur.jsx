@@ -37,7 +37,7 @@ const withFocusBlur = (WrappedComponent) => {
         tabIndex={0}
         onFocus={_onFocus}
         ref={setRef}
-        className="outline-none focus-blur-container">
+        className={"outline-none focus-blur-container " + (props.noFullScreen ? 'focus-no-full-screen' : '')}>
         <WrappedComponent {...props}/>
         {!props.hidePointer && <img src={triangle} alt="pointer" className="focus-blur-pointer"/> }
       </div>  }
