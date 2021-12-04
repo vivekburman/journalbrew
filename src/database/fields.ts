@@ -29,7 +29,9 @@ JOINED_AT = "created_at",
 USER_UUID = 'user_uuid',
 BOOKMARK_POST_ID='bookmark_post_id',
 LIKES = 'likes',
-VIEWS = 'views'
+VIEWS = 'views',
+FOLLOWER_ID = 'follower_uuid',
+FOLLOWEE_ID = 'following_uuid' 
 ;
 export {
     UUID,
@@ -60,5 +62,7 @@ export {
     USER_UUID,
     BOOKMARK_POST_ID,
     LIKES,
-    VIEWS
+    VIEWS,
+    FOLLOWER_ID,
+    FOLLOWEE_ID
 }

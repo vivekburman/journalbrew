@@ -5,7 +5,7 @@ import { parse as uuidParse } from 'uuid';
 import { RequestWithPayload } from "../../auth_service/utils";
 import { utils } from "../../auth_service/utils/jwtUtils";
 import SQL_DB from "../../database";
-import { EMAIL, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, JOINED_AT, UUID, ID, CREATED_AT, TITLE, SUMMARY, THUMBNAIL, TYPE, AUTHOR_ID, PUBLISH_STATUS, BOOKMARK_POST_ID, USER_UUID, FULL_STORY, POST_ID } from "../../database/fields";
+import { EMAIL, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, JOINED_AT, UUID, ID, CREATED_AT, TITLE, SUMMARY, THUMBNAIL, TYPE, AUTHOR_ID, PUBLISH_STATUS, BOOKMARK_POST_ID, USER_UUID, FULL_STORY, POST_ID, FOLLOWER_ID, FOLLOWEE_ID } from "../../database/fields";
 
 const userInfoRouter: Router = Router();
 
@@ -281,7 +281,35 @@ userInfoRouter.delete('/bookmark/delete', utils.verifyAccessToken, async(req_: R
                 WHERE ${ID}=?
                 AND ${USER_UUID}=?`,
             [bookmarkID, Buffer.from(uuidParse(userID))]);
-            if (response.affectedRows == 1) {
+            if (response[0] && response[0].affectedRows == 1) {
+                res.status(200).json({
+                    success: true
+                });
+            } else {
+                res.status(500).json({
+                    success: false
+                });
+            }
+        }
+
+    }catch(error) {
+        next(error);
+    } 
+});
+userInfoRouter.post('/following', utils.verifyAccessToken, async(req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const followerID = req.body.followerId || null;
+        const followingID = req.body.followingId || null;
+        if (!followerID || !followingID) {
+            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+        } else {
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.SELECT, 
+                `SELECT ${ID} FROM follow WHERE ${FOLLOWER_ID}=? AND ${FOLLOWEE_ID} = ?`, 
+                [Buffer.from(uuidParse(followerID)), Buffer.from(uuidParse(followingID))]
+            );
+            if (response[0] && response[0].affectedRows === 1) {
                 res.status(200).json({
                     success: true
                 });
@@ -297,4 +325,65 @@ userInfoRouter.delete('/bookmark/delete', utils.verifyAccessToken, async(req_: R
     } 
 });
 
+userInfoRouter.put('/follow-request', utils.verifyAccessToken, async(req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const followerID = req.body.followerId || null;
+        const followingID = req.body.followingId || null;
+        if (!followerID || !followingID) {
+            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+        } else {
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.INSERT, 
+                "INSERT INTO `follow` SET ?", {
+                    [FOLLOWEE_ID]: Buffer.from(uuidParse(followingID)),
+                    [FOLLOWER_ID]: Buffer.from(uuidParse(followerID)),
+                } 
+            );
+            if (response[0] && response[0].affectedRows === 1) {
+                res.status(200).json({
+                    success: true
+                });
+            } else {
+                res.status(500).json({
+                    success: false
+                });
+            }
+        }
+
+    }catch(error) {
+        next(error);
+    } 
+});
+
+userInfoRouter.delete('/unfollow-request', utils.verifyAccessToken, async(req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const followerID = req.body.followerId || null;
+        const followingID = req.body.followingId || null;
+        if (!followerID || !followingID) {
+            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+        } else {
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.DELETE, 
+                `DELETE FROM follow WHERE ${FOLLOWER_ID}=? AND ${FOLLOWEE_ID}=?`, [
+                    Buffer.from(uuidParse(followerID)),
+                    Buffer.from(uuidParse(followingID))
+                ] 
+            );
+            if (response[0] && response[0].affectedRows === 1) {
+                res.status(200).json({
+                    success: true
+                });
+            } else {
+                res.status(500).json({
+                    success: false
+                });
+            }
+        }
+
+    }catch(error) {
+        next(error);
+    } 
+});
 export default userInfoRouter;
