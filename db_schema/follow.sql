@@ -10,5 +10,6 @@ CREATE TABLE follow (
     following_uuid BINARY(16) NOT NULL,
     FOREIGN KEY (follower_uuid) REFERENCES user(author_id),
     FOREIGN KEY (following_uuid) REFERENCES user(author_id),
+    CONSTRAINT follow_pair_unique UNIQUE(follower_uuid, following_uuid)
     PRIMARY KEY(id)
 );

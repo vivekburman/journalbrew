@@ -13,6 +13,8 @@ import { getFullPost } from '../../services/postService';
 import Error from '../error.component/error';
 import { useParams } from 'react-router';
 import { getDisplayName } from '../../helpers/util';
+import { TSNEnum } from '../../helpers/tsnenum';
+import { getFollows } from '../../services/userService';
 
 const timeFormatter = (time) => {
   const _time = new Date(time);
@@ -32,20 +34,30 @@ export const FullPost = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const {userId: userID, postId: postID} = useParams();
+  const [follows, setFollows] = useState(TSNEnum.FOLLOW.UNSPECIFIED);
 
   useEffect(() => {
-    getFullPost(postID, userID)
-    .then(({ data }) => {
-      setFullPostInfo(data);
-      setError(false);
-    })
-    .catch(e => {
-      setFullPostInfo();
-      setError(true);
-    })
-    .finally(() =>{
-      setLoading(false);
-    }); 
+    const getFullPostInfo = () => {
+      getFullPost(postID, userID)
+      .then(({ data }) => {
+        setFullPostInfo(data);
+        setError(false);
+      })
+      .catch(e => {
+        setFullPostInfo();
+        setError(true);
+      })
+      .finally(() =>{
+        setLoading(false);
+      }); 
+    }
+    const getFollowsInfo = () => {
+      // 1. check whether its same user
+      // 2. check currentUser has token
+      // 3. make HTTP request
+    }
+    getFullPostInfo();
+    getFollowsInfo();
   }, []);
 
   return(
@@ -82,7 +94,7 @@ export const FullPost = (props) => {
                     <div className="flex flex-column-nowrap padding-8">
                     <div className="flex flex-row-nowrap align-items-center" >
                       <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
-                      {/* { hasUserFollowed ? <span className="following">Following</span> : <span className="follow">Follow</span> } */}
+                      { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> : follows === TSNEnum.FOLLOW.FOLLOWS ? <span className="following">Following</span> : <span className="follow">Follow</span> }
                     </div>
                       <div className="flex flex-row align-items-center">
                         <span className="news-location">{ fullPostInfo.metaInfo.location }</span>
@@ -124,7 +136,7 @@ export const FullPost = (props) => {
                       <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
                     </div>
                   </div>
-                  {/* { !hasUserFollowed ? <span className="following">Following</span> : <span className="follow">Follow</span> } */}
+                  { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> : follows === TSNEnum.FOLLOW.FOLLOWS ? <span className="following">Following</span> : <span className="follow">Follow</span> }
                 </div>
               </div>
             </div>
