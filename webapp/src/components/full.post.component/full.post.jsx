@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {connect} from 'react-redux';
 import './full.post.scss';
 import bookmark from '../../images/bookmark.svg';
 import PostReaction from '../user.reaction.component/user.reaction';
@@ -14,7 +15,7 @@ import Error from '../error.component/error';
 import { useParams } from 'react-router';
 import { getDisplayName } from '../../helpers/util';
 import { TSNEnum } from '../../helpers/tsnenum';
-import { getFollows } from '../../services/userService';
+import { getFollows, requestFollow, requestUnFollow } from '../../services/userService';
 
 const timeFormatter = (time) => {
   const _time = new Date(time);
@@ -29,36 +30,91 @@ const showArticle = ({ blocks=[] }) => {
 }
 
 const displayName = (authorInfo) => getDisplayName(authorInfo.firstName, authorInfo.middleName, authorInfo.lastName);
-export const FullPost = (props) => {
+const FullPost = (props) => {
   const [fullPostInfo, setFullPostInfo] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const {userId: userID, postId: postID} = useParams();
   const [follows, setFollows] = useState(TSNEnum.FOLLOW.UNSPECIFIED);
+  const [showLoadingFollows, setLoadingFollows] = useState(false);
 
+  // 1. Fires first time to get data
   useEffect(() => {
-    const getFullPostInfo = () => {
-      getFullPost(postID, userID)
+    getFullPost(postID, userID)
       .then(({ data }) => {
         setFullPostInfo(data);
         setError(false);
       })
-      .catch(e => {
+      .catch(() => {
         setFullPostInfo();
         setError(true);
       })
       .finally(() =>{
         setLoading(false);
       }); 
-    }
-    const getFollowsInfo = () => {
-      // 1. check whether its same user
-      // 2. check currentUser has token
-      // 3. make HTTP request
-    }
-    getFullPostInfo();
-    getFollowsInfo();
   }, []);
+  // 2. get Other infos dependent on Basic Info #1
+  useEffect(() => {
+    if (!props.currentUser?.token || !props.currentUser?.userId || !fullPostInfo?.authorInfo) {
+      setLoadingFollows(false);
+      setFollows(TSNEnum.FOLLOW.UNSPECIFIED);
+      return;
+    }
+    if (props.currentUser.userId === fullPostInfo.authorInfo.authorId) {
+      return setFollows(TSNEnum.FOLLOW.UNSPECIFIED);
+    }
+    getFollows({
+      followerId: props.currentUser.userId,
+      followingId: fullPostInfo.authorInfo.authorId
+    })
+    .then(({ data }) => {
+      if (data.success) {
+        setFollows(TSNEnum.FOLLOW.FOLLOWS);
+      } else {
+        setFollows(TSNEnum.FOLLOW.NOT_FOLLOWS);
+      }
+    })
+    .catch(() => {
+      setFollows(TSNEnum.FOLLOW.UNSPECIFIED);
+    }).finally(() => {
+      setLoadingFollows(false);
+    });
+  }, [fullPostInfo]);
+
+  const followRequest = () => {
+    if (!props.currentUser?.userId || !fullPostInfo?.authorInfo?.authorId) {
+      return;
+    }
+    const currentState = follows;
+    setLoadingFollows(true);
+    requestFollow({
+      followerId: props.currentUser.userId,
+      followingId: fullPostInfo.authorInfo.authorId
+    }).then(({ data }) => {
+      data.success ? setFollows(TSNEnum.FOLLOW.FOLLOWS) : setFollows(currentState);
+    }).catch(() => {
+      setFollows(currentState);
+    }).finally(() => {
+      setLoadingFollows(false);
+    });
+  }
+  const unfollowRequest = () => {
+    if (!props.currentUser?.userId || !fullPostInfo?.authorInfo?.authorId) {
+      return;
+    }
+    const currentState = follows;
+    setLoadingFollows(true);
+    requestUnFollow({
+      followerId: props.currentUser.userId,
+      followingId: fullPostInfo.authorInfo.authorId
+    }).then(({ data }) => {
+      data.success ? setFollows(TSNEnum.FOLLOW.NOT_FOLLOWS) : setFollows(currentState);
+    }).catch(() => {
+      setFollows(currentState);
+    }).finally(() => {
+      setLoadingFollows(false);
+    });
+  }
 
   return(
     <>
@@ -94,7 +150,11 @@ export const FullPost = (props) => {
                     <div className="flex flex-column-nowrap padding-8">
                     <div className="flex flex-row-nowrap align-items-center" >
                       <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
-                      { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> : follows === TSNEnum.FOLLOW.FOLLOWS ? <span className="following">Following</span> : <span className="follow">Follow</span> }
+                      { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
+                        : follows === TSNEnum.FOLLOW.FOLLOWS ? 
+                        <span className={"following " + (showLoadingFollows ? "tsn-loading" : "")} 
+                        onClick={unfollowRequest}>Following</span> 
+                        : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> }
                     </div>
                       <div className="flex flex-row align-items-center">
                         <span className="news-location">{ fullPostInfo.metaInfo.location }</span>
@@ -146,3 +206,7 @@ export const FullPost = (props) => {
     </>
   )
 }
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+export default connect(mapStateToProps)(FullPost);

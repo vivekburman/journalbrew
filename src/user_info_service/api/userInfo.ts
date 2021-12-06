@@ -303,6 +303,8 @@ userInfoRouter.post('/following', utils.verifyAccessToken, async(req_: Request, 
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is defined");
+        } else if(followerID === followingID) {
+            throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
             const db = new SQL_DB();
             const response = await db.exec(db.TYPES.SELECT, 
@@ -314,7 +316,7 @@ userInfoRouter.post('/following', utils.verifyAccessToken, async(req_: Request, 
                     success: true
                 });
             } else {
-                res.status(500).json({
+                res.status(200).json({
                     success: false
                 });
             }
@@ -332,6 +334,8 @@ userInfoRouter.put('/follow-request', utils.verifyAccessToken, async(req_: Reque
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is defined");
+        } else if(followerID === followingID) {
+            throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
             const db = new SQL_DB();
             const response = await db.exec(db.TYPES.INSERT, 
@@ -363,6 +367,8 @@ userInfoRouter.delete('/unfollow-request', utils.verifyAccessToken, async(req_: 
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is defined");
+        } else if(followerID === followingID) {
+            throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
             const db = new SQL_DB();
             const response = await db.exec(db.TYPES.DELETE, 

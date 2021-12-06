@@ -321,13 +321,13 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             // 1. get Post and check conditions
             // 2. get User_To_post of that post
             // 3. get User info of that post
-            let sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? ${loginUserID === authorID ? "" : `AND ${PUBLISH_STATUS}=${PublishStatus.PUBLISHED}`}`;
-            const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId]);
+            let sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? ${loginUserID === authorID ? "" : `AND ${PUBLISH_STATUS}=?`}`;
+            const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId, PublishStatus.PUBLISHED]);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
-                    db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [Buffer.from(uuidParse(loginUserID))])
+                    db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID])
                 ]);
                 const userToPost = _response[0];
                 const user = _response[1];
@@ -335,7 +335,7 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
                     delete post[FULL_STORY_ID];
                     res.status(200).json({
                         postInfo: userToPost[0][0],
-                        authorInfo: user[0][0],
+                        authorInfo: {...user[0][0], authorId: authorID},
                         metaInfo: post
                     });
                 } else {

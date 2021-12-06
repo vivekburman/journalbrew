@@ -40,7 +40,7 @@ const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
 }
 
 const issueRefreshTokenJWT = (userID: {email:string, id:string}) => {
-   const expiresIn = '1y';
+   const expiresIn = '15m';
    const payload = {
       email: userID.email,
       id:userID.id

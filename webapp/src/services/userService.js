@@ -11,7 +11,7 @@ const getFollows = ({ followerId, followingId }) => {
   })
 }
 const requestFollow = ({ followerId, followingId }) => {
-  return axiosPost('api/user-info/follow-request', {
+  return axiosPut('api/user-info/follow-request', {
     followerId: followerId,
     followingId: followingId
   }, {
