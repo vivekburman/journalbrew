@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {connect} from 'react-redux';
 import './full.post.scss';
 import bookmark from '../../images/bookmark.svg';
+import bookmarked from '../../images/bookmarked.svg';
 import PostReaction from '../user.reaction.component/user.reaction';
 import { parseHTMLToReact } from '../../helpers/jsontohtml';
 import { UserAvatar } from '../avatar.component/avatar';
@@ -15,7 +16,7 @@ import Error from '../error.component/error';
 import { useParams } from 'react-router';
 import { getDisplayName } from '../../helpers/util';
 import { TSNEnum } from '../../helpers/tsnenum';
-import { getFollows, requestFollow, requestUnFollow } from '../../services/userService';
+import { getFollows, setBookmark, unsetBookmark, requestFollow, requestUnFollow } from '../../services/userService';
 
 const timeFormatter = (time) => {
   const _time = new Date(time);
@@ -36,7 +37,8 @@ const FullPost = (props) => {
   const [error, setError] = useState(false);
   const {userId: userID, postId: postID} = useParams();
   const [follows, setFollows] = useState(TSNEnum.FOLLOW.UNSPECIFIED);
-  const [showLoadingFollows, setLoadingFollows] = useState(false);
+  const [isBookmarked, setBookmarked] = useState(false);
+  const [showLoadingFollows, setLoadingFollows] = useState();
 
   // 1. Fires first time to get data
   useEffect(() => {
@@ -44,6 +46,7 @@ const FullPost = (props) => {
       .then(({ data }) => {
         setFullPostInfo(data);
         setError(false);
+        setBookmarked(data.isBookmarked);
       })
       .catch(() => {
         setFullPostInfo();
@@ -55,30 +58,35 @@ const FullPost = (props) => {
   }, []);
   // 2. get Other infos dependent on Basic Info #1
   useEffect(() => {
+    const getFollowInfo = () => {
+      // get Follows
+      getFollows({
+        followerId: props.currentUser.userId,
+        followingId: fullPostInfo.authorInfo.authorId
+      })
+      .then(({ data }) => {
+        if (data.success) {
+          setFollows(TSNEnum.FOLLOW.FOLLOWS);
+        } else {
+          setFollows(TSNEnum.FOLLOW.NOT_FOLLOWS);
+        }
+      })
+      .catch(() => {
+        setFollows(TSNEnum.FOLLOW.UNSPECIFIED);
+      }).finally(() => {
+        setLoadingFollows(false);
+      });
+    }
     if (!props.currentUser?.token || !props.currentUser?.userId || !fullPostInfo?.authorInfo) {
       setLoadingFollows(false);
       setFollows(TSNEnum.FOLLOW.UNSPECIFIED);
       return;
     }
     if (props.currentUser.userId === fullPostInfo.authorInfo.authorId) {
-      return setFollows(TSNEnum.FOLLOW.UNSPECIFIED);
-    }
-    getFollows({
-      followerId: props.currentUser.userId,
-      followingId: fullPostInfo.authorInfo.authorId
-    })
-    .then(({ data }) => {
-      if (data.success) {
-        setFollows(TSNEnum.FOLLOW.FOLLOWS);
-      } else {
-        setFollows(TSNEnum.FOLLOW.NOT_FOLLOWS);
-      }
-    })
-    .catch(() => {
       setFollows(TSNEnum.FOLLOW.UNSPECIFIED);
-    }).finally(() => {
-      setLoadingFollows(false);
-    });
+    } else {
+      getFollowInfo();
+    }
   }, [fullPostInfo]);
 
   const followRequest = () => {
@@ -113,6 +121,31 @@ const FullPost = (props) => {
       setFollows(currentState);
     }).finally(() => {
       setLoadingFollows(false);
+    });
+  }
+  const toggleBookmark = () => {
+    !isBookmarked ? doBookmark() : undoBookmark();
+  }
+  const doBookmark = () => {
+    if (!props.currentUser?.userId || !postID) {
+      return;
+    }
+    setBookmark({
+      userID: props.currentUser.userId,
+      postID: postID
+    }).then(({ data }) => {
+      data.success && setBookmarked(true);
+    });
+  }
+  const undoBookmark = () => {
+    if (!props.currentUser?.userId || !postID) {
+      return;
+    }
+    unsetBookmark({
+      userID: props.currentUser.userId,
+      postID: postID
+    }).then(({ data }) => {
+      data.success && setBookmarked(false);
     });
   }
 
@@ -165,7 +198,8 @@ const FullPost = (props) => {
                   </div>
                   <div className="full-story-top-items-wrapper flex flex-column-nowrap">
                     <div className="flex flex-row-nowrap social-share-wrapper">
-                      <img src={bookmark} alt="bookmark" className="icon-img padding-left-0" />
+                      <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" className="icon-img padding-left-0" 
+                      onClick={toggleBookmark}/>
                       <SocialShare location={'top'}/>
                     </div>
                   </div>
@@ -184,7 +218,8 @@ const FullPost = (props) => {
                     <PostReaction likes={fullPostInfo.metaInfo.likes} hasUserLiked={false} showViews={true} views={fullPostInfo.metaInfo.views}/>
                   </div>
                   <div className="flex flex-row-nowrap social-share-bottom-wrapper padding-top-8">
-                    <img src={bookmark} alt="bookmark" className="icon-img" />
+                  <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" className="icon-img padding-left-0" 
+                    onClick={toggleBookmark}/>
                     <SocialShare location={'bottom'}/>
                   </div>
                 </div>
@@ -196,7 +231,11 @@ const FullPost = (props) => {
                       <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
                     </div>
                   </div>
-                  { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> : follows === TSNEnum.FOLLOW.FOLLOWS ? <span className="following">Following</span> : <span className="follow">Follow</span> }
+                  { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
+                    : follows === TSNEnum.FOLLOW.FOLLOWS ? 
+                    <span className={"following " + (showLoadingFollows ? "tsn-loading" : "")} 
+                    onClick={unfollowRequest}>Following</span> 
+                    : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> }
                 </div>
               </div>
             </div>

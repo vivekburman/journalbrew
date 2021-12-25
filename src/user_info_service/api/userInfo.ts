@@ -265,7 +265,7 @@ userInfoRouter.delete('/draft/delete', utils.verifyAccessToken, async(req_: Requ
     }
 });
 
-userInfoRouter.delete('/bookmark/delete', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
+userInfoRouter.post('/bookmarked', utils.verifyAccessToken, async(req_: Request, res: Response, next: NextFunction) => {
     try {
         const req = req_ as RequestWithPayload;
         const userID = req.body.userId || null;
@@ -276,11 +276,71 @@ userInfoRouter.delete('/bookmark/delete', utils.verifyAccessToken, async(req_: R
             throw new createHttpError[404];
         } else {
             const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.SELECT, 
+                `SELECT ${ID} FROM bookmark WHERE ${BOOKMARK_POST_ID}=? AND ${USER_UUID} = ?`, 
+                [bookmarkID, Buffer.from(uuidParse(userID))]
+            );
+            if (response[0] && response[0].affectedRows === 1) {
+                res.status(200).json({
+                    success: true
+                });
+            } else {
+                res.status(200).json({
+                    success: false
+                });
+            }
+        }
+
+    }catch(error) {
+        next(error);
+    } 
+});
+userInfoRouter.put('/bookmark', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const userID = req.body.userId || null;
+        const postID = req.body.postId || null;
+        if (!userID || userID == "") {
+            throw new createHttpError.BadRequest("User ID not found in query param");
+        } else if (!postID && !Number.isInteger(postID)) {
+            throw new createHttpError[404];
+        } else {
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.INSERT, "INSERT INTO `bookmark` SET ?", {
+                [USER_UUID]: Buffer.from(uuidParse(userID)),
+                [BOOKMARK_POST_ID]: postID
+            });
+            if (response[0] && response[0].affectedRows == 1) {
+                res.status(200).json({
+                    success: true
+                });
+            } else {
+                res.status(500).json({
+                    success: false
+                });
+            }
+        }
+    }catch(error) {
+        next(error);
+    } 
+});
+
+userInfoRouter.delete('/delete-bookmark', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const userID = req.body.userId || null;
+        const postID = req.body.postId || null;
+        if (!userID || userID == "") {
+            throw new createHttpError.BadRequest("User ID not found in query param");
+        } else if (!postID && !Number.isInteger(postID)) {
+            throw new createHttpError[404];
+        } else {
+            const db = new SQL_DB();
             const response = await db.exec(db.TYPES.DELETE, 
                 `DELETE FROM bookmark 
-                WHERE ${ID}=?
+                WHERE ${BOOKMARK_POST_ID}=?
                 AND ${USER_UUID}=?`,
-            [bookmarkID, Buffer.from(uuidParse(userID))]);
+            [postID, Buffer.from(uuidParse(userID))]);
             if (response[0] && response[0].affectedRows == 1) {
                 res.status(200).json({
                     success: true
@@ -296,6 +356,7 @@ userInfoRouter.delete('/bookmark/delete', utils.verifyAccessToken, async(req_: R
         next(error);
     } 
 });
+
 userInfoRouter.post('/following', utils.verifyAccessToken, async(req_: Request, res: Response, next: NextFunction) => {
     try {
         const req = req_ as RequestWithPayload;

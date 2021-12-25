@@ -31,8 +31,42 @@ const requestUnFollow = ({ followerId, followingId }) => {
     }
   })
 }
+const isBookmarked = ({ userID, postID }) => {
+  return axiosPost('api/user-info/bookmarked', {
+    userId: userID,
+    postId: postID
+  }, {
+    headers: {
+      'Authorization': getToken()
+    }
+  })
+}
+const setBookmark = ({ userID, postID }) => {
+  return axiosPut('api/user-info/bookmark', {
+    userId: userID,
+    postId: postID
+  }, {
+    headers: {
+      'Authorization': getToken()
+    }
+  })
+}
+const unsetBookmark = ({ userID, postID }) => {
+  return axiosDelete('api/user-info/delete-bookmark', {
+    data: {
+      userId: userID,
+      postId: postID
+    },
+    headers: {
+      'Authorization': getToken()
+    }
+  })
+}
 export {
   getFollows,
   requestFollow,
-  requestUnFollow
+  requestUnFollow,
+  unsetBookmark,
+  setBookmark,
+  isBookmarked
 }

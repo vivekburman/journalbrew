@@ -4,5 +4,5 @@ export const TSNEnum = {
     FOLLOWS: 1,
     UNSPECIFIED: 0,
     NOT_FOLLOWS: -1
-  }  
+  },
 };

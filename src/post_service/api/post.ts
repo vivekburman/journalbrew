@@ -8,7 +8,7 @@ import Busboy from 'busboy';
 import PQueue from 'p-queue';
 import awsSdk from 'aws-sdk';
 import SQL_DB from "../../database";
-import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS } from "../../database/fields";
+import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS, BOOKMARK_POST_ID, USER_UUID } from "../../database/fields";
 
 const postRouter: Router = Router();
 const thumbSize = 1024 * 1024 * 2;
@@ -317,6 +317,7 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             next(new createHttpError.InternalServerError("User ID is null"));
         } else {
             const _authorID = Buffer.from(uuidParse(authorID));
+            const _loginUserID = Buffer.from(uuidParse(loginUserID));
             await db.connect();
             // 1. get Post and check conditions
             // 2. get User_To_post of that post
@@ -327,16 +328,19 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
                 const post = responsePost[0][0];
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
-                    db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID])
+                    db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),
+                    db.selectWithValues(`SELECT ${ID} FROM bookmark WHERE ${BOOKMARK_POST_ID}=? AND ${USER_UUID} = ?`, [postId, _loginUserID])
                 ]);
                 const userToPost = _response[0];
                 const user = _response[1];
+                const bookmark = _response[2];
                 if (userToPost?.[0]?.[0] && user?.[0]?.[0]) {
                     delete post[FULL_STORY_ID];
                     res.status(200).json({
                         postInfo: userToPost[0][0],
                         authorInfo: {...user[0][0], authorId: authorID},
-                        metaInfo: post
+                        metaInfo: post,
+                        isBookmarked: !!(bookmark?.[0]?.[0])
                     });
                 } else {
                     next(new createHttpError.InternalServerError("Article not found"));
