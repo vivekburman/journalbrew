@@ -35,33 +35,6 @@ enum PublishStatus {
 
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
-postRouter.post('/create-post', utils.verifyAccessToken, async (req_:Request, res: Response, next:NextFunction) => {
-    // 1. if user is invalid / null  return
-    // 2. create new entry in db
-    try {
-        const req = req_ as RequestWithPayload;
-        const payload:User = req['payload'] as User;
-        const db = new SQL_DB();
-        const dbRes = await db.exec(db.TYPES.INSERT, "INSERT INTO `user_to_post` SET ?", {
-            [AUTHOR_ID]: Buffer.from(uuidParse(payload['id'])),
-            [FULL_STORY]: JSON.stringify(req.body.postStory),
-            [CREATED_AT]: convertTime()
-        });
-        if (dbRes) {
-            res.status(200).json({
-                success: true,
-                post_id: dbRes[0]['insertId']
-            });
-        } else {
-            throw new createHttpError.InternalServerError('unable to create POST')
-        }
-        
-    } catch(e) {
-        next(e);
-    }
-    // 3. return sucess
-});
-
 function generateSQLStatements(jsonPatch:any[]) {
     // 1. get pointer to that object
         // 2. parse the jsonPatch to 3 buckets add, delete, replace
@@ -98,6 +71,32 @@ function generateSQLStatements(jsonPatch:any[]) {
     return map;
 }
 
+postRouter.post('/create-post', utils.verifyAccessToken, async (req_:Request, res: Response, next:NextFunction) => {
+    // 1. if user is invalid / null  return
+    // 2. create new entry in db
+    try {
+        const req = req_ as RequestWithPayload;
+        const payload:User = req['payload'] as User;
+        const db = new SQL_DB();
+        const dbRes = await db.exec(db.TYPES.INSERT, "INSERT INTO `user_to_post` SET ?", {
+            [AUTHOR_ID]: Buffer.from(uuidParse(payload['id'])),
+            [FULL_STORY]: JSON.stringify(req.body.postStory),
+            [CREATED_AT]: convertTime()
+        });
+        if (dbRes) {
+            res.status(200).json({
+                success: true,
+                post_id: dbRes[0]['insertId']
+            });
+        } else {
+            throw new createHttpError.InternalServerError('unable to create POST')
+        }
+        
+    } catch(e) {
+        next(e);
+    }
+    // 3. return sucess
+});
 
 postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, res: Response, next:NextFunction) => {
     const db = new SQL_DB();
@@ -299,7 +298,50 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
 
 // Anonymous users
 postRouter.get('/view-post', async (req_: Request, res: Response, next:NextFunction) => {
-
+    const db = new SQL_DB();
+    try {
+        const req = req_ as RequestWithPayload;
+        const postId = req.query.postId;
+        const authorID = req.query.authorId as string;
+        if (!postId) {
+            next(new createHttpError.InternalServerError("Post ID is null"));
+        } else if (!authorID) {
+            next(new createHttpError.InternalServerError("User ID is null"));
+        } else {
+            const _authorID = Buffer.from(uuidParse(authorID));
+            await db.connect();
+            // 1. get Post and check conditions
+            // 2. get User_To_post of that post
+            // 3. get User info of that post
+            const sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? AND ${PUBLISH_STATUS}=?`;
+            const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId, PublishStatus.PUBLISHED]);
+            if (responsePost?.[0]?.[0]) {
+                const post = responsePost[0][0];
+                const _response = await Promise.all([
+                    db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
+                    db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),
+                ]);
+                const userToPost = _response[0];
+                const user = _response[1];
+                if (userToPost?.[0]?.[0] && user?.[0]?.[0]) {
+                    delete post[FULL_STORY_ID];
+                    res.status(200).json({
+                        postInfo: userToPost[0][0],
+                        authorInfo: {...user[0][0], authorId: authorID},
+                        metaInfo: post,
+                    });
+                } else {
+                    next(new createHttpError.InternalServerError("Article not found"));
+                }
+            } else {
+                next(new createHttpError.InternalServerError("Article not found"));
+            }
+        }
+    }catch(err) {
+        next(err);
+    }finally {
+        db.close();
+    }
 });
 
 // authusers
@@ -322,8 +364,11 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             // 1. get Post and check conditions
             // 2. get User_To_post of that post
             // 3. get User info of that post
-            let sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? ${loginUserID === authorID ? "" : `AND ${PUBLISH_STATUS}=?`}`;
-            const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId, PublishStatus.PUBLISHED]);
+            const isAuthorAndUserSame = loginUserID === authorID;
+            const sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? ${isAuthorAndUserSame ? "" : `AND ${PUBLISH_STATUS}=?`}`;
+            const sqlValue = [_authorID, postId];
+            isAuthorAndUserSame && sqlValue.push(PublishStatus.PUBLISHED);
+            const responsePost = await db.selectWithValues(sqlQuery, sqlValue);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
                 const _response = await Promise.all([
@@ -381,259 +426,259 @@ postRouter.get('/get-post', utils.verifyAccessToken, async (req_: Request, res: 
         next(err);
     }
 });
-// postRouter.post('/upload-media/image', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const req = req_ as RequestWithPayload;
-//         const busboy = new Busboy({
-//             headers: req_.headers,
-//             limits: {
-//                 files: 1,
-//                 fileSize: imageSize
-//             }
-//         });
-//         const workQueue = new PQueue({concurrency: 1});
+/* postRouter.post('/upload-media/image', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const busboy = new Busboy({
+            headers: req_.headers,
+            limits: {
+                files: 1,
+                fileSize: imageSize
+            }
+        });
+        const workQueue = new PQueue({concurrency: 1});
         
-//         const s3 = new awsSdk.S3({
-//             accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-//             secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-//         });
+        const s3 = new awsSdk.S3({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        });
 
-//         const handleErrorBusBoy = async (fn: Function) => {
-//             workQueue.add(async () => {
-//                 try {
-//                     await fn();
-//                 } catch(err) {
-//                     req_.unpipe(busboy);
-//                     workQueue.pause();
-//                     next(err);
-//                 }
-//             });
-//         };
-//         let _mimeType='', _encoding='', limit_reach = false, _filename='';
-//         const chunks: any[] = [];
-//         busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-//             _mimeType = mimetype;
-//             _encoding = encoding;
-//             _filename = filename;
-//             handleErrorBusBoy(() => {
-//                 try {
-//                     const fileTypes = /png/;
-//                     const extname = fileTypes.test(filename);
-//                     const mimeType = fileTypes.test(mimetype);
-//                     if (extname && mimeType) {
-//                         file.on('data', (data) => {
-//                             chunks.push(data);
-//                         });
+        const handleErrorBusBoy = async (fn: Function) => {
+            workQueue.add(async () => {
+                try {
+                    await fn();
+                } catch(err) {
+                    req_.unpipe(busboy);
+                    workQueue.pause();
+                    next(err);
+                }
+            });
+        };
+        let _mimeType='', _encoding='', limit_reach = false, _filename='';
+        const chunks: any[] = [];
+        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+            _mimeType = mimetype;
+            _encoding = encoding;
+            _filename = filename;
+            handleErrorBusBoy(() => {
+                try {
+                    const fileTypes = /png/;
+                    const extname = fileTypes.test(filename);
+                    const mimeType = fileTypes.test(mimetype);
+                    if (extname && mimeType) {
+                        file.on('data', (data) => {
+                            chunks.push(data);
+                        });
                         
-//                         file.on('limit', () => {
-//                             chunks.length = 0;
-//                             limit_reach = true;
-//                         });
-//                     } else {
-//                         throw new createHttpError.InternalServerError('only supported .png format');
-//                     }
-//                 }catch(err) {
-//                     next(err);
-//                 }
-//             });
-//         });
-//         busboy.on('finish', () => {
-//             handleErrorBusBoy(() => {
-//                 if (limit_reach) {
-//                     next(new createHttpError[413]);
-//                 } else {
-//                     const params: awsSdk.S3.Types.PutObjectRequest = {
-//                         Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
-//                         Key: `images/${_filename}_${Date.now()}.png`,
-//                         Body: Buffer.concat(chunks),
-//                         ContentType: _mimeType,
-//                         ContentEncoding: _encoding,
-//                         ACL: 'public-read'
-//                     };
-//                     s3.upload(params, async (err, _res) => {
-//                         if (err) {
-//                             next(new createHttpError.InternalServerError('unable to store image to s3'));
-//                         } else {    
-//                             res.status(200).json({
-//                                 success: true,
-//                                 url: _res.Location,
-//                                 key: _res.Key
-//                             });
-//                         }
-//                     });
-//                 }
-//             })
-//         });
-//         req_.pipe(busboy);
-//     }catch(err) {
-//         next(err);
-//     }
-// });
-// postRouter.post('/upload-media/video', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const req = req_ as RequestWithPayload;
-//         const busboy = new Busboy({
-//             headers: req_.headers,
-//             limits: {
-//                 files: 1
-//             }
-//         });
-//         const workQueue = new PQueue({concurrency: 1});
+                        file.on('limit', () => {
+                            chunks.length = 0;
+                            limit_reach = true;
+                        });
+                    } else {
+                        throw new createHttpError.InternalServerError('only supported .png format');
+                    }
+                }catch(err) {
+                    next(err);
+                }
+            });
+        });
+        busboy.on('finish', () => {
+            handleErrorBusBoy(() => {
+                if (limit_reach) {
+                    next(new createHttpError[413]);
+                } else {
+                    const params: awsSdk.S3.Types.PutObjectRequest = {
+                        Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+                        Key: `images/${_filename}_${Date.now()}.png`,
+                        Body: Buffer.concat(chunks),
+                        ContentType: _mimeType,
+                        ContentEncoding: _encoding,
+                        ACL: 'public-read'
+                    };
+                    s3.upload(params, async (err, _res) => {
+                        if (err) {
+                            next(new createHttpError.InternalServerError('unable to store image to s3'));
+                        } else {    
+                            res.status(200).json({
+                                success: true,
+                                url: _res.Location,
+                                key: _res.Key
+                            });
+                        }
+                    });
+                }
+            })
+        });
+        req_.pipe(busboy);
+    }catch(err) {
+        next(err);
+    }
+});
+postRouter.post('/upload-media/video', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const busboy = new Busboy({
+            headers: req_.headers,
+            limits: {
+                files: 1
+            }
+        });
+        const workQueue = new PQueue({concurrency: 1});
         
-//         const s3 = new awsSdk.S3({
-//             accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-//             secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-//         });
+        const s3 = new awsSdk.S3({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        });
 
-//         const handleErrorBusBoy = async (fn: Function) => {
-//             workQueue.add(async () => {
-//                 try {
-//                     await fn();
-//                 } catch(err) {
-//                     req_.unpipe(busboy);
-//                     workQueue.pause();
-//                     next(err);
-//                 }
-//             });
-//         };
-//         let _mimeType='', _encoding='', limit_reach = false, _filename='';
-//         const chunks: any[] = [];
-//         busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-//             _mimeType = mimetype;
-//             _encoding = encoding;
-//             _filename = filename;
-//             handleErrorBusBoy(() => {
-//                 try {
-//                     const fileTypes = /mp4/;
-//                     const extname = fileTypes.test(filename);
-//                     const mimeType = fileTypes.test(mimetype);
-//                     if (extname && mimeType) {
-//                         file.on('data', (data) => {
-//                             chunks.push(data);
-//                         });
-//                     } else {
-//                         throw new createHttpError.InternalServerError('only supported .mp4 format');
-//                     }
-//                 }catch(err) {
-//                     next(err);
-//                 }
-//             });
-//         });
-//         busboy.on('finish', () => {
-//             handleErrorBusBoy(() => {
-//                 const params: awsSdk.S3.Types.PutObjectRequest = {
-//                     Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
-//                     Key: `videos/${_filename}_${Date.now()}.mp4`,
-//                     Body: Buffer.concat(chunks),
-//                     ContentType: _mimeType,
-//                     ContentEncoding: _encoding,
-//                     ACL: 'public-read'
-//                 };
-//                 s3.upload(params, async (err, _res) => {
-//                     if (err) {
-//                         next(new createHttpError.InternalServerError('unable to store video to s3'));
-//                     } else {    
-//                         res.status(200).json({
-//                             success: true,
-//                             url: _res.Location,
-//                             key: _res.Key
-//                         });
-//                     }
-//                 });
-//             })
-//         });
-//         req_.pipe(busboy);
-//     }catch(err) {
-//         next(err);
-//     }
-// });
-// postRouter.post('/delete-media/image', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
-//     // 1. connect to aws
-//     // 2. delete image
-//     try {
-//         const req = req_ as RequestWithPayload;      
-//         const db = new SQL_DB();
-//         const pattern = /^https:\/\/topselfnewsbucket.*.png$/;
-//         const regex = new RegExp(pattern);
+        const handleErrorBusBoy = async (fn: Function) => {
+            workQueue.add(async () => {
+                try {
+                    await fn();
+                } catch(err) {
+                    req_.unpipe(busboy);
+                    workQueue.pause();
+                    next(err);
+                }
+            });
+        };
+        let _mimeType='', _encoding='', limit_reach = false, _filename='';
+        const chunks: any[] = [];
+        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+            _mimeType = mimetype;
+            _encoding = encoding;
+            _filename = filename;
+            handleErrorBusBoy(() => {
+                try {
+                    const fileTypes = /mp4/;
+                    const extname = fileTypes.test(filename);
+                    const mimeType = fileTypes.test(mimetype);
+                    if (extname && mimeType) {
+                        file.on('data', (data) => {
+                            chunks.push(data);
+                        });
+                    } else {
+                        throw new createHttpError.InternalServerError('only supported .mp4 format');
+                    }
+                }catch(err) {
+                    next(err);
+                }
+            });
+        });
+        busboy.on('finish', () => {
+            handleErrorBusBoy(() => {
+                const params: awsSdk.S3.Types.PutObjectRequest = {
+                    Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+                    Key: `videos/${_filename}_${Date.now()}.mp4`,
+                    Body: Buffer.concat(chunks),
+                    ContentType: _mimeType,
+                    ContentEncoding: _encoding,
+                    ACL: 'public-read'
+                };
+                s3.upload(params, async (err, _res) => {
+                    if (err) {
+                        next(new createHttpError.InternalServerError('unable to store video to s3'));
+                    } else {    
+                        res.status(200).json({
+                            success: true,
+                            url: _res.Location,
+                            key: _res.Key
+                        });
+                    }
+                });
+            })
+        });
+        req_.pipe(busboy);
+    }catch(err) {
+        next(err);
+    }
+});
+postRouter.post('/delete-media/image', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
+    // 1. connect to aws
+    // 2. delete image
+    try {
+        const req = req_ as RequestWithPayload;      
+        const db = new SQL_DB();
+        const pattern = /^https:\/\/topselfnewsbucket.*.png$/;
+        const regex = new RegExp(pattern);
 
-//         if (!req.body.mediaURL || !regex.test(req.body.mediaURL) ) {
-//             throw new createHttpError.InternalServerError('not a image URL');
-//         }
-//         if (!req.body.mediaKey || req.body.mediaKey.length < 1 || !req.body.mediaKey.startsWith('images/')) {
-//             throw new createHttpError.InternalServerError('Image file not found');
-//         }
+        if (!req.body.mediaURL || !regex.test(req.body.mediaURL) ) {
+            throw new createHttpError.InternalServerError('not a image URL');
+        }
+        if (!req.body.mediaKey || req.body.mediaKey.length < 1 || !req.body.mediaKey.startsWith('images/')) {
+            throw new createHttpError.InternalServerError('Image file not found');
+        }
 
-//         const postId = req.body.postId;
-//         const index = req.body.mediaKey.indexOf("images/");
-//         const filename = req.body.mediaKey.slice(index);
-//         const s3 = new awsSdk.S3({
-//             accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-//             secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-//         });
-//         const params: awsSdk.S3.Types.DeleteObjectRequest = {
-//             Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
-//             Key: `${filename}`,
-//         };
-//         s3.deleteObject(params, async (err, _res) => {
-//             if (err) {
-//                 // save to DB for future cleanup
-//                 await db.exec(db.TYPES.INSERT, "INSERT INTO `media_clean` SET ?", {
-//                     [FULL_STORY_ID]: postId,
-//                     [MEDIA_URL]: req.body.mediaURL
-//                 });
-//                 next(new createHttpError.InternalServerError('unable to delete image from s3'));
-//             } else {    
-//                 res.status(200).json({
-//                     success: true,
-//                 });
-//             }
-//         });
-//     }catch(err) {
-//         next(err);
-//     }
-// });
-// postRouter.post('/delete-media/video', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
-//     // 1. connect to aws
-//     // 2. delete video
-//     try {
-//         const req = req_ as RequestWithPayload;      
-//         const db = new SQL_DB();
-//         const pattern = /^https:\/\/topselfnewsbucket.*.mp4$/;
-//         const regex = new RegExp(pattern);
+        const postId = req.body.postId;
+        const index = req.body.mediaKey.indexOf("images/");
+        const filename = req.body.mediaKey.slice(index);
+        const s3 = new awsSdk.S3({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        });
+        const params: awsSdk.S3.Types.DeleteObjectRequest = {
+            Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+            Key: `${filename}`,
+        };
+        s3.deleteObject(params, async (err, _res) => {
+            if (err) {
+                // save to DB for future cleanup
+                await db.exec(db.TYPES.INSERT, "INSERT INTO `media_clean` SET ?", {
+                    [FULL_STORY_ID]: postId,
+                    [MEDIA_URL]: req.body.mediaURL
+                });
+                next(new createHttpError.InternalServerError('unable to delete image from s3'));
+            } else {    
+                res.status(200).json({
+                    success: true,
+                });
+            }
+        });
+    }catch(err) {
+        next(err);
+    }
+});
+postRouter.post('/delete-media/video', utils.verifyAccessToken, (req_: Request, res: Response, next: NextFunction) => {
+    // 1. connect to aws
+    // 2. delete video
+    try {
+        const req = req_ as RequestWithPayload;      
+        const db = new SQL_DB();
+        const pattern = /^https:\/\/topselfnewsbucket.*.mp4$/;
+        const regex = new RegExp(pattern);
 
-//         if (!req.body.mediaURL || !regex.test(req.body.mediaURL)) {
-//             throw new createHttpError.InternalServerError('not a video URL');
-//         }
-//         if (!req.body.mediaKey || req.body.mediaKey.length < 1 || !req.body.mediaKey.startsWith('videos/')) {
-//             throw new createHttpError.InternalServerError('Video file not found');
-//         }
-//         const postId = req.body.postId;
-//         const index = req.body.mediaKey.indexOf("videos/");
-//         const filename = req.body.mediaKey.slice(index);
-//         const s3 = new awsSdk.S3({
-//             accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-//             secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-//         });
-//         const params: awsSdk.S3.Types.DeleteObjectRequest = {
-//             Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
-//             Key: `${filename}`,
-//         };
-//         s3.deleteObject(params, async (err, _res) => {
-//             if (err) {
-//                 // save to DB for future cleanup
-//                 await db.exec(db.TYPES.INSERT, "INSERT INTO `media_clean` SET ?", {
-//                     [FULL_STORY_ID]: postId,
-//                     [MEDIA_URL]: req.body.mediaURL
-//                 });
-//                 next(new createHttpError.InternalServerError('unable to delete video from s3'));
-//             } else {    
-//                 res.status(200).json({
-//                     success: true,
-//                 });
-//             }
-//         });
-//     }catch(err) {
-//         next(err);
-//     }
-// });
+        if (!req.body.mediaURL || !regex.test(req.body.mediaURL)) {
+            throw new createHttpError.InternalServerError('not a video URL');
+        }
+        if (!req.body.mediaKey || req.body.mediaKey.length < 1 || !req.body.mediaKey.startsWith('videos/')) {
+            throw new createHttpError.InternalServerError('Video file not found');
+        }
+        const postId = req.body.postId;
+        const index = req.body.mediaKey.indexOf("videos/");
+        const filename = req.body.mediaKey.slice(index);
+        const s3 = new awsSdk.S3({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        });
+        const params: awsSdk.S3.Types.DeleteObjectRequest = {
+            Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+            Key: `${filename}`,
+        };
+        s3.deleteObject(params, async (err, _res) => {
+            if (err) {
+                // save to DB for future cleanup
+                await db.exec(db.TYPES.INSERT, "INSERT INTO `media_clean` SET ?", {
+                    [FULL_STORY_ID]: postId,
+                    [MEDIA_URL]: req.body.mediaURL
+                });
+                next(new createHttpError.InternalServerError('unable to delete video from s3'));
+            } else {    
+                res.status(200).json({
+                    success: true,
+                });
+            }
+        });
+    }catch(err) {
+        next(err);
+    }
+}); */
 export default postRouter;

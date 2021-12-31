@@ -40,15 +40,17 @@ const FullPost = (props) => {
   const [isBookmarked, setBookmarked] = useState(false);
   const [showLoadingFollows, setLoadingFollows] = useState();
 
+  const isUserLoggedIn = !!props.currentUser?.userId;
+
   // 1. Fires first time to get data
   useEffect(() => {
     getFullPost(postID, userID)
       .then(({ data }) => {
         setFullPostInfo(data);
         setError(false);
-        setBookmarked(data.isBookmarked);
+        isUserLoggedIn && setBookmarked(data.isBookmarked);
       })
-      .catch(() => {
+      .catch((e) => {
         setFullPostInfo();
         setError(true);
       })
@@ -58,6 +60,7 @@ const FullPost = (props) => {
   }, []);
   // 2. get Other infos dependent on Basic Info #1
   useEffect(() => {
+    if(!isUserLoggedIn) return;
     const getFollowInfo = () => {
       // get Follows
       getFollows({
@@ -183,11 +186,13 @@ const FullPost = (props) => {
                     <div className="flex flex-column-nowrap padding-8">
                     <div className="flex flex-row-nowrap align-items-center" >
                       <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
-                      { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
+                      { 
+                        follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
                         : follows === TSNEnum.FOLLOW.FOLLOWS ? 
                         <span className={"following " + (showLoadingFollows ? "tsn-loading" : "")} 
                         onClick={unfollowRequest}>Following</span> 
-                        : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> }
+                        : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> 
+                      }
                     </div>
                       <div className="flex flex-row align-items-center">
                         <span className="news-location">{ fullPostInfo.metaInfo.location }</span>
@@ -198,9 +203,16 @@ const FullPost = (props) => {
                   </div>
                   <div className="full-story-top-items-wrapper flex flex-column-nowrap">
                     <div className="flex flex-row-nowrap social-share-wrapper">
-                      <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" className="icon-img padding-left-0" 
-                      onClick={toggleBookmark}/>
-                      <SocialShare location={'top'}/>
+                      {
+                        isUserLoggedIn ?
+                        <>
+                          <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" className="icon-img padding-left-0" 
+                          onClick={toggleBookmark}/>
+                          <SocialShare location={'top'}/>
+                        </>
+                        :
+                        <></>
+                      }
                     </div>
                   </div>
                 </div>
@@ -218,9 +230,17 @@ const FullPost = (props) => {
                     <PostReaction likes={fullPostInfo.metaInfo.likes} hasUserLiked={false} showViews={true} views={fullPostInfo.metaInfo.views}/>
                   </div>
                   <div className="flex flex-row-nowrap social-share-bottom-wrapper padding-top-8">
-                  <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" className="icon-img padding-left-0" 
-                    onClick={toggleBookmark}/>
-                    <SocialShare location={'bottom'}/>
+                  {
+                    isUserLoggedIn ?
+                    <>
+                      <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" 
+                      className="icon-img padding-left-0" 
+                      onClick={toggleBookmark}/>
+                      <SocialShare location={'bottom'}/>
+                    </>
+                    :
+                    <></>
+                  }
                   </div>
                 </div>
                 <div className="flex flex-row-nowrap justify-content-between align-items-center">
@@ -231,11 +251,13 @@ const FullPost = (props) => {
                       <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
                     </div>
                   </div>
-                  { follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
+                  { 
+                    follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
                     : follows === TSNEnum.FOLLOW.FOLLOWS ? 
                     <span className={"following " + (showLoadingFollows ? "tsn-loading" : "")} 
                     onClick={unfollowRequest}>Following</span> 
-                    : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> }
+                    : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> 
+                  }
                 </div>
               </div>
             </div>

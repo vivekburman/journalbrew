@@ -71,7 +71,7 @@ const getFullPost = (postId, authorId) => {
         'Authorization': token
       }
   }) :
-  axiosGet(`api/post/view-post?postId=${postId}`);
+  axiosGet(`api/post/view-post?postId=${postId}&authorId=${authorId}`);
 }
 
 const updatePostById = (data, postId) => {
