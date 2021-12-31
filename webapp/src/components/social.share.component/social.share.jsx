@@ -18,7 +18,7 @@ const SocialShare = (props) => {
   }
   return(
     <div className="flex flex-row-nowrap">
-      <Link to=''>
+      {/* <Link to=''>
         <img src={twitter} alt="twitter" className="icon-img"/>
       </Link>
       <Link to=''>
@@ -26,11 +26,12 @@ const SocialShare = (props) => {
       </Link>
       <Link to=''>
         <img src={linkedIn} alt="linkedIn" className="icon-img"/>
-      </Link>
+      </Link> */}
       <div className="position-relative">
         <img src={threeDots} alt="report" className="icon-img" 
         onClick= {toggleDD}  />
         <ReportDropDown 
+          noFullScreen={true}
           isOpen = {isReportDropDownOpen} 
           hideFunc={hideReportDropDown}
           {...props}/>

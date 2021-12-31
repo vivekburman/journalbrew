@@ -8,43 +8,12 @@ import { v4 as uuidv4, parse as uuidParse, stringify as uuidStringify } from 'uu
 import { convertTime } from '../utils/general';
 import { Buffer } from 'buffer';
 import SQL_DB from '../../database';
-
-const UNDEF = undefined,
-   STRATEGY_ID = 'strategy_id',
-   // USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo',
-   // REFRESH_TOKEN_URL = 'https://oauth2.googleapis.com/token',
-   STRATEGY_TYPE = 'strategy_type',
-   FIRST_NAME = 'first_name', 
-   MIDDLE_NAME = 'middle_name', 
-   LAST_NAME = 'last_name',
-   PROFILE_PIC_URL = 'profile_pic_url', 
-   EMAIL = 'email', 
-   CREATED_AT = 'created_at', 
-   LAST_LOGGED_AT = 'last_logged_at',
-   UUID = 'uuid';
-
-   
-type userName = {
-   [FIRST_NAME]:string, 
-   [MIDDLE_NAME]:string, 
-   [LAST_NAME]:string
-}
+import { UNDEF, UUID, STRATEGY_ID, EMAIL, STRATEGY_TYPE, FIRST_NAME, LAST_NAME, MIDDLE_NAME, PROFILE_PIC_URL, CREATED_AT } from '../../database/fields';
 
 const getName = (name:string) => {
    const name_ = name?.split(' ');
    return {firstName: name_[0], middleName: name_[2] ? name_[1] : UNDEF , lastName: name_[2] || name_[1] || UNDEF};
 };
-
-const getConsolidatedName = (name: userName) => {
-   let name_ = name[FIRST_NAME];
-   if (name[MIDDLE_NAME]) {
-      name_ += ` ${name[MIDDLE_NAME]}`;
-   }
-   if (name[LAST_NAME]) {
-      name_ += ` ${name[LAST_NAME]}`;
-   }
-   return name;
-}
 
 const registerRouter: Router = Router();
 // auth with google

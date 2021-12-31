@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Crimson+Text:wght@400;700&family=Playfair+Display:wght@500&family=Roboto:wght@300;400;500;700&display=swap');
 @import './main';
+body {
+  margin: 0;
+  padding: 0;
+}
 
 .flex-row-nowrap {
   display: flex;
@@ -25,6 +30,9 @@
 }
 .justify-content-evenly {
   justify-content: space-evenly;
+}
+.align-items-end {
+  align-items: end;
 }
 .align-items-center {
   align-items: center;
@@ -134,19 +142,22 @@
   padding: 8px;
 }
 .margin-top-0 {
-  margin-top: 0;
+  margin-top: 0px;
 }
 .margin-top-5 {
-  margin-top: 5;
+  margin-top: 5px;
+}
+.margin-top-10 {
+  margin-top: 10px;
 }
 .margin-top-15 {
   margin-top: 15px;
 }
 .margin-bottom-0 {
-  margin-bottom: 0;
+  margin-bottom: 0px;
 }
 .margin-bottom-5 {
-  margin-bottom: 5;
+  margin-bottom: 5px;
 }
 .margin-bottom-15 {
   margin-bottom: 15px;
@@ -154,20 +165,26 @@
 .margin-left-8 {
   margin-left: 8px;
 }
+.padding-left-5 {
+  padding-left: 5px;
+}
 .padding-left-8 {
   padding-left: 8px;
 } 
+.padding-right-5 {
+  padding-right: 5px;
+}
 .padding-right-8 {
   padding-right: 8px;
 }
 .padding-top-8 {
-padding-top: 8px;
+  padding-top: 8px;
 }
 .padding-left-0 {
-  padding-left: 0;
+  padding-left: 0px !important;
 }
 .margin-0 {
-  margin: 0;
+  margin: 0px;
 }
 
 .margin-auto {
@@ -176,6 +193,22 @@ padding-top: 8px;
 }
 .float-right {
   float: right;
+}
+.ts--top-align-1 {
+  position: relative;
+  top: 1px;
+}
+.ts--top-align-2 {
+  position: relative;
+  top: 2px;
+}
+.ts--top-align-3 {
+  position: relative;
+  top: 3px;
+}
+.ts--top-align-4 {
+  position: relative;
+  top: 4px;
 }
 .btn-primary {
   display: inline-block;

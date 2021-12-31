@@ -1,8 +1,17 @@
 import React from 'react';
-import ReactAvatar from 'react-avatar';
-export const UserAvatar = ({ url, size=100}) => {
+import './avatar.component.scss';
+export const UserAvatar = ({ url, size=100, userName="ABC"}) => {
   const colorArray = ['red', 'blue', 'green'];
   const colorID = Math.floor(Math.random() * (colorArray.length - 1));
-  return url ? <ReactAvatar size={size} className="avatar" src={url} round />
-    : <ReactAvatar size={size} className="avatar" name="ABC" round color={colorArray[colorID]} />
+  return (
+    <div className="user-avatar-wrapper">
+      {
+        url ? <img className="user-avatar-image" src={url} width={`${size}px`} height={`${size}px`}/>
+        :
+        <div className="user-avatar-text" style={{backgoundColor: `${colorArray[colorID]}`, width: `${size}px`, height: `${size}px`}}>
+          { userName }
+        </div>
+      }
+    </div>
+  );
 };

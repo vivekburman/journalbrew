@@ -59,6 +59,7 @@ class PublishedPostsList extends Component {
       summary={data.summary}
       thumbnail={data.thumbnail}
       type={data.type}
+      userID={this.props.userID}
       />
   }
 

@@ -1,0 +1,10 @@
+.user-avatar-wrapper {
+  .user-avatar-text {
+    border-radius: 50%;
+    color: #fff;
+  }
+  .user-avatar-image {
+    object-fit: cover;
+    border-radius: 50%;
+  }
+}

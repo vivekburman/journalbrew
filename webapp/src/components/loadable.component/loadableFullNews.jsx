@@ -1,5 +1,5 @@
 import React from 'react';
-import { FullPost } from '../full.post.component/full.post';
+import FullPost from '../full.post.component/full.post';
 
 const LoadableFullNews = () => {
   return (

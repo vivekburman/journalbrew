@@ -22,7 +22,7 @@ class UserReaction extends Component {
           { hasUserLiked ? <img src={liked} alt="liked" className="icon-img rotate-180 size-29" />
           : <img src={likePlaceholder} alt="likePlaceholder" className="icon-img rotate-180 size-29" /> }
           <span className="align-self-center likes-count">{`${formatCount(likes)} Likes`}</span>
-          { direction === 'row' && <span className="separator">&#8226;</span>}
+          { direction === 'row' && <span className="separator ts--top-align-4">&#8226;</span>}
         </div>
         { showViews &&  <span className={`align-self-center likes-count views-${direction}`}>{ `${formatCount(views)} Views` }</span>}
       </div>

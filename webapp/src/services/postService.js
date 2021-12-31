@@ -61,6 +61,19 @@ const getDraftById = (postId) => {
   });
 }
 
+const getFullPost = (postId, authorId) => {
+  const token = getToken();
+  return token ? axiosPost(`api/post/view-post`, {
+      userId: authorId,
+      postId: postId
+    }, {
+      headers: {
+        'Authorization': token
+      }
+  }) :
+  axiosGet(`api/post/view-post?postId=${postId}&authorId=${authorId}`);
+}
+
 const updatePostById = (data, postId) => {
   return axiosPatch('api/post/update-post', {
     storypatchData: data,
@@ -111,5 +124,6 @@ export {
   updatePostById,
   createPostById,
   deleteDraft,
-  publishPost
+  publishPost,
+  getFullPost
 }
