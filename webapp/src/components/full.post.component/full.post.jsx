@@ -3,10 +3,10 @@ import {connect} from 'react-redux';
 import './full.post.scss';
 import bookmark from '../../images/bookmark.svg';
 import bookmarked from '../../images/bookmarked.svg';
-import PostReaction from '../user.reaction.component/user.reaction';
+// import PostReaction from '../user.reaction.component/user.reaction';
 import { parseHTMLToReact } from '../../helpers/jsontohtml';
 import { UserAvatar } from '../avatar.component/avatar';
-import SocialShare from '../social.share.component/social.share';
+// import SocialShare from '../social.share.component/social.share';
 import { Tags } from '../tags.component/tags';
 import Skeleton from 'react-loading-skeleton';
 import { months } from '../../helpers/timeformatter';
@@ -208,7 +208,7 @@ const FullPost = (props) => {
                         <>
                           <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" className="icon-img padding-left-0" 
                           onClick={toggleBookmark}/>
-                          <SocialShare location={'top'}/>
+                          {/* <SocialShare location={'top'}/> */}
                         </>
                         :
                         <></>
@@ -253,7 +253,7 @@ const FullPost = (props) => {
                       <img src={ isBookmarked ? bookmarked : bookmark} alt="bookmark" 
                       className="icon-img padding-left-0" 
                       onClick={toggleBookmark}/>
-                      <SocialShare location={'bottom'}/>
+                      {/* <SocialShare location={'bottom'}/> */}
                     </>
                     :
                     <></>
