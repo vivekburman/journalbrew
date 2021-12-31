@@ -1,6 +1,5 @@
-import mysql, { Connection } from 'mysql2/promise';
+import mysql from 'mysql2/promise';
 import createHttpError from "http-errors";
-import { query } from 'express';
 // interface dbQueryFunc { 
 //     insertWithValues(query: string, values:any|any[]): Promise<any>,
 //     updateWithValues(query: string, values:any|any[]): Promise<any>, 

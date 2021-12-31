@@ -224,10 +224,27 @@ const FullPost = (props) => {
               <Tags tags={fullPostInfo.metaInfo.tags}/>
             </div>
             <div>
-              <div className="full-story-profile-wrapper-bottom justify-content-between">
+              <div className="full-story-profile-wrapper-bottom justify-content-between margin-top-10">
                 <div className="full-story-profile-wrapper justify-content-between">
-                  <div className="flex flex-row-nowrap padding-top-8">
+                  {/* <div className="flex flex-row-nowrap padding-top-8">
                     <PostReaction likes={fullPostInfo.metaInfo.likes} hasUserLiked={false} showViews={true} views={fullPostInfo.metaInfo.views}/>
+                  </div> */}
+                  <div className="flex flex-row-nowrap justify-content-between align-items-center">
+                    <div className="flex flex-row-nowrap align-items-center padding-top-8">
+                      <UserAvatar size={50} url={fullPostInfo.authorInfo.profilePicUrl} 
+                      userName={displayName(fullPostInfo.authorInfo)}/>
+                      <div className="flex flex-column-nowrap margin-left-8">
+                        <span className="written-by">Written By</span>
+                        <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
+                      </div>
+                    </div>
+                    { 
+                      follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
+                      : follows === TSNEnum.FOLLOW.FOLLOWS ? 
+                      <span className={"following " + (showLoadingFollows ? "tsn-loading" : "")} 
+                      onClick={unfollowRequest}>Following</span> 
+                      : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> 
+                    }
                   </div>
                   <div className="flex flex-row-nowrap social-share-bottom-wrapper padding-top-8">
                   {
@@ -242,22 +259,6 @@ const FullPost = (props) => {
                     <></>
                   }
                   </div>
-                </div>
-                <div className="flex flex-row-nowrap justify-content-between align-items-center">
-                  <div className="flex flex-row-nowrap align-items-center padding-top-8">
-                    <UserAvatar size={50} url={fullPostInfo.authorInfo.profilePicUrl} userName={displayName(fullPostInfo.authorInfo)}/>
-                    <div className="flex flex-column-nowrap margin-left-8">
-                      <span className="written-by">Written By</span>
-                      <span className="username">{displayName(fullPostInfo.authorInfo)}</span>
-                    </div>
-                  </div>
-                  { 
-                    follows === TSNEnum.FOLLOW.UNSPECIFIED ? <></> 
-                    : follows === TSNEnum.FOLLOW.FOLLOWS ? 
-                    <span className={"following " + (showLoadingFollows ? "tsn-loading" : "")} 
-                    onClick={unfollowRequest}>Following</span> 
-                    : <span className={"follow " + (showLoadingFollows ? "tsn-loading" : "")} onClick={followRequest}>Follow</span> 
-                  }
                 </div>
               </div>
             </div>
