@@ -121,6 +121,15 @@ body {
 .position-absolute {
   position: absolute;
 }
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-hidden-x {
+  overflow-x: hidden;
+}
+.overflow-hidden-y {
+  overflow-y: hidden;
+}
 .link {
   color: #000;
   cursor: pointer;
@@ -239,4 +248,17 @@ body {
 }
 .h-100 {
   height: 100%;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+.font-cormorant {
+  font-family: 'Cormorant Garamond', serif;
+}
+.font-crimson {
+  font-family: 'Crimson Text', serif;
+}
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
 }

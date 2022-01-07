@@ -107,14 +107,6 @@ class Accordian extends Component {
                 <span className="item-name">Health</span>
               </div>
             </div>
-            <div className="accordian-list-item external-item">
-              <Link to="/opinions" className="link">
-                <div className="accordian-item">
-                  <img src={opinion} className="item-img" alt="list-item-icon" />
-                  <span className="item-name">Opinion</span>
-                </div>
-              </Link>
-            </div>
           </SimpleBar>
         </div>
       </div>

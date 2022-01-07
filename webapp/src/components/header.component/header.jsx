@@ -13,7 +13,7 @@ const Header = () => {
       <Switch>
         <Route exact path={["/full-story", 
           "/user-profile/:userID", "/new-story", 
-          "/payment-history-&-insights", "/opinions"]}>
+          "/payment-history-&-insights"]}>
           <Back />
         </Route>
         <Route exact path="/">

@@ -29,7 +29,7 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
       { currentUser ?
 			<ul className="flex-row-nowrap align-items-center">
 			  <Switch>
-			    <Route exact path={['/full-story', '/user-profile', '/opinions', '/', '/payment-history-&-insights']}>
+			    <Route exact path={['/full-story', '/user-profile', '/', '/payment-history-&-insights']}>
 			      <li className="notification-icon-wrapper outline-none">
 			        <img src={ bell } alt="notifications" className="icon-img outline-none"
 			          onClick={toggleNotification} />

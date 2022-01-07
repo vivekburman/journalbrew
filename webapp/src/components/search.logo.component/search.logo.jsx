@@ -37,7 +37,7 @@ class SearchNLogoComponent extends Component {
       <div className="search-and-logo">
         <h1 onClick={this.goToHome} className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>TopSelfNews</h1>
         <Switch>
-          <Route exact path={['/', '/user-profile', '/opinions']}>
+          <Route exact path={['/', '/user-profile']}>
             <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-1' : 'flex-0')}`}>
               <form className="search-wrapper flex flex-row-nowrap justify-content-center"
                 onSubmit={(e) => handleSearchRequest(e.target.value)}>
