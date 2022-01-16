@@ -4,7 +4,6 @@
   position: sticky;
   border-bottom: 1px solid rgba(1, 1, 1, 0.2);
   .feed-filter-wrapper {
-    max-width: 670px;
     padding: 6px 16px;
     margin: 0 auto;
     .icon-left, .icon-right {
@@ -23,38 +22,41 @@
     .icon-right {
       transform: rotateZ(180deg);
     }
-    .arrow-right::before {
-      position: absolute;
-      z-index: 1;
-      left: -50px;
-      height: 100%;
-      width: 50px;
-      display: block;
-      content: "";
-      pointer-events: none;
-      background: linear-gradient(to left,rgba(255 ,255 ,255, 1) 20%,rgba(255,255,255,0) 80%);
-    }
-    .arrow-left::after {
-      position: absolute;
-      z-index: 1;
-      left: 30px;
-      top: 0;
-      height: 100%;
-      width: 50px;
-      display: block;
-      content: "";
-      pointer-events: none;
-      background: linear-gradient(to right,rgba(255 ,255 ,255, 1) 20%,rgba(255,255,255,0) 80%);
-    }
+    // .arrow-right::before {
+    //   position: absolute;
+    //   z-index: 1;
+    //   left: -50px;
+    //   height: 100%;
+    //   width: 50px;
+    //   display: block;
+    //   content: "";
+    //   pointer-events: none;
+    //   background: linear-gradient(to left,rgba(255 ,255 ,255, 1) 20%,rgba(255,255,255,0) 80%);
+    // }
+    // .arrow-left::after {
+    //   position: absolute;
+    //   z-index: 1;
+    //   left: 30px;
+    //   top: 0;
+    //   height: 100%;
+    //   width: 50px;
+    //   display: block;
+    //   content: "";
+    //   pointer-events: none;
+    //   background: linear-gradient(to right,rgba(255 ,255 ,255, 1) 20%,rgba(255,255,255,0) 80%);
+    // }
     .feed-list-wrapper {
-  
+      top: 4px;
+    }
+    .feed-pill-wrapper {
+      padding-right: 12px;
     }
     .feed-pill {
       border-radius: 16px;
       font-weight: 400;
       font-size: 14px;
       padding: 2px 12px;
-      margin: 0 12px 12px 0;
+      margin-bottom: 12px;
       color: #030303;
       background-color: rgba(0,0,0,0.05);
       border: 1px solid rgba(0,0,0,0.1);

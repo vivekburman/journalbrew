@@ -234,7 +234,6 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                         file.on('data', (data) => {
                             chunks.push(data);
                         });
-                        
                         file.on('limit', () => {
                             chunks.length = 0;
                             limit_reach = true;
