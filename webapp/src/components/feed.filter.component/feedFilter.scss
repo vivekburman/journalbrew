@@ -5,6 +5,7 @@
   border-bottom: 1px solid rgba(1, 1, 1, 0.2);
   .feed-filter-wrapper {
     padding: 6px 16px;
+    height: 34px;
     margin: 0 auto;
     .icon-left, .icon-right {
       width: 12px !important;
@@ -22,29 +23,6 @@
     .icon-right {
       transform: rotateZ(180deg);
     }
-    // .arrow-right::before {
-    //   position: absolute;
-    //   z-index: 1;
-    //   left: -50px;
-    //   height: 100%;
-    //   width: 50px;
-    //   display: block;
-    //   content: "";
-    //   pointer-events: none;
-    //   background: linear-gradient(to left,rgba(255 ,255 ,255, 1) 20%,rgba(255,255,255,0) 80%);
-    // }
-    // .arrow-left::after {
-    //   position: absolute;
-    //   z-index: 1;
-    //   left: 30px;
-    //   top: 0;
-    //   height: 100%;
-    //   width: 50px;
-    //   display: block;
-    //   content: "";
-    //   pointer-events: none;
-    //   background: linear-gradient(to right,rgba(255 ,255 ,255, 1) 20%,rgba(255,255,255,0) 80%);
-    // }
     .feed-list-wrapper {
       top: 4px;
     }
@@ -69,4 +47,14 @@
       }
     }
   }
+  .arrow-right, .arrow-left {
+    display: none;
+  }
+}
+@media (min-width: 929px) {
+.feed-filter {
+  .arrow-left, .arrow-right {
+    display: block;
+  }
+}
 }

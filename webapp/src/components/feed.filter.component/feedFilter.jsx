@@ -11,6 +11,8 @@ class FeedFilter extends Component {
     };
     this.offset = 2;
     this.sliderRef = createRef(null);
+    this.pointerPosition = null;
+    this.totalItemsWidth = 0;
     this.filterList = [
       {
         name: "National",
@@ -57,8 +59,19 @@ class FeedFilter extends Component {
       },
     ]
   }
+  
+  componentDidMount() {
+    const dom = this.sliderRef.current;
+    const children = Array.from(dom.children);
+    let totalItemsWidth = 0;
+    children.forEach(i => {
+      totalItemsWidth += i.getBoundingClientRect().width
+    });
+    this.totalItemsWidth = totalItemsWidth;
+  }
   onFilterSelect = (e) => {
-    const filterId = +e.target.dataset.filterId;
+    const filterId = e.target.classList.contains("feed-pill-wrapper") ? 
+      +e.target.dataset.filterId : +e.target.parentElement.dataset.filterId;
     this.setState({
       selectedFilter: filterId
     });
@@ -145,6 +158,34 @@ class FeedFilter extends Component {
     if (!str) return 0;
     return +str.split("(")[1].split("px")[0];
   }
+  onPointerDown = (e) => {
+    this.pointerPosition = {
+      clientX : e.clientX,
+    }
+  }
+  onPointerUp = (e) => {
+    this.pointerPosition = null;
+  }
+  onPointerMove = (e) => {
+    if (!this.pointerPosition) return;
+    const diff = (e.clientX - this.pointerPosition.clientX);
+    const dom = this.sliderRef.current;
+    const rootRect = dom.parentElement.getBoundingClientRect();
+    const currTransform = this.getTranslateX(dom.style.transform);
+    const transformVal = diff < 0 ? Math.max((rootRect.width - this.totalItemsWidth), (currTransform + diff)) : Math.min(0, (currTransform + diff));
+    dom.style.transform = `translateX(${transformVal}px)`;
+    this.pointerPosition = {
+      clientX: e.clientX
+    }
+  }
+  onWheel = (e) => {
+    const diff = -1 * e.deltaX;
+    const dom = this.sliderRef.current;
+    const rootRect = dom.parentElement.getBoundingClientRect();
+    const currTransform = this.getTranslateX(dom.style.transform);
+    const transformVal = diff < 0 ? Math.max((rootRect.width - this.totalItemsWidth), (currTransform + diff)) : Math.min(0, (currTransform + diff));
+    dom.style.transform = `translateX(${transformVal}px)`;
+  }
   render() {
     return (
       <div className='feed-filter'>
@@ -155,7 +196,11 @@ class FeedFilter extends Component {
           </div>
           <div className='flex-grow-1 position-relative overflow-hidden'>
             <div className='flex-row-nowrap feed-list-wrapper w-100 position-absolute'
-            ref={this.sliderRef}>
+            ref={this.sliderRef}
+            onPointerDown={this.onPointerDown}
+            onPointerUp={this.onPointerUp}
+            onWheel={this.onWheel}
+            onPointerMove={this.onPointerMove}>
               {
                 this.filterList.map(i => {
                   return (
