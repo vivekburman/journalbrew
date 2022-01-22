@@ -2,31 +2,15 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import './accordian.component.scss';
-import sport from '../../images/accordian/sport.svg';
-import story from '../../images/accordian/story.svg';
-import bookmark from '../../images/accordian/bookmark.svg';
-import technology from '../../images/accordian/technology.svg';
-import health from '../../images/accordian/health.svg';
-import national from '../../images/accordian/national.svg';
-import business from '../../images/accordian/business.svg';
-import science from '../../images/accordian/science.svg';
-import local from '../../images/accordian/local.svg';
-import global from '../../images/accordian/global.svg';
-import opinion from '../../images/accordian/opinion.svg';
-import history from '../../images/accordian/history.svg';
+import story from '../../images/story.svg';
+import bookmark from '../../images/bookmarked.svg';
+import help from '../../images/help.svg';
 
 import {Link} from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import {closeAccordian} from '../../reducers/click/accordian.action';
 
-
-/*
-TODO: Style it,
-    animate it,
-    click it
-    if possible add auto collapse
-*/
 
 class Accordian extends Component {
   render() {
@@ -40,71 +24,21 @@ class Accordian extends Component {
             {currentUser && <div className="accordian-list-item">
               <Link to="/new-story" className="link">
                 <div className="accordian-item">
-                  <img src={story} className="item-img" alt="list-item-icon" />
+                  <img src={story} className="item-img ts--top-align-2" alt="list-item-icon" />
                   <span className="item-name">New Story</span>
                 </div>
               </Link>
             </div>}
-            <div className="accordian-list-item external-item">
-              <Link to={`/full-story?${'history'}`} className="link">
-                <div className="accordian-item">
-                  <img src={history} className="item-img" alt="list-item-icon" />
-                  <span className="item-name">Historical Event</span>
-                </div>
-              </Link>
-            </div>
             <div className="accordian-list-item">
               <div className="accordian-item">
-                <img src={bookmark} className="item-img" alt="list-item-icon" />
+                <img src={bookmark} className="item-img ts--top-align-2" alt="list-item-icon" />
                 <span className="item-name">Bookmarks</span>
               </div>
             </div>
-            <div className="accordian-list-item divider">
-              <div className="accordian-item">
-                <img src={national} className="item-img" alt="list-item-icon" />
-                <span className="item-name">National</span>
-              </div>
-            </div>
             <div className="accordian-list-item">
               <div className="accordian-item">
-                <img src={local} className="item-img" alt="list-item-icon" />
-                <span className="item-name">Local</span>
-              </div>
-            </div>
-            <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={global} className="item-img" alt="list-item-icon" />
-                <span className="item-name">Global</span>
-              </div>
-            </div>
-            <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={business} className="item-img" alt="list-item-icon" />
-                <span className="item-name">Business</span>
-              </div>
-            </div>
-            <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={technology} className="item-img" alt="list-item-icon" />
-                <span className="item-name">Technology</span>
-              </div>
-            </div>
-            <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={sport} className="item-img" alt="list-item-icon" />
-                <span className="item-name">Sports</span>
-              </div>
-            </div>
-            <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={science} className="item-img" alt="list-item-icon" />
-                <span className="item-name">Science</span>
-              </div>
-            </div>
-            <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={health} className="item-img" alt="list-item-icon" />
-                <span className="item-name">Health</span>
+                <img src={help} className="item-img ts--top-align-2" alt="list-item-icon" />
+                <span className="item-name">Help Center</span>
               </div>
             </div>
           </SimpleBar>
