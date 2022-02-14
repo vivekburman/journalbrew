@@ -36,7 +36,7 @@ export const createAxiosInterceptor = () => {
   }, async (error) => {
     if (error.response.status !== 401) {
       _retry = false;
-      return Promise.reject(error.response.data);
+      return Promise.reject(error);
     }
     if (_retry) {
       _retry = false;

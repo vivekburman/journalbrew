@@ -5,4 +5,12 @@ export const TSNEnum = {
     UNSPECIFIED: 0,
     NOT_FOLLOWS: -1
   },
+  SEARCH_TYPES: {
+    "TITLE": 1,
+    "TAG": 2,
+    "PERSON": 3,
+    "LOCATION": 4,
+    "TIME": 5,
+    "AND": 6
+  }
 };

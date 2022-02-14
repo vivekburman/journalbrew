@@ -3,6 +3,7 @@ import createHttpError from "http-errors";
 import { userInfo } from "os";
 import { parse as uuidParse } from 'uuid';
 import { RequestWithPayload } from "../../auth_service/utils";
+import { convertTime } from "../../auth_service/utils/general";
 import { utils } from "../../auth_service/utils/jwtUtils";
 import SQL_DB from "../../database";
 import { EMAIL, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, JOINED_AT, UUID, ID, CREATED_AT, TITLE, SUMMARY, THUMBNAIL, TYPE, AUTHOR_ID, PUBLISH_STATUS, BOOKMARK_POST_ID, USER_UUID, FULL_STORY, POST_ID, FOLLOWER_ID, FOLLOWEE_ID } from "../../database/fields";
@@ -308,7 +309,8 @@ userInfoRouter.put('/bookmark', utils.verifyAccessToken, async(req_: Request, re
             const db = new SQL_DB();
             const response = await db.exec(db.TYPES.INSERT, "INSERT INTO `bookmark` SET ?", {
                 [USER_UUID]: Buffer.from(uuidParse(userID)),
-                [BOOKMARK_POST_ID]: postID
+                [BOOKMARK_POST_ID]: postID,
+                [CREATED_AT]: convertTime()
             });
             if (response[0] && response[0].affectedRows == 1) {
                 res.status(200).json({

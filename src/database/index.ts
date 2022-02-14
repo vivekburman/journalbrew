@@ -146,12 +146,12 @@ class SQL_DB {
                 if (res && (type != this.TYPES.SELECT && type != this.TYPES.CTE_SELECT) ) {
                     await this.commitTransc();
                 }
-                this.close();
                 return res;
             }catch(err) {
                 await this.rollbackTransc();
-                this.close();
                 return Promise.reject(err);
+            } finally{
+                this.close();
             }
         }
     }

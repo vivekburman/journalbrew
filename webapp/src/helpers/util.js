@@ -20,9 +20,13 @@ const getDateOfJoining = (date) => {
   return `${doj.getDate()}-${monthNames[doj.getMonth()]}-${doj.getFullYear()}`;
 }
 
-
+const getFormattedTime = (str) => {
+  const date = new Date(str);
+  return `${date.getDate()} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+}
 
 export {
   getDisplayName,
-  getDateOfJoining
+  getDateOfJoining,
+  getFormattedTime
 }

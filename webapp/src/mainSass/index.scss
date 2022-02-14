@@ -168,6 +168,9 @@ body {
 .margin-bottom-5 {
   margin-bottom: 5px;
 }
+.margin-bottom-10 {
+  margin-bottom: 10px;
+}
 .margin-bottom-15 {
   margin-bottom: 15px;
 }
@@ -177,17 +180,44 @@ body {
 .padding-left-5 {
   padding-left: 5px;
 }
+.padding-left-10 {
+  padding-left: 10px;
+}
+.padding-left-15 {
+  padding-left: 15px;
+}
 .padding-left-8 {
   padding-left: 8px;
 } 
 .padding-right-5 {
   padding-right: 5px;
 }
+.padding-right-10 {
+  padding-right: 10px;
+}
+.padding-right-15 {
+  padding-right: 15px;
+}
 .padding-right-8 {
   padding-right: 8px;
 }
+.padding-top-5 {
+  padding-top: 5px;
+}
 .padding-top-8 {
   padding-top: 8px;
+}
+.padding-top-10 {
+  padding-top: 10px;
+}
+.padding-bottom-5 {
+  padding-bottom: 5px;
+}
+.padding-bottom-8 {
+  padding-bottom: 8px;
+}
+.padding-bottom-10 {
+  padding-bottom: 10px;
 }
 .padding-left-0 {
   padding-left: 0px !important;
@@ -252,6 +282,12 @@ body {
 .h-100 {
   height: 100%;
 }
+.text-ellpsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 .font-playfair {
   font-family: 'Playfair Display', serif;

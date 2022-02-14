@@ -15,47 +15,50 @@ class FeedFilter extends Component {
     this.totalItemsWidth = 0;
     this.filterList = [
       {
-        name: "National",
+        name: "Explore",
         id: 1,
       },{
-        name: "Local",
+        name: "National",
         id: 2,
       },{
-        name: "Worldwide",
+        name: "Local",
         id: 3,
       },{
-        name: "Business",
+        name: "Worldwide",
         id: 4,
       },{
-        name: "Technology",
+        name: "Business",
         id: 5,
       },{
-        name: "Sports",
+        name: "Technology",
         id: 6,
       },{
-        name: "Science",
+        name: "Sports",
         id: 7,
       },{
-        name: "Health",
+        name: "Science",
         id: 8,
       },{
-        name: "Opinion",
+        name: "Health",
         id: 9,
       },{
-        name: "Historical",
+        name: "Opinion",
         id: 10,
       },{
-        name: "Entertainment",
+        name: "Historical",
         id: 11,
       },{
-        name: "Stocks",
+        name: "Entertainment",
         id: 12,
       },{
-        name: "Apple",
+        name: "Stocks",
         id: 13,
       },{
-        name: "Microsoft",
+        name: "Apple",
         id: 14,
+      },{
+        name: "Microsoft",
+        id: 15,
       },
     ]
   }
@@ -75,6 +78,13 @@ class FeedFilter extends Component {
     this.setState({
       selectedFilter: filterId
     });
+  }
+  performSearch = () => {
+    /**
+     * search while search is happening set global state to loading,
+     * if done then good,
+     * else no 404
+     */
   }
   onPrevClick = () => {
     const dom = this.sliderRef.current;
