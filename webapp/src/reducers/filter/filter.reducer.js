@@ -1,18 +1,14 @@
-import { SHOW_FILTER_ERROR, SHOW_FILTER_RESULT, SHOW_FILTER_START } from "./filter.action";
+import { SET_FILTER_TYPE } from "./filter.action";
 
 const INITIAL_STATE = {
-    loading: null,
-    error: null,
-    filterResult: null
+    filterText: ''
 }
 const filterReducer = (state=INITIAL_STATE, action) => {
     switch(action.type) {
-        case SHOW_FILTER_START: 
-        case SHOW_FILTER_ERROR: 
-        case SHOW_FILTER_RESULT: 
+        case SET_FILTER_TYPE: 
             return {
                 ...state,
-                filter: action.payload
+                filterText: action.payload
             };
         default: 
             return state;

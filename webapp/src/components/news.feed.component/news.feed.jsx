@@ -10,7 +10,7 @@ class NewsFeed extends Component {
       <div className="news-feed-wrapper flex-row-wrap">
         <Accordian />
         <main className='news-feed-main-wrapper flex-grow-1'>
-          <div className='feed-wrapper'>
+          <div className='feed-wrapper h-100'>
             <>
               <FeedFilter />
             </>

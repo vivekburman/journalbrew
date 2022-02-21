@@ -6,6 +6,7 @@ export const TSNEnum = {
     NOT_FOLLOWS: -1
   },
   SEARCH_TYPES: {
+    "DEFAULT": -1,
     "TITLE": 1,
     "TAG": 2,
     "PERSON": 3,

@@ -2,12 +2,13 @@ import { NextFunction, Request, Response, Router } from "express";
 import createHttpError from "http-errors";
 import SQL_DB from "../../database";
 import { stringify as uuidStringify } from 'uuid';
-import { ID, CREATED_AT, TITLE, SUMMARY, THUMBNAIL, TYPE, AUTHOR_ID, PUBLISH_STATUS, TAGS, LOCATION } from "../../database/fields";
+import { ID, CREATED_AT, TITLE, SUMMARY, THUMBNAIL, TYPE, AUTHOR_ID, PUBLISH_STATUS, TAGS, LOCATION, UUID, PROFILE_PIC_URL, FIRST_NAME, MIDDLE_NAME, LAST_NAME } from "../../database/fields";
 import { escapeQuotes, getHTMLSafeString, isNullOrEmpty } from "../../helpers/util";
 
 const searchRouter: Router = Router();
 const QUERY_SIZE = 50;
 const TYPES = {
+    "DEFAULT": -1,
     "TITLE": 1,
     "TAG": 2,
     "PERSON": 3,
@@ -65,6 +66,8 @@ function isValidAND(str: string): Boolean {
 function isValidSyntax(str: string, type: number | undefined): Boolean {
     if (isNullOrEmpty(type)) return false;
     switch(type) {
+        case TYPES.DEFAULT:
+            return true;
         case TYPES.TITLE:
             return isValidTitle(str);
         case TYPES.TAG:
@@ -96,13 +99,20 @@ function getTimeStampQuery(timeStart:string, timeEnd: string) {
         values: [] as Array<string>
     }
     if (isNullOrEmpty(timeStart) || isNullOrEmpty(timeEnd)) {
-        result.query = `${CREATED_AT} > DATE_SUB(NOW(), INTERVAL 24 HOUR)`;
+        return null;
     } else {
         result.query = `${CREATED_AT} BETWEEN ? AND ?`;
         result.values.push(`${formatTimeForSQL(timeStart)}`);
         result.values.push(`${formatTimeForSQL(timeEnd)}`);
     }
     return result;
+}
+
+function searchByDefault() {
+    return {
+        query : "",
+        values: []
+    }
 }
 
 function searchByTitle(str: string) {
@@ -168,25 +178,24 @@ function searchByAND(str:string) {
     if (!type) return null;
     if (map[type]) return null;
     map[type] = true;
-    let searchObj = null;
+    let searchObj: {query:string, values: string[]} | null = null;
     switch(type) {
         case TYPES.TAG:
             searchObj = searchByTag(str);
             break;
         case TYPES.LOCATION:
-            searchByLocation(str);
+            searchObj = searchByLocation(str);
+            break;
         case TYPES.TIME:
-            searchByTime(str);
+            searchObj = searchByTime(str);
+            break;
         case TYPES.TITLE:
-            searchByTitle(str);
+            searchObj = searchByTitle(str);
+            break;
     }
     if (!searchObj) return null;
     result.push(searchObj.query);
     values.push(...searchObj.values);
- }
-
- if (!map[TYPES.TIME]) {
-    result.push(`${CREATED_AT} > DATE_SUB(NOW(), INTERVAL 24 HOUR)`);
  }
  return {
      values,
@@ -232,6 +241,12 @@ searchRouter.post('/', async (req:Request, res: Response, next:NextFunction) => 
             values: Object[]
         } | null;
         switch(searchFilter.type) {
+            case TYPES.DEFAULT:
+                searchQuery = searchByDefault();
+                if (isNullOrEmpty(searchQuery)) {
+                    throw new createHttpError.InternalServerError("Cannot create SQL Query");
+                }
+                break;
             case TYPES.TITLE:
                 searchQuery = searchByTitle(searchFilter.query);
                 if (isNullOrEmpty(searchQuery)) {
@@ -265,21 +280,25 @@ searchRouter.post('/', async (req:Request, res: Response, next:NextFunction) => 
             default:
                 searchQuery = null;
         }
-        if (isNullOrEmpty(searchQuery) || isNullOrEmpty(searchQuery?.query)) {
+        if (isNullOrEmpty(searchQuery)) {
             throw new createHttpError.InternalServerError("Search Query is Empty");
         }
         const _rangeEnd = Math.min(searchFilter.rangeStart + QUERY_SIZE, searchFilter.rangeEnd);
         const db = new SQL_DB();
-        const response = await db.exec(db.TYPES.CTE_SELECT, 
-        `WITH CTE AS (SELECT ${ID} as postID, 
-        ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
-        COUNT(*) OVER() AS totalCount, 
-        ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
-        FROM post
-        WHERE ${PUBLISH_STATUS} = 'published'
-        ${searchQuery?.query ? ` AND ${searchQuery.query}` : ''}
-        ORDER BY ${CREATED_AT} DESC)
-        SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
+        const query = `WITH CTE AS (SELECT ${ID} as postID, 
+            ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
+            COUNT(*) OVER() AS totalCount, 
+            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
+            FROM post
+            WHERE ${PUBLISH_STATUS} = 'published'
+            ${searchQuery?.query ? ` AND ${searchQuery.query}` : ''}
+            ORDER BY ${CREATED_AT} DESC)
+            SELECT postID, dataIndex, totalCount, createdAt, authorID, 
+            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${PROFILE_PIC_URL} as profilePicUrl, 
+            ${FIRST_NAME} as firstName, ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName
+            FROM CTE LEFT JOIN user ON authorID = ${UUID} 
+            WHERE dataIndex >= ? AND dataIndex < ?`;
+        const response = await db.exec(db.TYPES.CTE_SELECT, query,
         searchQuery?.values ? [...searchQuery.values, searchFilter.rangeStart, _rangeEnd] : [searchFilter.rangeStart, _rangeEnd]);
         if (response?.[0]?.length) {
             res.status(200).json({

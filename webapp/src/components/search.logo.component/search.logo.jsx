@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import search from '../../images/search.svg';
 import close from '../../images/close.svg';
 import {connect} from 'react-redux';
-import { setFilterData, setFilterError, setFilterLoading } from '../../reducers/filter/filter.action';
 import {Switch, Route, withRouter} from 'react-router-dom';
 import './search.logo.component.scss';
 import SearchSuggestion from '../search.suggestion.component/search.suggestion';
@@ -125,15 +124,9 @@ class SearchNLogoComponent extends Component {
     );
   }
 }
-const mapStateToProps = ({window, filterState}) => {
+const mapStateToProps = ({window}) => {
   return {
-    windowWidth: window.windowSize,
-    filterState: filterState.filter,
+    windowWidth: window.windowSize
   };
 };
-const mapDispatchToProps = (dispatch) => ({
-  setFilterData: (result) => dispatch(setFilterData(result)),
-  setFilterError: () => dispatch(setFilterError()),
-  setFilterLoading: () => dispatch(setFilterLoading()),
-});
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SearchNLogoComponent));
+export default connect(mapStateToProps)(withRouter(SearchNLogoComponent));

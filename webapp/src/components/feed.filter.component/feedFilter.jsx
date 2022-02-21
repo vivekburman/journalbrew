@@ -1,6 +1,8 @@
 import React, { Component, createRef } from 'react';
 import './feedFilter.scss';
 import arrowLeft from '../../images/arrow-left.svg';
+import { connect } from 'react-redux';
+import { setFilterData } from '../../reducers/filter/filter.action';
 class FeedFilter extends Component {
   constructor(props) {
     super(props);
@@ -47,19 +49,7 @@ class FeedFilter extends Component {
       },{
         name: "Historical",
         id: 11,
-      },{
-        name: "Entertainment",
-        id: 12,
-      },{
-        name: "Stocks",
-        id: 13,
-      },{
-        name: "Apple",
-        id: 14,
-      },{
-        name: "Microsoft",
-        id: 15,
-      },
+      }
     ]
   }
   
@@ -78,13 +68,10 @@ class FeedFilter extends Component {
     this.setState({
       selectedFilter: filterId
     });
+    this.performSearch(filterId);
   }
-  performSearch = () => {
-    /**
-     * search while search is happening set global state to loading,
-     * if done then good,
-     * else no 404
-     */
+  performSearch = async (filterId) => {
+    this.props.setFilterData(`#${this.filterList.find(i => i.id === filterId).name}`.toLowerCase());
   }
   onPrevClick = () => {
     const dom = this.sliderRef.current;
@@ -238,4 +225,8 @@ class FeedFilter extends Component {
     );
   }
 }
-export default FeedFilter;
+
+const mapDispatchToProps = (dispatch) => ({
+  setFilterData: (data) => dispatch(setFilterData(data)),
+});
+export default connect(null, mapDispatchToProps)(FeedFilter);

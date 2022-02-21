@@ -15,17 +15,20 @@ const search = (query, type, rangeStart, rangeEnd) => {
 const searchByTag = (query, rangeStart, rangeEnd) => {
   return search(query, TSNEnum.SEARCH_TYPES.TAG, rangeStart, rangeEnd);
 }
-const searchByTitle = (query) => {
+const searchByTitle = (query, rangeStart, rangeEnd) => {
   return search(query, TSNEnum.SEARCH_TYPES.TITLE, rangeStart, rangeEnd);
 }
-const searchByTime = (query) => {
+const searchByTime = (query, rangeStart, rangeEnd) => {
   return search(query, TSNEnum.SEARCH_TYPES.TIME, rangeStart, rangeEnd);
 }
-const searchByLocation = (query) => {
+const searchByLocation = (query, rangeStart, rangeEnd) => {
   return search(query, TSNEnum.SEARCH_TYPES.LOCATION, rangeStart, rangeEnd);
 }
-const searchByAND = (query) => {
+const searchByAND = (query, rangeStart, rangeEnd) => {
   return search(query, TSNEnum.SEARCH_TYPES.AND, rangeStart, rangeEnd);
+}
+const searchByDefault = (query, rangeStart, rangeEnd) => {
+  return search('default', TSNEnum.SEARCH_TYPES.DEFAULT, rangeStart, rangeEnd);
 }
 
 export {
@@ -34,5 +37,6 @@ export {
   searchByTime,
   searchByLocation,
   searchByAND,
-  search as searchWithoutType
+  search as searchWithoutType,
+  searchByDefault
 }

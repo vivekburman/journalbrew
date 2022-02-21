@@ -83,7 +83,7 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
                 {!showCreator ? <Moment fromNow date={time} />
                 : 
                 <>
-                  <img className="creator-pic" src={ profilePicUrl } alt="Creator Profile Pic"/>
+                  <img className="creator-pic" src={ profilePicUrl }/>
                   <CreatorInfo username={username} time={time} />
                 </>}
             </div>
