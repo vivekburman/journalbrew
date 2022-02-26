@@ -1,10 +1,9 @@
 import React from 'react';
 import bell from '../../images/bell.svg';
-import user from '../../images/user.svg';
-import Notification from '../notification.component/notification.card';
+// import Notification from '../notification.component/notification.card';
 import {showNotification, hideNotification} from '../../reducers/click/notification.action';
 import {connect} from 'react-redux';
-import {Switch, Route} from 'react-router-dom';
+// import {Switch, Route} from 'react-router-dom';
 import './profile.component.scss';
 import ProfileDropDown from '../profile.dropdown.component/profile.dropdown';
 import {showProfileDropDown, hideProfileDropDown} from '../../reducers/click/profile.dropdown.action';
@@ -28,7 +27,7 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
     <>
       { currentUser ?
 			<ul className="flex-row-nowrap align-items-center">
-			  <Switch>
+			  {/* <Switch>
 			    <Route exact path={['/full-story', '/user-profile', '/', '/payment-history-&-insights']}>
 			      <li className="notification-icon-wrapper outline-none">
 			        <img src={ bell } alt="notifications" className="icon-img outline-none"
@@ -36,7 +35,7 @@ const ProfileComponent = ({currentUser, isProfileDropDownOpen, showNotification,
 			        <Notification hideFunc={hideNotification} isOpen={isNotificationDropDownOpen}/>
 			      </li>
 			    </Route>
-			  </Switch>
+			  </Switch> */}
 			  <li className="profile-wrapper margin-left-8">
 					<span tabIndex={0} onClick={toggleProfileDropDown} className="cursor-pointer">
 				    <UserAvatar url={ currentUser.profilePicUrl } size={35}/>
