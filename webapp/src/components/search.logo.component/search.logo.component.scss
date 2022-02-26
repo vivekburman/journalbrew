@@ -70,30 +70,43 @@
   .search-wrapper .icon-img-close {
     display: none;
   }
-  .search.flex-1 {
+  .search.search-grow {
     position: absolute;
     left: 0;
-    top: 10px;
+    top: 0;
     background-color: #fff;
     padding: 10px 0;
     height: 100vh;
     z-index: 30;
     width: 100%;
   }
-  .search.flex-1 form {
+  .search.search-grow form {
     width: 100%;
   }
   
-  .search.flex-1 .icon-img-close {
+  .search.search-grow .icon-img-close {
     display: initial;
   }
-  .search.flex-1 .icon-img-search {
+  .search.search-grow .icon-img-search {
     display: none;
   }
-  .search.flex-1 .search-input {
+  .search.search-grow .icon-img-help {
+    margin-right: 10px;
+  }
+  .search.search-grow .search-input {
     margin-right: 16px;
     border-radius: 4px;
   }
+}
+@media (max-width: 768px) {
+.search-and-logo {
+  .focus-blur-container {
+    width: 100%;
+    box-shadow: none;
+    top: 60px;
+    left: 27px !important;
+  }
+}
 }
 @media (min-width: 576px) {
   .search-and-logo {

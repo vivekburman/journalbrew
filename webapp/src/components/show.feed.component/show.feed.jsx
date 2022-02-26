@@ -41,13 +41,13 @@ class ShowFeed extends Component {
       showCreator={true}
       profilePicUrl={data.profilePicUrl}
       username={getDisplayName(data.firstName, data.middleName, data.lastName)}
-      postID={data.id} 
+      postID={data.postID} 
       time={data.createdAt}
       title={data.title}
       summary={data.summary}
       thumbnail={data.thumbnail}
       type={data.type}
-      userID={data.userID}
+      userID={data.authorID}
       />
   }
   getRangeData (start, end) {

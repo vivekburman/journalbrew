@@ -6,6 +6,9 @@ import {Switch, Route, withRouter} from 'react-router-dom';
 import './search.logo.component.scss';
 import SearchSuggestion from '../search.suggestion.component/search.suggestion';
 import { searchWithoutType } from '../../services/searchService';
+import help from '../../images/help.svg';
+import SearchHelp from '../search.help.component/search.help';
+
 class SearchNLogoComponent extends Component {
   constructor(props) {
     super(props);
@@ -14,7 +17,8 @@ class SearchNLogoComponent extends Component {
       searchText: "",
       searchResult: [],
       searchError: null,
-      searchLoading: null
+      searchLoading: null,
+      toggleHelpPopover: false,
     }
   }
   goToHome = () => {
@@ -38,7 +42,11 @@ class SearchNLogoComponent extends Component {
       searchLoading: null
     });
   }
-
+  _toggleHelpPopover = () => {
+    this.setState({
+      toggleHelpPopover: !this.state.toggleHelpPopover
+    });
+  }
   performSearch = async (event) => {
     if (event.which === 13) {
     // perform search
@@ -52,13 +60,15 @@ class SearchNLogoComponent extends Component {
         this.setState({
           searchLoading: false,
           searchError: null,
-          searchResult: response.data.postsList || []
+          searchResult: response.data.postsList || [],
+          toggleHelpPopover: false,
         });
       } catch(e) {
         this.setState({
           searchLoading: false,
           searchError: e.error,
-          searchResult: []
+          searchResult: [],
+          toggleHelpPopover: false,
         })
       }
     }
@@ -78,12 +88,18 @@ class SearchNLogoComponent extends Component {
       searchLoading: null,
       searchResult: [],
       searchError: null,
+      toggleHelpPopover: false,
+    });
+  }
+  hideSearchInfoPopover = (e) => {
+    this.setState({
+      toggleHelpPopover: false
     });
   }
 
   render() {
     const { windowWidth } = this.props;
-    const { searchText, isSearchBarOpen, searchError, searchLoading, searchResult } = this.state;
+    const { searchText, isSearchBarOpen, searchError, searchLoading, searchResult, toggleHelpPopover } = this.state;
     const placeholder = 'Search news';
     return (
       <div className="search-and-logo">
@@ -91,23 +107,33 @@ class SearchNLogoComponent extends Component {
         <div className='search-logo-separator'></div>
         <Switch>
           <Route exact path={['/', '/user-profile']}>
-            <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-1' : 'flex-0')}`}>
+            <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-grow-1 search-grow' : '')}`}>
               <div className="search-wrapper flex flex-row-nowrap justify-content-center">
                 <div className="search-wrapper align-items-center">
                   <div className="flex flex-row-nowrap align-items-center">
-                    <img src={close} alt="search-icon" className="icon-img icon-img-close"
+                    <img src={close} className="icon-img icon-img-close"
                       onClick={this._closeSearchBar}/>
-                    <img src={search} alt="search-icon"
+                    <img src={search}
                       className="icon-img icon-img-search"
                       onClick={this._openSearchBar} />
-                    <input
-                      className={`search-input outline-none on-focus ${isSearchBarOpen ? 'expand-search' : 'collapse-search'}`}
-                      type="text"
-                      onChange={this.onChange}
-                      onKeyDown={this.performSearch}
-                      placeholder={placeholder}
-                      value={searchText}
-                    />
+                    <div className='flex flex-row-nowrap flex-grow-1 align-items-center'>
+                      <input
+                        className={`search-input outline-none on-focus ${isSearchBarOpen ? 'expand-search' : 'collapse-search'}`}
+                        type="text"
+                        onChange={this.onChange}
+                        onKeyDown={this.performSearch}
+                        placeholder={placeholder}
+                        value={searchText}
+                      />
+                      <img src={help} 
+                        className={`icon-img icon-img-help ${!isSearchBarOpen && windowWidth < 768 ? 'display-none' : ''}`}
+                        onClick={this._toggleHelpPopover}/>
+                    </div>
+                    <div className={"search-popover " + (toggleHelpPopover ? '' : 'display-none')}>
+                      <SearchHelp  isOpen={toggleHelpPopover}
+                      hideFunc={this.hideSearchInfoPopover}
+                      noFullScreen={true}/>
+                    </div>
                   </div>
                   { searchText.length > 0 && <SearchSuggestion 
                   loading={searchLoading}
