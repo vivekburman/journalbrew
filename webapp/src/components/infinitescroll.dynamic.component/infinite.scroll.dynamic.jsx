@@ -125,7 +125,7 @@ class InfiniteScroll extends Component {
         const childrenNodes = Array.from(rootRef.children);
         if (currentScrollMode === this.SCROLL_MODES.BOTTOM) {
           const wrapperNewHeight = this.positionElementsBottom(childrenNodes);  
-          rootRef.style.height = wrapperNewHeight + "px";
+          wrapperNewHeight != 0 && (rootRef.style.height = wrapperNewHeight + "px");
         } else if (currentScrollMode === this.SCROLL_MODES.TOP) {
           this.positionElementsTop(childrenNodes);
         } else {
@@ -382,12 +382,12 @@ class InfiniteScroll extends Component {
             }
           </div>
           :
-          <ul className="ul-default position-relative"
+          <div className="position-relative"
           ref={this.rootRef}>
             {
               this.renderList()
             }
-          </ul>
+          </div>
         }
         
       </div>

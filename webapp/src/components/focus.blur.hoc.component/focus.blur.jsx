@@ -11,7 +11,7 @@ const withFocusBlur = (WrappedComponent) => {
     const _onBlur = () => {
       timer = setTimeout(() => {
         if (ref && isFocused) {
-          props.hideFunc();
+          props.hideFunc && props.hideFunc();
         }
       }, 500);
     };

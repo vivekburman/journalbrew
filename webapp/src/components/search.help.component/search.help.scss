@@ -1,0 +1,30 @@
+.search-help-container {
+  background-color: #fff;
+  
+  .help-title {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 10px;
+  }
+  .search-options {
+    list-style-type: disc;
+    padding: 10px 15px;
+  }
+  .search-item {
+    text-align: left;
+    font-size: 14px;
+  }
+}
+@media (min-width: 768px) {
+  .search-help-container {
+    padding-top: 10px;
+    padding-left: 25px;
+    box-shadow: 0 0 3px 0px grey;
+    height: 200px;
+    width: 500px;
+  }
+  .search-popover {
+    position: relative;
+    top: 25px;
+  }
+}

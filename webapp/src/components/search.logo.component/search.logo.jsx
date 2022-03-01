@@ -2,66 +2,147 @@ import React, {Component} from 'react';
 import search from '../../images/search.svg';
 import close from '../../images/close.svg';
 import {connect} from 'react-redux';
-import handleSearchRequest from '../../reducers/search/search.action';
 import {Switch, Route, withRouter} from 'react-router-dom';
 import './search.logo.component.scss';
 import SearchSuggestion from '../search.suggestion.component/search.suggestion';
-import {openSearchBar, closeSearchBar} from '../../reducers/click/search.bar.action';
+import { searchWithoutType } from '../../services/searchService';
+import help from '../../images/help.svg';
+import SearchHelp from '../search.help.component/search.help';
+
 class SearchNLogoComponent extends Component {
   constructor(props) {
     super(props);
-    this.ref = React.createRef(null);
-    this.searchIconRef = React.createRef(null);
+    this.state = {
+      isSearchBarOpen: false,
+      searchText: "",
+      searchResult: [],
+      searchError: null,
+      searchLoading: null,
+      toggleHelpPopover: false,
+    }
   }
   goToHome = () => {
     this.props.history.push("/");
   }
   _openSearchBar = () => {
-    this.props.windowWidth < 768 && openSearchBar();
+    this.props.windowWidth < 768 && this.setState({
+      isSearchBarOpen: true,
+      searchText: "",
+      searchResult: [],
+      searchError: null,
+      searchLoading: null
+    });
   }
-  _toggleFocus = () =>{
-    this.ref.current && this.ref.current.classList.add('on-focus');
-    this.searchIconRef.current && this.searchIconRef.current.classList.add('on-focus');
+  _closeSearchBar = () => {
+    this.setState({
+      isSearchBarOpen: false,
+      searchText: "",
+      searchResult: [],
+      searchError: null,
+      searchLoading: null
+    });
   }
-  _toggleBlur = () => {
-    this.ref.current && this.ref.current.classList.remove('on-focus');
-    this.searchIconRef.current && this.searchIconRef.current.classList.remove('on-focus');
-    setTimeout(() => handleSearchRequest(''), 100);
+  _toggleHelpPopover = () => {
+    this.setState({
+      toggleHelpPopover: !this.state.toggleHelpPopover
+    });
   }
+  performSearch = async (event) => {
+    if (event.which === 13) {
+    // perform search
+      this.setState({
+        searchLoading: true,
+        searchResult: [],
+        searchError: null,
+      });
+      try {
+        const response = await searchWithoutType(this.state.searchText, null, 0, 50);
+        this.setState({
+          searchLoading: false,
+          searchError: null,
+          searchResult: response.data.postsList || [],
+          toggleHelpPopover: false,
+        });
+      } catch(e) {
+        this.setState({
+          searchLoading: false,
+          searchError: e.error,
+          searchResult: [],
+          toggleHelpPopover: false,
+        })
+      }
+    }
+  }
+  onSelectItemCallback = (authorID, postID) => {
+    this.setState({
+      searchText: "",
+      searchLoading: null,
+      searchResult: [],
+      searchError: null,
+    });
+    this.props.history.push(`/full-story/${authorID}/${postID}`);
+  }
+  onChange = (e) => {
+    this.setState({
+      searchText: e.target.value,
+      searchLoading: null,
+      searchResult: [],
+      searchError: null,
+      toggleHelpPopover: false,
+    });
+  }
+  hideSearchInfoPopover = (e) => {
+    this.setState({
+      toggleHelpPopover: false
+    });
+  }
+
   render() {
-    const {searchText='', windowWidth,
-      handleSearchRequest, isSearchBarOpen,
-      openSearchBar, closeSearchBar} = this.props;
-    const placeholder = 'Search by location, date or creator';
+    const { windowWidth } = this.props;
+    const { searchText, isSearchBarOpen, searchError, searchLoading, searchResult, toggleHelpPopover } = this.state;
+    const placeholder = 'Search news';
     return (
       <div className="search-and-logo">
         <h1 onClick={this.goToHome} className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>TopSelfNews</h1>
+        <div className='search-logo-separator'></div>
         <Switch>
-          <Route exact path={['/', '/user-profile', '/opinions']}>
-            <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-1' : 'flex-0')}`}>
-              <form className="search-wrapper flex flex-row-nowrap justify-content-center"
-                onSubmit={(e) => handleSearchRequest(e.target.value)}>
+          <Route exact path={['/', '/user-profile']}>
+            <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-grow-1 search-grow' : '')}`}>
+              <div className="search-wrapper flex flex-row-nowrap justify-content-center">
                 <div className="search-wrapper align-items-center">
                   <div className="flex flex-row-nowrap align-items-center">
-                    <img src={close} alt="search-icon" className="icon-img icon-img-close"
-                      onClick={closeSearchBar}/>
-                    <img src={search} alt="search-icon" ref={this.searchIconRef}
+                    <img src={close} className="icon-img icon-img-close"
+                      onClick={this._closeSearchBar}/>
+                    <img src={search}
                       className="icon-img icon-img-search"
                       onClick={this._openSearchBar} />
-                    <input
-                      ref = {this.ref}
-                      className={`search-input outline-none ${windowWidth < 768 && (isSearchBarOpen ? 'expand-search' : 'collapse-search')}`}
-                      type="search"
-                      placeholder={placeholder}
-                      onChange= {(e) => handleSearchRequest(e.target.value)}
-                      value={searchText}
-                      onFocus={this._toggleFocus}
-                      onBlur={this._toggleBlur}
-                    />
+                    <div className='flex flex-row-nowrap flex-grow-1 align-items-center'>
+                      <input
+                        className={`search-input outline-none on-focus ${isSearchBarOpen ? 'expand-search' : 'collapse-search'}`}
+                        type="text"
+                        onChange={this.onChange}
+                        onKeyDown={this.performSearch}
+                        placeholder={placeholder}
+                        value={searchText}
+                      />
+                      <img src={help} 
+                        className={`icon-img icon-img-help ${!isSearchBarOpen && windowWidth < 768 ? 'display-none' : ''}`}
+                        onClick={this._toggleHelpPopover}/>
+                    </div>
+                    <div className={"search-popover " + (toggleHelpPopover ? '' : 'display-none')}>
+                      <SearchHelp  isOpen={toggleHelpPopover}
+                      hideFunc={this.hideSearchInfoPopover}
+                      noFullScreen={true}/>
+                    </div>
                   </div>
-                  { (windowWidth > 768 || isSearchBarOpen) && searchText.length > 0 && <SearchSuggestion /> }
+                  { searchText.length > 0 && <SearchSuggestion 
+                  loading={searchLoading}
+                  error={searchError}
+                  items={searchResult}
+                  onSelectCallback={this.onSelectItemCallback}
+                  /> }
                 </div>
-              </form>
+              </div>
             </div>
           </Route>
         </Switch>
@@ -69,16 +150,9 @@ class SearchNLogoComponent extends Component {
     );
   }
 }
-const mapStateToProps = ({window, search, searchBar}) => {
+const mapStateToProps = ({window}) => {
   return {
-    windowWidth: window.windowSize,
-    isSearchBarOpen: searchBar.isOpen,
-    searchText: search.searchText,
+    windowWidth: window.windowSize
   };
 };
-const mapDispatchToProps = (dispatch) => ({
-  handleSearchRequest: (searchString) => dispatch(handleSearchRequest(searchString)),
-  openSearchBar: () => dispatch(openSearchBar()),
-  closeSearchBar: () => dispatch(closeSearchBar()),
-});
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SearchNLogoComponent));
+export default connect(mapStateToProps)(withRouter(SearchNLogoComponent));

@@ -8,6 +8,8 @@ import threeDots from '../../images/threeDots.svg';
 import { useState } from 'react';
 import PostDropdown from '../post.dropdown.component/post.dropdown';
 import { useHistory } from 'react-router';
+import user from '../../images/user.svg';
+
 
 const MODES = {
   1: '/full-story/',
@@ -48,6 +50,12 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
     }
   }
 
+  const onProfilePicLoadError = (e) => {
+    const img = e.target;
+    img.src = user;
+    img.classList.add("on-error");
+  }
+
   return (
     <div className="news-item"
     ref={rootRef}>
@@ -79,11 +87,11 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
             </p>
           </div>
           <div className="flex flex-row-nowrap align-items-center justify-content-between">
-              <div className="creator-info">
+              <div className="flex flex-row-nowrap align-items-center">
                 {!showCreator ? <Moment fromNow date={time} />
                 : 
                 <>
-                  <img className="creator-pic" src={ profilePicUrl } alt="Creator Profile Pic"/>
+                  <img className="creator-pic" src={ profilePicUrl } onError={onProfilePicLoadError}/>
                   <CreatorInfo username={username} time={time} />
                 </>}
             </div>
