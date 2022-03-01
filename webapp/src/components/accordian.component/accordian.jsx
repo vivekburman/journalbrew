@@ -36,10 +36,12 @@ class Accordian extends Component {
               </div>
             </div>
             <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={help} className="item-img ts--top-align-2" alt="list-item-icon" />
-                <span className="item-name">Help Center</span>
-              </div>
+              <Link to="/helpcenter" className="link">
+                <div className="accordian-item">
+                  <img src={help} className="item-img ts--top-align-2" alt="list-item-icon" />
+                  <span className="item-name">Help Center</span>
+                </div>
+              </Link>
             </div>
           </SimpleBar>
         </div>
