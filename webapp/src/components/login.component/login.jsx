@@ -22,7 +22,7 @@ const Login = ({ hideLogin, allowToClose=true }) => {
     localStorage.setItem(TSNEnum.LAST_VISITED_PAGE_BEFORE_LOGIN, location.pathname);
   };
   return (
-    <div className="login-container">
+    <div className="login-container flex flex-row-nowrap">
       <div className="login-wrapper outline-none" onBlur={hideLogin} tabIndex={-1}>
         {allowToClose && <img src={close} alt="close" className="icon-img icon-img-close float-right" onClick={hideLogin}/> }
         <h2 className="header">Join Us</h2>

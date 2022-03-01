@@ -16,7 +16,9 @@
   padding: 24px 16px;
   text-align: center;
   margin: 0 24px;
-  min-height: 100%;
+  height: 262px;
+  flex-grow: 1;
+  transform: translateY(50%);
 }
 .login-phrase {
   color: rgb(39, 39, 39);
