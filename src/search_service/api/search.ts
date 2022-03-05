@@ -288,13 +288,13 @@ searchRouter.post('/', async (req:Request, res: Response, next:NextFunction) => 
         const query = `WITH CTE AS (SELECT ${ID} as postID, 
             ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
             COUNT(*) OVER() AS totalCount, 
-            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
+            ${TITLE}, ${SUMMARY}, ${TYPE}, ${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
             FROM post
             WHERE ${PUBLISH_STATUS} = 'published'
             ${searchQuery?.query ? ` AND ${searchQuery.query}` : ''}
             ORDER BY ${CREATED_AT} DESC)
             SELECT postID, dataIndex, totalCount, createdAt, authorID, 
-            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${PROFILE_PIC_URL} as profilePicUrl, 
+            ${TITLE}, ${SUMMARY}, ${TYPE}, ${PROFILE_PIC_URL} as profilePicUrl, 
             ${FIRST_NAME} as firstName, ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName
             FROM CTE LEFT JOIN user ON authorID = ${UUID} 
             WHERE dataIndex >= ? AND dataIndex < ?`;

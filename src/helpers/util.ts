@@ -50,11 +50,13 @@ enum PublishStatus {
     DISCARDED = "discarded",
     REMOVED = "removed"
 }
+const REFRESH_TOKEN = "tsn_refresh_token"
 export {
     getConsolidatedName,
     getHTMLSafeString,
     isNullOrEmpty,
     escapeQuotes,
     PublishStatus,
-    User
+    User,
+    REFRESH_TOKEN
 }

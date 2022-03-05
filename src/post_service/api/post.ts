@@ -138,25 +138,25 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
     try {
         const busboy = new Busboy({
             headers: req_.headers,
-            limits: {
-                files: 1,
-                fileSize: thumbSize
-            }
+            // limits: {
+            //     files: 1,
+            //     fileSize: thumbSize
+            // }
         });
-        let limit_reach = false;
-        const chunks: any[] = [];
+        // let limit_reach = false;
+        // const chunks: any[] = [];
         const req = req_ as RequestWithPayload;
         const payload: User = req['payload'] as User;
         const db = new SQL_DB();
         const formPayload: PublishForm = {} as PublishForm;
         let fieldParesed = 0;
-        let _encoding='', _mimeType='';
+        // let _encoding='', _mimeType='';
         const workQueue = new PQueue({concurrency: 1});
         
-        const s3 = new awsSdk.S3({
-            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-        });
+        // const s3 = new awsSdk.S3({
+        //     accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+        //     secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        // });
 
         const handleErrorBusBoy = async (fn: Function) => {
             workQueue.add(async () => {
@@ -210,82 +210,104 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                         fieldParesed++;
                         formPayload.tags = val;
                         break;
-                    case 'type':
-                        if (val == null || val == undefined || !(val in ArticleType)) {
-                            next(new createHttpError.InternalServerError('type is null or not supported'));
-                        }
-                        fieldParesed++;
-                        formPayload.type = val;
-                        break;
+                    // case 'type':
+                    //     if (val == null || val == undefined || !(val in ArticleType)) {
+                    //         next(new createHttpError.InternalServerError('type is null or not supported'));
+                    //     }
+                    //     fieldParesed++;
+                    //     formPayload.type = val;
+                    //     break;
                 }
             });
         });
-        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-            _mimeType = mimetype;
-            _encoding = encoding;
-            handleErrorBusBoy(() => {
-                if (fieldParesed != 6) {
-                    next(new createHttpError.InternalServerError('fields must be parsed first'));
-                } else {
-                    const fileTypes = /png/;
-                    const extname = fileTypes.test(filename);
-                    const mimeType = fileTypes.test(mimetype);
-                    if (extname && mimeType) {
-                        file.on('data', (data) => {
-                            chunks.push(data);
-                        });
-                        file.on('limit', () => {
-                            chunks.length = 0;
-                            limit_reach = true;
-                        });
-                    } else {
-                        next(new createHttpError.InternalServerError('thumbnail is not proper image only supports .png'));
-                    }
-                }
-            })
-        });
+        // busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        //     _mimeType = mimetype;
+        //     _encoding = encoding;
+        //     handleErrorBusBoy(() => {
+        //         if (fieldParesed != 6) {
+        //             next(new createHttpError.InternalServerError('fields must be parsed first'));
+        //         } else {
+        //             const fileTypes = /png/;
+        //             const extname = fileTypes.test(filename);
+        //             const mimeType = fileTypes.test(mimetype);
+        //             if (extname && mimeType) {
+        //                 file.on('data', (data) => {
+        //                     chunks.push(data);
+        //                 });
+        //                 file.on('limit', () => {
+        //                     chunks.length = 0;
+        //                     limit_reach = true;
+        //                 });
+        //             } else {
+        //                 next(new createHttpError.InternalServerError('thumbnail is not proper image only supports .png'));
+        //             }
+        //         }
+        //     })
+        // });
         busboy.on('finish', () => {
             handleErrorBusBoy(async () => {
-                if (limit_reach) {
-                    next(new createHttpError[413]);
-                } else {
-                    // save to s3
-                    const params: awsSdk.S3.Types.PutObjectRequest = {
-                        Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
-                        Key: `thumbs/${formPayload.postId}.png`,
-                        Body: Buffer.concat(chunks),
-                        ContentType: _mimeType,
-                        ContentEncoding: _encoding,
-                        ACL: 'public-read'
-                    };
+                // if (limit_reach) {
+                //     next(new createHttpError[413]);
+                // } else {
+                //     // save to s3
+                //     const params: awsSdk.S3.Types.PutObjectRequest = {
+                //         Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+                //         Key: `thumbs/${formPayload.postId}.png`,
+                //         Body: Buffer.concat(chunks),
+                //         ContentType: _mimeType,
+                //         ContentEncoding: _encoding,
+                //         ACL: 'public-read'
+                //     };
                     
-                    s3.upload(params, async (err, _res) => {
-                        if(err) next(new createHttpError.InternalServerError('something went wrong in s3: ' + err.message));
-                        else {
-                            //save to DB
-                            try {
-                                await db.exec(db.TYPES.INSERT,
-                                    "INSERT INTO `post` SET ?", {
-                                        [TITLE]: formPayload.title,
-                                        [THUMBNAIL]: _res.Location,
-                                        [SUMMARY]: formPayload.summary,
-                                        [TAGS]: JSON.stringify(formPayload.tags),
-                                        [LOCATION]: formPayload.location,
-                                        [TYPE]: formPayload.type,
-                                        [FULL_STORY_ID]: formPayload.postId,
-                                        [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
-                                        [CREATED_AT]: convertTime(),
-                                        [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
-                                    } 
-                                );
-                                res.status(200).json({
-                                    success: true
-                                });
-                            } catch(err) {
-                                next(err);
-                            }
-                        }  
+                //     s3.upload(params, async (err, _res) => {
+                //         if(err) next(new createHttpError.InternalServerError('something went wrong in s3: ' + err.message));
+                //         else {
+                //             //save to DB
+                //             try {
+                //                 await db.exec(db.TYPES.INSERT,
+                //                     "INSERT INTO `post` SET ?", {
+                //                         [TITLE]: formPayload.title,
+                //                         [THUMBNAIL]: _res.Location,
+                //                         [SUMMARY]: formPayload.summary,
+                //                         [TAGS]: JSON.stringify(formPayload.tags),
+                //                         [LOCATION]: formPayload.location,
+                //                         [TYPE]: formPayload.type,
+                //                         [FULL_STORY_ID]: formPayload.postId,
+                //                         [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
+                //                         [CREATED_AT]: convertTime(),
+                //                         [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
+                //                     } 
+                //                 );
+                //                 res.status(200).json({
+                //                     success: true
+                //                 });
+                //             } catch(err) {
+                //                 next(err);
+                //             }
+                //         }  
+                //     });
+                // }
+                //save to DB
+                try {
+                    await db.exec(db.TYPES.INSERT,
+                        "INSERT INTO `post` SET ?", {
+                            [TITLE]: formPayload.title,
+                            // [THUMBNAIL]: _res.Location,
+                            [SUMMARY]: formPayload.summary,
+                            [TAGS]: JSON.stringify(formPayload.tags),
+                            [LOCATION]: formPayload.location,
+                            [TYPE]: ArticleType.ARTICLE,
+                            [FULL_STORY_ID]: formPayload.postId,
+                            [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
+                            [CREATED_AT]: convertTime(),
+                            [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
+                        } 
+                    );
+                    res.status(200).json({
+                        success: true
                     });
+                } catch(err) {
+                    next(err);
                 }
             });
         })

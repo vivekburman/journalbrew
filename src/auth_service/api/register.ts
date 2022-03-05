@@ -9,6 +9,7 @@ import { convertTime } from '../utils/general';
 import { Buffer } from 'buffer';
 import SQL_DB from '../../database';
 import { UNDEF, UUID, STRATEGY_ID, EMAIL, STRATEGY_TYPE, FIRST_NAME, LAST_NAME, MIDDLE_NAME, PROFILE_PIC_URL, CREATED_AT } from '../../database/fields';
+import { REFRESH_TOKEN } from '../../helpers/util';
 
 const getName = (name:string) => {
    const name_ = name?.split(' ');
@@ -72,7 +73,7 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
          const userID = data;
          const accessTokenJWT = utils.issueAccessTokenJWT(tokenObj);
          data = await utils.issueRefreshTokenJWT(tokenObj);
-         res.cookie('refresh_token', data.token, {
+         res.cookie(REFRESH_TOKEN, data.token, {
             httpOnly: true,
             maxAge: data.expiresInMs
          });
@@ -94,7 +95,7 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
 });
 
 registerRouter.post('/refresh-token', async (req:Request, res:Response, next:NextFunction) => {
-   const refreshToken = req.cookies['refresh_token'];
+   const refreshToken = req.cookies[REFRESH_TOKEN];
    const db = new SQL_DB();
    try {
       if (!refreshToken) {
@@ -117,7 +118,7 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
       const token = {...tokenObj, email: data[EMAIL]};
       const accessTokenJWT = utils.issueAccessTokenJWT(token)
       const response = await utils.issueRefreshTokenJWT(token);
-      res.cookie('refresh_token', response.token, {
+      res.cookie(REFRESH_TOKEN, response.token, {
          httpOnly: true,
          maxAge: response.expiresInMs
       });
@@ -139,7 +140,7 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
 
 registerRouter.delete('/logout', async (req, res, next) => {
    try{
-      const refreshToken = req.cookies['refresh_token'];
+      const refreshToken = req.cookies[REFRESH_TOKEN];
       if (!refreshToken) {
          throw new createHttpError.BadRequest();
       }

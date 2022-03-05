@@ -35,6 +35,7 @@ class TextEditor extends Component {
     this.currentMode = this.MODES.NONE;
     this.state = {
       error: false,
+      updateOrCreateRESTError: false,
     };
     this.instanceRef = createRef(null);
     //bind this
@@ -246,12 +247,13 @@ class TextEditor extends Component {
       diff.generateObjDiff();
       self.props.setEditorData(newEditorData);
       if (self.checkForMeaningfulUpdate(diff.jsonPatch)) {
-        self.props.handleSave(newEditorData, diff.jsonPatch, () => {
-          // if (self.pendingRemove) {
-          //   // remove it
-          //   self.deleteMedia(self.pendingRemove.data, self.pendingRemove.type);
-          // }
-        });
+        // self.props.handleSave(newEditorData, diff.jsonPatch, () => {
+        //   // if (self.pendingRemove) {
+        //   //   // remove it
+        //   //   self.deleteMedia(self.pendingRemove.data, self.pendingRemove.type);
+        //   // }
+        // });
+        self.props.handleSave(newEditorData, diff.jsonPatch);
       }
     }, 500);
   }

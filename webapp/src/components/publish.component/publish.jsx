@@ -21,8 +21,8 @@ const publishPostAPI = (postId, token, formData) => {
   _formData.append('location', formData.location);
   _formData.append('tags', JSON.stringify(formData.tags));
   _formData.append('summary', formData.summary);
-  _formData.append('type', formData.type);
-  _formData.append('thumb', formData.thumb);
+  // _formData.append('type', formData.type);
+  // _formData.append('thumb', formData.thumb);
   return publishPost(_formData);
 }
 const ERR_TITLE_LIMIT = 'Title should be within 150 characters.';
@@ -30,10 +30,10 @@ const ERR_EMPTY = 'field cannot be empty.';
 const ERR_SUMMARY = 'Summary should be within 150 characters.';
 const ERR_LOCATION = 'Location should be within 50 characters.';
 const ERR_TAGS_LIMIT = 'Tags limit reached';
-const ERR_THUMB_MAX_SIZE = 'Thumb size exceeded max 2MB';
-const ERR_TYPE_ERROR = 'Type must be one of supported types';
-const thumbSize = 1024 * 1024 * 2;
-let file = null;
+// const ERR_THUMB_MAX_SIZE = 'Thumb size exceeded max 2MB';
+// const ERR_TYPE_ERROR = 'Type must be one of supported types';
+// const thumbSize = 1024 * 1024 * 2;
+// let file = null;
 const types = [{
   title: 'article',
   value: 'ARTICLE'
@@ -54,23 +54,23 @@ class Publish extends Component {
     this.state = {
       toggle: false,
       title: '',
-      thumbnail: '',
+      // thumbnail: '',
       loader: false,
       tag: '',
       tagsList: [],
       location: '',
       summary: this._summary,
-      type: types[0].value,
+      // type: types[0].value,
       spinner: false,
       publishError: false,
-      thumbError: '',
+      // thumbError: '',
       titleError: '',
       locationError: '',
       tagError: '',
       summaryError: '',
-      typeError: ''
+      // typeError: ''
     };
-    this.fileInputRef = createRef(null);
+    // this.fileInputRef = createRef(null);
     this.tagInputRef = createRef(null);
     this.summaryInputRef = createRef(null);
     this.titleInputRef = createRef(null);
@@ -97,20 +97,20 @@ class Publish extends Component {
     this.setState({
       toggle: !this.state.toggle,
       tagError: '',
-      thumbError: '',
+      // thumbError: '',
       titleError: '',
       locationError: '',
       summaryError: '',
-      typeError: '',
+      // typeError: '',
       publishError: false,
       title: '',
       location: '',
       tagsList: [],
       tag: '',
-      thumbnail: '',
+      // thumbnail: '',
       summary: this._summary || ''
     });
-    file = null;
+    // file = null;
     requestAnimationFrame(() => {
       document.body.style.overflow = _toggle ? '' : 'hidden';
     });
@@ -128,10 +128,10 @@ class Publish extends Component {
   handleFormChange = (event) => {
     const target = event.target;
     switch(target.name) {
-      case 'thumbnail':
-        this.preventDefaults(event);
-        this.handleImageDrop(target.files[0]);
-        break;
+      // case 'thumbnail':
+      //   this.preventDefaults(event);
+      //   this.handleImageDrop(target.files[0]);
+      //   break;
       case 'title':
         if (this.state.title.length == 150 && target.value.length >= 150) {
           this.setState({
@@ -225,7 +225,7 @@ class Publish extends Component {
       location: this.state.location,
       tags: this.state.tagsList,
       summary: this.state.summary,
-      type: this.state.type
+      // type: this.state.type
     }).then(() => {
       // stop spinner and go to homepage
       this.setState({
@@ -234,29 +234,22 @@ class Publish extends Component {
       });
       this.props.history.push("/");
     }).catch(e => {
-      if (e.response.status == 401) {
-        silentRefresh(this.props.setCurrentUser).then(() => {
-          // try to do same again
-          this.handlePublish();
-        });
-      } else {
-        //there is an error
-        this.setState({
-          spinner: false,
-          publishError: true
-        });
-      }
+      //there is an error
+      this.setState({
+        spinner: false,
+        publishError: true
+      });
     });
   }
   handleSubmit = (e) => {
     e.preventDefault();
     let flag_err = false;
-    if (!file || file.size > thumbSize) {
-      flag_err = true;
-      this.setState({
-        thumbError: ERR_THUMB_MAX_SIZE
-      });
-    }
+    // if (!file || file.size > thumbSize) {
+    //   flag_err = true;
+    //   this.setState({
+    //     thumbError: ERR_THUMB_MAX_SIZE
+    //   });
+    // }
     if (this.state.title.length == 0) {
       flag_err = true;
       this.setState({
@@ -281,18 +274,18 @@ class Publish extends Component {
         summaryError: 'Summary ' + ERR_EMPTY
       });
     }
-    if (!this.state.thumbnail) {
-      flag_err = true;
-      this.setState({
-        thumbError: 'Thumb ' + ERR_EMPTY
-      });
-    }
-    if (!this.state.type || !this.state.type.length) {
-      flag_err =true;
-      this.setState({
-        typeError: 'Type '+ ERR_EMPTY
-      });
-    }
+    // if (!this.state.thumbnail) {
+    //   flag_err = true;
+    //   this.setState({
+    //     thumbError: 'Thumb ' + ERR_EMPTY
+    //   });
+    // }
+    // if (!this.state.type || !this.state.type.length) {
+    //   flag_err =true;
+    //   this.setState({
+    //     typeError: 'Type '+ ERR_EMPTY
+    //   });
+    // }
 
     if (this.state.title.length > 150) {
       flag_err = true;
@@ -319,12 +312,12 @@ class Publish extends Component {
       });
     }
     
-    if (types.findIndex(e => e.value == this.state.type) == -1) {
-      flag_err =true;
-      this.setState({
-        typeError: ERR_TYPE_ERROR
-      });
-    }
+    // if (types.findIndex(e => e.value == this.state.type) == -1) {
+    //   flag_err =true;
+    //   this.setState({
+    //     typeError: ERR_TYPE_ERROR
+    //   });
+    // }
 
     if (flag_err) return;
     this.setState({
@@ -334,64 +327,64 @@ class Publish extends Component {
     this.handlePublish();
   }
 
-  handleManualImageUpload = () => {
-    this.fileInputRef.current.click();
-  }
+  // handleManualImageUpload = () => {
+  //   this.fileInputRef.current.click();
+  // }
 
   preventDefaults = (e) => {
     e.preventDefault();
     e.stopPropagation();
   }
-  compressImage = (file) => {
-    const options = {
-      maxSizeMB: 2,
-      maxWidthOrHeight: 246.67,
-      useWebWorker: true,
-      fileType: 'png',
-    }
-    return imageCompression(file, options);
-  }
-  handleImageDrop = async (_file) => {
-    let compressedFile = _file;
-    this.setState({
-      loader: true
-    });
-    if (_file.size > thumbSize) {
-      compressedFile = await this.compressImage(_file);
-      const filename = getPngName(compressedFile.name);
-      compressedFile = new File([compressedFile], filename, {type: 'image/png', lastModified: Date.now()});
-    } else {
-      compressedFile = await convertToPng(_file);
-    }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.setState({
-        thumbnail: e.target.result,
-        loader: false
-      });
-      file = compressedFile;
-    }
-    reader.readAsDataURL(compressedFile);
-  }
-  handleRemove = () => {
-    file = null; 
-    this.setState({
-      thumbnail: '',
-      loader: false
-    });
-  }
-  handleRadioBtnChange = (val) => {
-    if (val >= 0 && val < types.length) {
-      this.setState({
-        typeError: '',
-        type: types[val].value
-      });
-    } else {
-      this.setState({
-        typeError: 'Type ' + ERR_EMPTY,
-      });
-    }
-  }
+  // compressImage = (file) => {
+  //   const options = {
+  //     maxSizeMB: 2,
+  //     maxWidthOrHeight: 246.67,
+  //     useWebWorker: true,
+  //     fileType: 'png',
+  //   }
+  //   return imageCompression(file, options);
+  // }
+  // handleImageDrop = async (_file) => {
+  //   let compressedFile = _file;
+  //   this.setState({
+  //     loader: true
+  //   });
+  //   if (_file.size > thumbSize) {
+  //     compressedFile = await this.compressImage(_file);
+  //     const filename = getPngName(compressedFile.name);
+  //     compressedFile = new File([compressedFile], filename, {type: 'image/png', lastModified: Date.now()});
+  //   } else {
+  //     compressedFile = await convertToPng(_file);
+  //   }
+  //   const reader = new FileReader();
+  //   reader.onload = (e) => {
+  //     this.setState({
+  //       thumbnail: e.target.result,
+  //       loader: false
+  //     });
+  //     file = compressedFile;
+  //   }
+  //   reader.readAsDataURL(compressedFile);
+  // }
+  // handleRemove = () => {
+  //   file = null; 
+  //   this.setState({
+  //     thumbnail: '',
+  //     loader: false
+  //   });
+  // }
+  // handleRadioBtnChange = (val) => {
+  //   if (val >= 0 && val < types.length) {
+  //     this.setState({
+  //       typeError: '',
+  //       type: types[val].value
+  //     });
+  //   } else {
+  //     this.setState({
+  //       typeError: 'Type ' + ERR_EMPTY,
+  //     });
+  //   }
+  // }
   render() {
     return (
       <>
@@ -424,7 +417,7 @@ class Publish extends Component {
                   {this.state.publishError && <div className="publish-error"><span>&#128533;</span> Seems like there is some trouble in publishing, give it a retry</div>}
                   <form className="publish-form">
                     <div className="forminput-container child-1">
-                      {
+                      {/* {
                         !this.state.thumbnail ? 
                         <div>
                             { this.state.loader ? 
@@ -473,7 +466,7 @@ class Publish extends Component {
                           <span className="remove-img-btn" onClick={this.handleRemove}>Remove</span>
                         </div>
                       </div>
-                      }
+                      } */}
                       <div className="publish-form-input-wrapper">
                         <textarea className="publish-form-input form-title" 
                         value={this.state.title}
@@ -489,7 +482,7 @@ class Publish extends Component {
                         value={this.state.location}
                         onChange={this.handleFormChange}
                         required
-                        type="text" placeholder="Location incident took place(Vivekanand Marg, Delhi)" name="location" />
+                        type="text" placeholder="Location ex: (Vivekanand Marg, Delhi)" name="location" />
                         <div className={"form-error " + (this.state.locationError.length > 0 ? 'err-show' : 'err-hide')}>{this.state.locationError}</div>
                       </div>
                     </div>
@@ -521,13 +514,13 @@ class Publish extends Component {
                         </div>
                         <div className={"form-error " + (this.state.tagError.length > 0 ? 'err-show' : 'err-hide')}>{this.state.tagError}</div>
                       </div>
-                      <div>
+                      {/* <div>
                         <div className={`publish-form-input-wrapper flex ${this.props.windowWidth > 768 ? 'flex-row-nowrap align-items-center' : 'flex-column-nowrap'}`}>
                           <div className="publish-radio-title">Article Type:</div>
                           <RadioButton options={types} orientation={this.props.windowWidth > 768 ? 0 : 1} onChange={this.handleRadioBtnChange}/>
                         </div>
                         <div className={"form-error " + (this.state.typeError.length > 0 ? 'err-show' : 'err-hide')}>{this.state.typeError}</div>
-                      </div>
+                      </div> */}
                       <div className="publish-form-input-wrapper">
                         <textarea className="publish-form-input form-summary" 
                         value={this.state.summary}

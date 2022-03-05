@@ -21,6 +21,9 @@ class CreateOrUpdatePost extends Component {
   constructor(props) {
     super(props);
     this.handleSave = this.handleSave.bind(this);
+    this.state = {
+      error: "",
+    }
   }
   componentDidMount() {
     this.props.setPostInfo(null);
@@ -28,7 +31,10 @@ class CreateOrUpdatePost extends Component {
   componentWillUnmount() {
     this.props.setPostInfo(null);
   }
-  handleSave(newEditorData, jsonPatch, callbackFunc) {
+  handleSave(newEditorData, jsonPatch) {
+    this.setState({
+      error: ""
+    });
     const props = this.props;
     // 1. call create-post or update post to create new post
     const promise = props.postInfo?.postId  ? updatePostREST(jsonPatch, props.currentUser?.token, props.postInfo?.postId) 
@@ -37,19 +43,27 @@ class CreateOrUpdatePost extends Component {
       if (data.post_id) {
         // update post_id
         props.setPostInfo({...props.postInfo, postId: data.post_id});
-        // move to edit page
-        props.history.push(`/edit-story/${data.post_id}`);
+        // move to edit page, if not on it
+        if (props.history.location.pathname === "/new-story") {
+          props.history.push(`/edit-story/${data.post_id}`);
+        }
       }
-    });
+    }).catch(e => {
+      this.setState({
+        error: `Unable to save new ${props.postInfo?.postId ? 'article' : 'changes'}, please logout and login`
+      });
+    }) 
   }
 
-  shouldComponentUpdate() {
-    // no need to update text editor
-    return false;
-  }
   render() {
     return (
-      <TextEditor handleSave={this.handleSave} />
+      <>
+        <div className={!this.state.error ? "publish-error visibility-hidden" : "publish-error"}>
+          <span>&#128533;</span>
+          <span>{this.state.error}</span>
+        </div>
+        <TextEditor handleSave={this.handleSave} />
+      </>
     );
   }
 }

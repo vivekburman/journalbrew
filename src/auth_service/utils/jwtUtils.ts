@@ -29,7 +29,7 @@ const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_ACCESS_TOKEN, {
       expiresIn: expiresIn,
       algorithm: 'RS256',
-      issuer: 'topselfnews.com',
+      issuer: 'topshelfnews.com',
       audience: userID.email   
    });
 
@@ -48,7 +48,7 @@ const issueRefreshTokenJWT = (userID: {email:string, id:string}) => {
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_REFRESH_TOKEN, {
       expiresIn: expiresIn,
       algorithm: 'RS512',
-      issuer: 'topselfnews.com',
+      issuer: 'topshelfnews.com',
       audience: JSON.stringify(userID) 
    });
 
