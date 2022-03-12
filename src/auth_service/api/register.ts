@@ -99,7 +99,7 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
    const db = new SQL_DB();
    try {
       if (!refreshToken) {
-         throw new createHttpError.BadRequest();
+         throw new createHttpError.BadRequest("Refresh token not found");
       }
       const tokenObj = await utils.verifyRefreshToken(refreshToken);
       if (!tokenObj.id) throw new createHttpError.BadRequest();

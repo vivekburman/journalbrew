@@ -50,7 +50,7 @@ class CreateOrUpdatePost extends Component {
       }
     }).catch(e => {
       this.setState({
-        error: `Unable to save new ${props.postInfo?.postId ? 'article' : 'changes'}, please logout and login`
+        error: `Unable to save new ${props.postInfo?.postId ? 'article' : 'changes'}, last state is saved. Please logout and login`
       });
     }) 
   }

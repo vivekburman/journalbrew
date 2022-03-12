@@ -9,6 +9,7 @@ import PQueue from 'p-queue';
 import awsSdk from 'aws-sdk';
 import SQL_DB from "../../database";
 import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS, BOOKMARK_POST_ID, USER_UUID } from "../../database/fields";
+import { getSanitizedText, isNullOrEmpty } from "../../helpers/util";
 
 const postRouter: Router = Router();
 const thumbSize = 1024 * 1024 * 2;
@@ -50,16 +51,31 @@ function generateSQLStatements(jsonPatch:any[]) {
         });
         return result;
     }
+    const getUpdateValue = (val: any) => {
+        if (isNullOrEmpty(val)) return val;
+        if (Array.isArray(val)) {
+            return `CAST('[${val.toString()}]' AS JSON)`;
+        }
+        if (typeof val === "object") {
+            if (!isNullOrEmpty(val.data.text)) {
+                val.data.text = getSanitizedText(val.data.text);
+            }
+            return `CAST('${JSON.stringify(val)}' AS JSON)`;
+        }
+        if (typeof val === "string" && Number.isNaN(+val)) {
+            return `"${getSanitizedText(val)}"`;
+        }
+        return val;
+    }
     jsonPatch.forEach((item: {'op': string, 'path': string, value: any}, index) => {
         const jsonPath = parsePath(item.path);
+        const value = getUpdateValue(item.value);
         switch(item.op) {
             case 'add':
-                map.push(`JSON_SET(${FULL_STORY}, '${jsonPath}', ${Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
-                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : `${Number.isNaN(+item.value) ? `"${item.value}"` : item.value}`})`);
+                map.push(`JSON_SET(${FULL_STORY}, '${jsonPath}', ${value})`);
                 break;
             case 'replace':
-                map.push(`JSON_REPLACE(${FULL_STORY}, '${jsonPath}', ${Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
-                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : `${Number.isNaN(+item.value) ? `"${item.value}"` : item.value}`})`);
+                map.push(`JSON_REPLACE(${FULL_STORY}, '${jsonPath}', ${value})`);
                 break;
             case 'delete':
                 map.push(`JSON_REMOVE(${FULL_STORY}, '${jsonPath}')`);
@@ -119,7 +135,13 @@ postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, 
         };
         generateSQLStatements(jsonPatch.storypatchData).forEach(item => {
             sqlQuery.query += `${FULL_STORY}=?,`;
-            sqlQuery.values.push({toSqlString: function () { return item }});
+            sqlQuery.values.push(
+                {
+                    toSqlString: function () {
+                        return item;
+                    }
+                }
+            );
         });
         sqlQuery.query = `${sqlQuery.query.slice(0, -1)} WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
         sqlQuery.values.push(authorID, jsonPatch.postId);

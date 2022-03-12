@@ -8,17 +8,13 @@ type userName = {
     [LAST_NAME]:string
 }
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
-
-const getConsolidatedName = (name: userName): userName => {
-    let name_ = name[FIRST_NAME];
-    if (name[MIDDLE_NAME]) {
-       name_ += ` ${name[MIDDLE_NAME]}`;
-    }
-    if (name[LAST_NAME]) {
-       name_ += ` ${name[LAST_NAME]}`;
-    }
-    return name;
-};
+enum PublishStatus {
+    UNDER_REVIEW = "underReview",
+    PUBLISHED = "published",
+    DISCARDED = "discarded",
+    REMOVED = "removed"
+}
+const REFRESH_TOKEN = "tsn_refresh_token";
 const getHTMLSafeString = (str: string):string => {
     return str
     .replace(/"/g, '&quot;')
@@ -44,18 +40,17 @@ const isNullOrEmpty = (obj: any): Boolean => {
 const escapeQuotes = (str:null | undefined |string) => {
     return str ? str.replace(/"|`|'/g, '') : '';
 }
-enum PublishStatus {
-    UNDER_REVIEW = "underReview",
-    PUBLISHED = "published",
-    DISCARDED = "discarded",
-    REMOVED = "removed"
+function getSanitizedText(str: string) {
+    return str.replace(/"/g, '\\"');
 }
-const REFRESH_TOKEN = "tsn_refresh_token"
+/**
+ * sanitize quotes before update
+ */
 export {
-    getConsolidatedName,
     getHTMLSafeString,
     isNullOrEmpty,
     escapeQuotes,
+    getSanitizedText,
     PublishStatus,
     User,
     REFRESH_TOKEN
