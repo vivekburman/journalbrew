@@ -87,6 +87,7 @@ class Publish extends Component {
         break;
       }
     }
+    this.handleInputOverflow(this.summaryInputRef, 10);
   }
   handleToggle = () => {
     const _toggle = this.state.toggle;
@@ -220,7 +221,7 @@ class Publish extends Component {
   }
   async handlePublish() {
     publishPostAPI(this.props.postInfo?.postId, this.props.currentUser?.token, {
-      thumb: file,
+      // thumb: file,
       title: this.state.title,
       location: this.state.location,
       tags: this.state.tagsList,

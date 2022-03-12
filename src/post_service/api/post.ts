@@ -311,6 +311,9 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                 // }
                 //save to DB
                 try {
+                    if (fieldParesed != 5) {
+                        next(new createHttpError.InternalServerError('Number of fields parsed does not match the expected count'));
+                    } 
                     await db.exec(db.TYPES.INSERT,
                         "INSERT INTO `post` SET ?", {
                             [TITLE]: formPayload.title,
@@ -320,7 +323,7 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                             [LOCATION]: formPayload.location,
                             [TYPE]: ArticleType.ARTICLE,
                             [FULL_STORY_ID]: formPayload.postId,
-                            [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
+                            [PUBLISH_STATUS]: PublishStatus.PUBLISHED,
                             [CREATED_AT]: convertTime(),
                             [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
                         } 
@@ -360,6 +363,7 @@ postRouter.get('/view-post', async (req_: Request, res: Response, next:NextFunct
             const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId, PublishStatus.PUBLISHED]);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
+                post.tags = isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
                     db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),
@@ -414,6 +418,7 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             const responsePost = await db.selectWithValues(sqlQuery, sqlValue);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
+                post.tags = isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
                     db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),
