@@ -67,7 +67,7 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
          } else if (data) {
             data =  data.id;
          } else {
-            throw new createHttpError.BadRequest('Invalid OAuth Credentials');
+            throw new createHttpError.Unauthorized('Invalid OAuth Credentials');
          }
          const tokenObj = {email: profile.emails[0].value, id:data};
          const userID = data;
@@ -88,6 +88,7 @@ registerRouter.get('/google/redirect', passport.authenticate('google', {session:
          });
       }  
    } catch(err) {
+      console.log(err);
       next(err);
    }finally {
       db.close();
@@ -99,14 +100,14 @@ registerRouter.post('/refresh-token', async (req:Request, res:Response, next:Nex
    const db = new SQL_DB();
    try {
       if (!refreshToken) {
-         throw new createHttpError.BadRequest("Refresh token not found");
+         throw new createHttpError.Unauthorized("Refresh token not found");
       }
       const tokenObj = await utils.verifyRefreshToken(refreshToken);
-      if (!tokenObj.id) throw new createHttpError.BadRequest();
+      if (!tokenObj.id) throw new createHttpError.Unauthorized();
       await db.connect()
       let data = await db.selectWithValues(`SELECT ${EMAIL}, ${FIRST_NAME}, ${MIDDLE_NAME}, ${LAST_NAME}, ${PROFILE_PIC_URL} FROM user WHERE ${UUID}=?`, [Buffer.from(uuidParse(tokenObj.id))])
       if(!data[0].length) {
-         throw new createHttpError.Unauthorized();
+         throw new createHttpError.InternalServerError("Cannot find user");
       }
       data = {
          [FIRST_NAME]: data[0][0][FIRST_NAME], 
@@ -142,7 +143,7 @@ registerRouter.delete('/logout', async (req, res, next) => {
    try{
       const refreshToken = req.cookies[REFRESH_TOKEN];
       if (!refreshToken) {
-         throw new createHttpError.BadRequest();
+         throw new createHttpError.Unauthorized();
       }
       const response = await utils.verifyRefreshToken(refreshToken);
       await delRedis(response.id);

@@ -197,28 +197,28 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                 switch(fieldname) {
                     case 'postId':
                         if (val == null || val == undefined || Number.isNaN(+val)) {
-                            next(new createHttpError.InternalServerError('postId not found'));
+                            next(new createHttpError.BadRequest('postId not found'));
                         }
                         fieldParesed++;
                         formPayload.postId = val;
                         break;
                     case 'title':
                         if (val == null || val == undefined || val.length == 0 || val.length > 150) {
-                            next(new createHttpError.InternalServerError('title is null or exceeds 150 char length'));
+                            next(new createHttpError.BadRequest('title is null or exceeds 150 char length'));
                         }
                         fieldParesed++;
                         formPayload.title = val;
                         break;
                     case 'summary':
                         if (val == null || val == undefined || val.length == 0 || val.length > 150) {
-                            next(new createHttpError.InternalServerError('summary is null or exceeds 150 char length'));
+                            next(new createHttpError.BadRequest('summary is null or exceeds 150 char length'));
                         }
                         fieldParesed++;
                         formPayload.summary = val;
                         break;
                     case 'location':
                         if (val == null || val == undefined || val.length == 0 || val.length > 50) {
-                            next(new createHttpError.InternalServerError('location is null or exceeds 50 char length'));
+                            next(new createHttpError.BadRequest('location is null or exceeds 50 char length'));
                         }
                         fieldParesed++;
                         formPayload.location = val;
@@ -227,7 +227,7 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                         const _val = JSON.parse(val);
                         if (val == null || val == undefined || _val.length == 0 || _val.length > 5
                             || _val.findIndex((e:string) => typeof e != 'string') != -1) {
-                            next(new createHttpError.InternalServerError('tags is null or exceeds 5 array length or make sure its all string'));
+                            next(new createHttpError.BadRequest('tags is null or exceeds 5 array length or make sure its all string'));
                         }
                         fieldParesed++;
                         formPayload.tags = val;
@@ -312,7 +312,7 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                 //save to DB
                 try {
                     if (fieldParesed != 5) {
-                        next(new createHttpError.InternalServerError('Number of fields parsed does not match the expected count'));
+                        next(new createHttpError.BadRequest('Number of fields parsed does not match the expected count'));
                     } 
                     await db.exec(db.TYPES.INSERT,
                         "INSERT INTO `post` SET ?", {
@@ -350,9 +350,9 @@ postRouter.get('/view-post', async (req_: Request, res: Response, next:NextFunct
         const postId = req.query.postId;
         const authorID = req.query.authorId as string;
         if (!postId) {
-            next(new createHttpError.InternalServerError("Post ID is null"));
+            next(new createHttpError.BadRequest("Post ID is null"));
         } else if (!authorID) {
-            next(new createHttpError.InternalServerError("User ID is null"));
+            next(new createHttpError.BadRequest("User ID is null"));
         } else {
             const _authorID = Buffer.from(uuidParse(authorID));
             await db.connect();
@@ -401,9 +401,9 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
         const authorID = req.body.userId;
         const loginUserID = payload['id'];
         if (!postId) {
-            next(new createHttpError.InternalServerError("Post ID is null"));
+            next(new createHttpError.BadRequest("Post ID is null"));
         } else if (!authorID) {
-            next(new createHttpError.InternalServerError("User ID is null"));
+            next(new createHttpError.BadRequest("User ID is null"));
         } else {
             const _authorID = Buffer.from(uuidParse(authorID));
             const _loginUserID = Buffer.from(uuidParse(loginUserID));

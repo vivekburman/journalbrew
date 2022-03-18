@@ -214,13 +214,13 @@ searchRouter.post('/', async (req:Request, res: Response, next:NextFunction) => 
     try {
         const searchFilter:{ type?:number, query:string, rangeStart:number, rangeEnd: number } = req.body.filter;
         if (isNullOrEmpty(searchFilter)) {
-            throw new createHttpError.InternalServerError("Search Filter is Empty");
+            throw new createHttpError.BadRequest("Search Filter is Empty");
         }
         if (isNullOrEmpty(searchFilter.query)) {
-            throw new createHttpError.InternalServerError("Search Query is Empty");
+            throw new createHttpError.BadRequest("Search Query is Empty");
         }
         if (!isNullOrEmpty(searchFilter.type) && !isValidSyntax(searchFilter.query, searchFilter.type)) {
-            throw new createHttpError.InternalServerError("Not valid Search Payload");
+            throw new createHttpError.BadRequest("Not valid Search Payload");
         }
         if (isNullOrEmpty(searchFilter.rangeStart) || !Number.isInteger(searchFilter.rangeStart) || searchFilter.rangeStart < 0) {
             throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeStart not defined");

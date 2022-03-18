@@ -21,7 +21,7 @@ const pathToPublicKeyRefreshToken:string = path.join(__dirname, '../id_refresh_r
 const PUB_KEY_REFRESH_TOKEN:string = fs.readFileSync(pathToPublicKeyRefreshToken, 'utf-8');
 
 const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
-   const expiresIn = '1m';
+   const expiresIn = '15m';
    const payload = {
       email: userID.email,
       id:userID.id
@@ -40,7 +40,7 @@ const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
 }
 
 const issueRefreshTokenJWT = (userID: {email:string, id:string}) => {
-   const expiresIn = '15m';
+   const expiresIn = '1y'; // 1y, 15m, 30d
    const payload = {
       email: userID.email,
       id:userID.id
