@@ -22,13 +22,17 @@ const silentRefresh = () => {
           resolve();
         } else {
           store.dispatch(setCurrentUser(undefined));
-            reject();
+          reject();
         }
+    })
+    .catch(e => {
+      store.dispatch(setCurrentUser(undefined));
+      return reject();
     });
   }); 
 }
 
-export const createAxiosInterceptor = () => {
+export const createAxiosInterceptor = async () => {
   let _retry = false;
   Axios.interceptors.response.use((response) => { 
     _retry = false;
@@ -44,10 +48,15 @@ export const createAxiosInterceptor = () => {
     }
     // else its unauthorized try to do refresh token
     _retry = true;
-    await silentRefresh();
+    try {
+      await silentRefresh();
+    }catch(e) {
+      _retry = false;
+      return Promise.reject(error);
+    }
     //update token header if its there
     if (error.config.headers.Authorization) {
-      error.config.headers.Authorization  = getToken();
+      error.config.headers.Authorization = getToken();
     }
     const response = await Axios.request(error.config);
     return {
@@ -56,5 +65,10 @@ export const createAxiosInterceptor = () => {
     };
   });
   _retry = true;
-  silentRefresh();
+  try {
+    await silentRefresh();
+  }catch(e) {
+    _retry = false;
+    return Promise.reject(e);
+  }
 }

@@ -21,7 +21,7 @@ const pathToPublicKeyRefreshToken:string = path.join(__dirname, '../id_refresh_r
 const PUB_KEY_REFRESH_TOKEN:string = fs.readFileSync(pathToPublicKeyRefreshToken, 'utf-8');
 
 const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
-   const expiresIn = '1m';
+   const expiresIn = '15m';
    const payload = {
       email: userID.email,
       id:userID.id
@@ -29,7 +29,7 @@ const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_ACCESS_TOKEN, {
       expiresIn: expiresIn,
       algorithm: 'RS256',
-      issuer: 'topselfnews.com',
+      issuer: 'topshelfnews.com',
       audience: userID.email   
    });
 
@@ -40,7 +40,7 @@ const issueAccessTokenJWT = (userID: {email:string, id:string}) => {
 }
 
 const issueRefreshTokenJWT = (userID: {email:string, id:string}) => {
-   const expiresIn = '15m';
+   const expiresIn = '1y'; // 1y, 15m, 30d
    const payload = {
       email: userID.email,
       id:userID.id
@@ -48,7 +48,7 @@ const issueRefreshTokenJWT = (userID: {email:string, id:string}) => {
    const signedToken = jsonwebtoken.sign(payload, PRV_KEY_REFRESH_TOKEN, {
       expiresIn: expiresIn,
       algorithm: 'RS512',
-      issuer: 'topselfnews.com',
+      issuer: 'topshelfnews.com',
       audience: JSON.stringify(userID) 
    });
 

@@ -5,7 +5,7 @@ CREATE TABLE post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
     author_id BINARY(16) NOT NULL,
     title VARCHAR(150) NOT NULL,
-    thumbnail TEXT,
+    -- thumbnail TEXT,
     summary VARCHAR(150) NOT NULL,
     tags JSON NOT NULL,
     location VARCHAR(50) NOT NULL,

@@ -4,8 +4,19 @@
     overflow: hidden;
     width: 100%;
     position: fixed;
-    z-index: 10;
+    z-index: 20;
+    top: 53px;
     background-color: #0000002a;
+}
+@media (min-width: 768px) {
+    .accordian-list-container {
+        top: 61px;
+    }   
+}
+@media (min-width: 929px) {
+    .accordian-list-container {
+        top: auto;
+    }   
 }
 .accordian-list {
     display: flex;

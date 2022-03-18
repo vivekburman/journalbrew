@@ -67,7 +67,7 @@ userInfoRouter.post('/published-posts', async (req_: Request, res: Response, nex
             `WITH CTE AS (SELECT ${ID}, 
             ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
             COUNT(*) OVER() AS totalCount, 
-            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt
+            ${TITLE}, ${SUMMARY}, ${TYPE}, ${CREATED_AT} AS createdAt
             FROM post
             WHERE post.${AUTHOR_ID} = ?
             AND ${PUBLISH_STATUS} = 'published' 
@@ -146,7 +146,7 @@ userInfoRouter.post('/bookmarks', utils.verifyAccessToken, async (req_: Request,
                 `WITH CTE AS (SELECT bookmark.${ID}, 
                 ROW_NUMBER() OVER(ORDER BY bookmark.${CREATED_AT} DESC) - 1 AS dataIndex, 
                 COUNT(*) OVER() AS totalCount, 
-                ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, post.${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
+                ${TITLE}, ${SUMMARY}, ${TYPE}, post.${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
                 FROM bookmark INNER JOIN post
                 ON bookmark.${BOOKMARK_POST_ID} = post.${ID}
                 WHERE ${USER_UUID} = ?

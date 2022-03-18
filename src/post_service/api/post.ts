@@ -9,6 +9,7 @@ import PQueue from 'p-queue';
 import awsSdk from 'aws-sdk';
 import SQL_DB from "../../database";
 import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS, BOOKMARK_POST_ID, USER_UUID } from "../../database/fields";
+import { getSanitizedText, isNullOrEmpty } from "../../helpers/util";
 
 const postRouter: Router = Router();
 const thumbSize = 1024 * 1024 * 2;
@@ -50,16 +51,31 @@ function generateSQLStatements(jsonPatch:any[]) {
         });
         return result;
     }
+    const getUpdateValue = (val: any) => {
+        if (isNullOrEmpty(val)) return val;
+        if (Array.isArray(val)) {
+            return `CAST('[${val.toString()}]' AS JSON)`;
+        }
+        if (typeof val === "object") {
+            if (!isNullOrEmpty(val.data.text)) {
+                val.data.text = getSanitizedText(val.data.text);
+            }
+            return `CAST('${JSON.stringify(val)}' AS JSON)`;
+        }
+        if (typeof val === "string" && Number.isNaN(+val)) {
+            return `"${getSanitizedText(val)}"`;
+        }
+        return val;
+    }
     jsonPatch.forEach((item: {'op': string, 'path': string, value: any}, index) => {
         const jsonPath = parsePath(item.path);
+        const value = getUpdateValue(item.value);
         switch(item.op) {
             case 'add':
-                map.push(`JSON_SET(${FULL_STORY}, '${jsonPath}', ${Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
-                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : `${Number.isNaN(+item.value) ? `"${item.value}"` : item.value}`})`);
+                map.push(`JSON_SET(${FULL_STORY}, '${jsonPath}', ${value})`);
                 break;
             case 'replace':
-                map.push(`JSON_REPLACE(${FULL_STORY}, '${jsonPath}', ${Array.isArray(item.value) ? `CAST('[${item.value.toString()}]' AS JSON)`
-                :   typeof item.value == 'object' ? `CAST('${JSON.stringify(item.value)}' AS JSON)` : `${Number.isNaN(+item.value) ? `"${item.value}"` : item.value}`})`);
+                map.push(`JSON_REPLACE(${FULL_STORY}, '${jsonPath}', ${value})`);
                 break;
             case 'delete':
                 map.push(`JSON_REMOVE(${FULL_STORY}, '${jsonPath}')`);
@@ -119,7 +135,13 @@ postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, 
         };
         generateSQLStatements(jsonPatch.storypatchData).forEach(item => {
             sqlQuery.query += `${FULL_STORY}=?,`;
-            sqlQuery.values.push({toSqlString: function () { return item }});
+            sqlQuery.values.push(
+                {
+                    toSqlString: function () {
+                        return item;
+                    }
+                }
+            );
         });
         sqlQuery.query = `${sqlQuery.query.slice(0, -1)} WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
         sqlQuery.values.push(authorID, jsonPatch.postId);
@@ -138,25 +160,25 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
     try {
         const busboy = new Busboy({
             headers: req_.headers,
-            limits: {
-                files: 1,
-                fileSize: thumbSize
-            }
+            // limits: {
+            //     files: 1,
+            //     fileSize: thumbSize
+            // }
         });
-        let limit_reach = false;
-        const chunks: any[] = [];
+        // let limit_reach = false;
+        // const chunks: any[] = [];
         const req = req_ as RequestWithPayload;
         const payload: User = req['payload'] as User;
         const db = new SQL_DB();
         const formPayload: PublishForm = {} as PublishForm;
         let fieldParesed = 0;
-        let _encoding='', _mimeType='';
+        // let _encoding='', _mimeType='';
         const workQueue = new PQueue({concurrency: 1});
         
-        const s3 = new awsSdk.S3({
-            accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-        });
+        // const s3 = new awsSdk.S3({
+        //     accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+        //     secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+        // });
 
         const handleErrorBusBoy = async (fn: Function) => {
             workQueue.add(async () => {
@@ -175,28 +197,28 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                 switch(fieldname) {
                     case 'postId':
                         if (val == null || val == undefined || Number.isNaN(+val)) {
-                            next(new createHttpError.InternalServerError('postId not found'));
+                            next(new createHttpError.BadRequest('postId not found'));
                         }
                         fieldParesed++;
                         formPayload.postId = val;
                         break;
                     case 'title':
                         if (val == null || val == undefined || val.length == 0 || val.length > 150) {
-                            next(new createHttpError.InternalServerError('title is null or exceeds 150 char length'));
+                            next(new createHttpError.BadRequest('title is null or exceeds 150 char length'));
                         }
                         fieldParesed++;
                         formPayload.title = val;
                         break;
                     case 'summary':
                         if (val == null || val == undefined || val.length == 0 || val.length > 150) {
-                            next(new createHttpError.InternalServerError('summary is null or exceeds 150 char length'));
+                            next(new createHttpError.BadRequest('summary is null or exceeds 150 char length'));
                         }
                         fieldParesed++;
                         formPayload.summary = val;
                         break;
                     case 'location':
                         if (val == null || val == undefined || val.length == 0 || val.length > 50) {
-                            next(new createHttpError.InternalServerError('location is null or exceeds 50 char length'));
+                            next(new createHttpError.BadRequest('location is null or exceeds 50 char length'));
                         }
                         fieldParesed++;
                         formPayload.location = val;
@@ -205,87 +227,112 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                         const _val = JSON.parse(val);
                         if (val == null || val == undefined || _val.length == 0 || _val.length > 5
                             || _val.findIndex((e:string) => typeof e != 'string') != -1) {
-                            next(new createHttpError.InternalServerError('tags is null or exceeds 5 array length or make sure its all string'));
+                            next(new createHttpError.BadRequest('tags is null or exceeds 5 array length or make sure its all string'));
                         }
                         fieldParesed++;
                         formPayload.tags = val;
                         break;
-                    case 'type':
-                        if (val == null || val == undefined || !(val in ArticleType)) {
-                            next(new createHttpError.InternalServerError('type is null or not supported'));
-                        }
-                        fieldParesed++;
-                        formPayload.type = val;
-                        break;
+                    // case 'type':
+                    //     if (val == null || val == undefined || !(val in ArticleType)) {
+                    //         next(new createHttpError.InternalServerError('type is null or not supported'));
+                    //     }
+                    //     fieldParesed++;
+                    //     formPayload.type = val;
+                    //     break;
                 }
             });
         });
-        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-            _mimeType = mimetype;
-            _encoding = encoding;
-            handleErrorBusBoy(() => {
-                if (fieldParesed != 6) {
-                    next(new createHttpError.InternalServerError('fields must be parsed first'));
-                } else {
-                    const fileTypes = /png/;
-                    const extname = fileTypes.test(filename);
-                    const mimeType = fileTypes.test(mimetype);
-                    if (extname && mimeType) {
-                        file.on('data', (data) => {
-                            chunks.push(data);
-                        });
-                        file.on('limit', () => {
-                            chunks.length = 0;
-                            limit_reach = true;
-                        });
-                    } else {
-                        next(new createHttpError.InternalServerError('thumbnail is not proper image only supports .png'));
-                    }
-                }
-            })
-        });
+        // busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        //     _mimeType = mimetype;
+        //     _encoding = encoding;
+        //     handleErrorBusBoy(() => {
+        //         if (fieldParesed != 6) {
+        //             next(new createHttpError.InternalServerError('fields must be parsed first'));
+        //         } else {
+        //             const fileTypes = /png/;
+        //             const extname = fileTypes.test(filename);
+        //             const mimeType = fileTypes.test(mimetype);
+        //             if (extname && mimeType) {
+        //                 file.on('data', (data) => {
+        //                     chunks.push(data);
+        //                 });
+        //                 file.on('limit', () => {
+        //                     chunks.length = 0;
+        //                     limit_reach = true;
+        //                 });
+        //             } else {
+        //                 next(new createHttpError.InternalServerError('thumbnail is not proper image only supports .png'));
+        //             }
+        //         }
+        //     })
+        // });
         busboy.on('finish', () => {
             handleErrorBusBoy(async () => {
-                if (limit_reach) {
-                    next(new createHttpError[413]);
-                } else {
-                    // save to s3
-                    const params: awsSdk.S3.Types.PutObjectRequest = {
-                        Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
-                        Key: `thumbs/${formPayload.postId}.png`,
-                        Body: Buffer.concat(chunks),
-                        ContentType: _mimeType,
-                        ContentEncoding: _encoding,
-                        ACL: 'public-read'
-                    };
+                // if (limit_reach) {
+                //     next(new createHttpError[413]);
+                // } else {
+                //     // save to s3
+                //     const params: awsSdk.S3.Types.PutObjectRequest = {
+                //         Bucket: `${process.env.AWS_S3_BUCKETNAME}`,
+                //         Key: `thumbs/${formPayload.postId}.png`,
+                //         Body: Buffer.concat(chunks),
+                //         ContentType: _mimeType,
+                //         ContentEncoding: _encoding,
+                //         ACL: 'public-read'
+                //     };
                     
-                    s3.upload(params, async (err, _res) => {
-                        if(err) next(new createHttpError.InternalServerError('something went wrong in s3: ' + err.message));
-                        else {
-                            //save to DB
-                            try {
-                                await db.exec(db.TYPES.INSERT,
-                                    "INSERT INTO `post` SET ?", {
-                                        [TITLE]: formPayload.title,
-                                        [THUMBNAIL]: _res.Location,
-                                        [SUMMARY]: formPayload.summary,
-                                        [TAGS]: JSON.stringify(formPayload.tags),
-                                        [LOCATION]: formPayload.location,
-                                        [TYPE]: formPayload.type,
-                                        [FULL_STORY_ID]: formPayload.postId,
-                                        [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
-                                        [CREATED_AT]: convertTime(),
-                                        [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
-                                    } 
-                                );
-                                res.status(200).json({
-                                    success: true
-                                });
-                            } catch(err) {
-                                next(err);
-                            }
-                        }  
+                //     s3.upload(params, async (err, _res) => {
+                //         if(err) next(new createHttpError.InternalServerError('something went wrong in s3: ' + err.message));
+                //         else {
+                //             //save to DB
+                //             try {
+                //                 await db.exec(db.TYPES.INSERT,
+                //                     "INSERT INTO `post` SET ?", {
+                //                         [TITLE]: formPayload.title,
+                //                         [THUMBNAIL]: _res.Location,
+                //                         [SUMMARY]: formPayload.summary,
+                //                         [TAGS]: JSON.stringify(formPayload.tags),
+                //                         [LOCATION]: formPayload.location,
+                //                         [TYPE]: formPayload.type,
+                //                         [FULL_STORY_ID]: formPayload.postId,
+                //                         [PUBLISH_STATUS]: PublishStatus.UNDER_REVIEW,
+                //                         [CREATED_AT]: convertTime(),
+                //                         [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
+                //                     } 
+                //                 );
+                //                 res.status(200).json({
+                //                     success: true
+                //                 });
+                //             } catch(err) {
+                //                 next(err);
+                //             }
+                //         }  
+                //     });
+                // }
+                //save to DB
+                try {
+                    if (fieldParesed != 5) {
+                        next(new createHttpError.BadRequest('Number of fields parsed does not match the expected count'));
+                    } 
+                    await db.exec(db.TYPES.INSERT,
+                        "INSERT INTO `post` SET ?", {
+                            [TITLE]: formPayload.title,
+                            // [THUMBNAIL]: _res.Location,
+                            [SUMMARY]: formPayload.summary,
+                            [TAGS]: JSON.stringify(formPayload.tags),
+                            [LOCATION]: formPayload.location,
+                            [TYPE]: ArticleType.ARTICLE,
+                            [FULL_STORY_ID]: formPayload.postId,
+                            [PUBLISH_STATUS]: PublishStatus.PUBLISHED,
+                            [CREATED_AT]: convertTime(),
+                            [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
+                        } 
+                    );
+                    res.status(200).json({
+                        success: true
                     });
+                } catch(err) {
+                    next(err);
                 }
             });
         })
@@ -303,9 +350,9 @@ postRouter.get('/view-post', async (req_: Request, res: Response, next:NextFunct
         const postId = req.query.postId;
         const authorID = req.query.authorId as string;
         if (!postId) {
-            next(new createHttpError.InternalServerError("Post ID is null"));
+            next(new createHttpError.BadRequest("Post ID is null"));
         } else if (!authorID) {
-            next(new createHttpError.InternalServerError("User ID is null"));
+            next(new createHttpError.BadRequest("User ID is null"));
         } else {
             const _authorID = Buffer.from(uuidParse(authorID));
             await db.connect();
@@ -316,6 +363,7 @@ postRouter.get('/view-post', async (req_: Request, res: Response, next:NextFunct
             const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId, PublishStatus.PUBLISHED]);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
+                post.tags = isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
                     db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),
@@ -353,9 +401,9 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
         const authorID = req.body.userId;
         const loginUserID = payload['id'];
         if (!postId) {
-            next(new createHttpError.InternalServerError("Post ID is null"));
+            next(new createHttpError.BadRequest("Post ID is null"));
         } else if (!authorID) {
-            next(new createHttpError.InternalServerError("User ID is null"));
+            next(new createHttpError.BadRequest("User ID is null"));
         } else {
             const _authorID = Buffer.from(uuidParse(authorID));
             const _loginUserID = Buffer.from(uuidParse(loginUserID));
@@ -370,6 +418,7 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             const responsePost = await db.selectWithValues(sqlQuery, sqlValue);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
+                post.tags = isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
                     db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),

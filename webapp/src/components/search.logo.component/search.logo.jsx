@@ -103,7 +103,7 @@ class SearchNLogoComponent extends Component {
     const placeholder = 'Search news';
     return (
       <div className="search-and-logo">
-        <h1 onClick={this.goToHome} className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>TopSelfNews</h1>
+        <h1 onClick={this.goToHome} className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>TopShelfNews</h1>
         <div className='search-logo-separator'></div>
         <Switch>
           <Route exact path={['/', '/user-profile']}>

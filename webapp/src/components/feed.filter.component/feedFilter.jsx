@@ -43,12 +43,14 @@ class FeedFilter extends Component {
       },{
         name: "Health",
         id: 9,
-      },{
-        name: "Opinion",
-        id: 10,
-      },{
+      },
+      // {
+      //   name: "Opinion",
+      //   id: 10,
+      // },
+      {
         name: "Historical",
-        id: 11,
+        id: 10,
       }
     ]
   }
@@ -156,6 +158,7 @@ class FeedFilter extends Component {
     return +str.split("(")[1].split("px")[0];
   }
   onPointerDown = (e) => {
+    e.preventDefault();
     this.pointerPosition = {
       clientX : e.clientX,
     }

@@ -11,8 +11,8 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import {closeAccordian} from '../../reducers/click/accordian.action';
 
-
 class Accordian extends Component {
+
   render() {
     const {collapseAccordian, currentUser} = this.props;
     const shouldOpen = (this.props.shouldOpen || this.props.windowWidth > 929) ? 'show-list' : 'hide-list';
@@ -30,10 +30,12 @@ class Accordian extends Component {
               </Link>
             </div>}
             <div className="accordian-list-item">
-              <div className="accordian-item">
-                <img src={bookmark} className="item-img ts--top-align-2" alt="list-item-icon" />
-                <span className="item-name">Bookmarks</span>
-              </div>
+              <Link to={currentUser ? `/user-profile/${currentUser.userId}` : "/"} className="link">
+                <div className="accordian-item">
+                  <img src={bookmark} className="item-img ts--top-align-2" alt="list-item-icon" />
+                  <span className="item-name">Bookmarks</span>
+                </div>
+              </Link>
             </div>
             <div className="accordian-list-item">
               <Link to="/helpcenter" className="link">

@@ -214,13 +214,13 @@ searchRouter.post('/', async (req:Request, res: Response, next:NextFunction) => 
     try {
         const searchFilter:{ type?:number, query:string, rangeStart:number, rangeEnd: number } = req.body.filter;
         if (isNullOrEmpty(searchFilter)) {
-            throw new createHttpError.InternalServerError("Search Filter is Empty");
+            throw new createHttpError.BadRequest("Search Filter is Empty");
         }
         if (isNullOrEmpty(searchFilter.query)) {
-            throw new createHttpError.InternalServerError("Search Query is Empty");
+            throw new createHttpError.BadRequest("Search Query is Empty");
         }
         if (!isNullOrEmpty(searchFilter.type) && !isValidSyntax(searchFilter.query, searchFilter.type)) {
-            throw new createHttpError.InternalServerError("Not valid Search Payload");
+            throw new createHttpError.BadRequest("Not valid Search Payload");
         }
         if (isNullOrEmpty(searchFilter.rangeStart) || !Number.isInteger(searchFilter.rangeStart) || searchFilter.rangeStart < 0) {
             throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeStart not defined");
@@ -288,13 +288,13 @@ searchRouter.post('/', async (req:Request, res: Response, next:NextFunction) => 
         const query = `WITH CTE AS (SELECT ${ID} as postID, 
             ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
             COUNT(*) OVER() AS totalCount, 
-            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
+            ${TITLE}, ${SUMMARY}, ${TYPE}, ${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
             FROM post
             WHERE ${PUBLISH_STATUS} = 'published'
             ${searchQuery?.query ? ` AND ${searchQuery.query}` : ''}
             ORDER BY ${CREATED_AT} DESC)
             SELECT postID, dataIndex, totalCount, createdAt, authorID, 
-            ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${PROFILE_PIC_URL} as profilePicUrl, 
+            ${TITLE}, ${SUMMARY}, ${TYPE}, ${PROFILE_PIC_URL} as profilePicUrl, 
             ${FIRST_NAME} as firstName, ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName
             FROM CTE LEFT JOIN user ON authorID = ${UUID} 
             WHERE dataIndex >= ? AND dataIndex < ?`;

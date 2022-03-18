@@ -96,10 +96,10 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
                 </>}
             </div>
             <div className="menu-section flex-row-nowrap align-items-center">
-              {type ? <div>
+              {/* {type ? <div>
                 <Tags readOnly={true} tags={[type]} />
               </div>
-              : <></>}
+              : <></>} */}
               {bookmark ? <img src={ bookmarkImg } className="icon-img bookmark-link" alt="Bookmark" /> : <></>}
             </div>
           </div>
