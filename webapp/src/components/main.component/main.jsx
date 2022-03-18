@@ -19,7 +19,7 @@ class Main extends Component {
             <Route exact path="/new-story" component={CreateOrUpdatePost} />
             <Route exact path="/edit-story/:postId" component={CreateOrUpdatePost} />
             <Route exact path="/full-story/:userId/:postId" component={FullNews} />
-            <Route exact path="/payment-history-&-insights" component={PaymentInsights} />
+            {/* <Route exact path="/payment-history-&-insights" component={PaymentInsights} /> */}
             <Route exact path="/helpcenter" component={HelpCenter} />
           </Switch>
         </div>

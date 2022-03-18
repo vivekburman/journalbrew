@@ -39,7 +39,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
         </div>
       </Link>
     </li>
-    <li className="profile-list-item-wrapper">
+    {/* <li className="profile-list-item-wrapper">
       <Link to="/" className="profile-item-link">
         <div className="profile-list-item">
           <img src={payment} className="icon-img" alt="Payment Gateway" />
@@ -54,7 +54,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
           <span className="profile-list-info">Payment History & Insights</span>	
         </div>				
       </Link>
-    </li>
+    </li> */}
     <li className="profile-list-item-wrapper">
       <Link to="/" onClick={userLogout} className="profile-item-link">
         <div className="profile-list-item">
