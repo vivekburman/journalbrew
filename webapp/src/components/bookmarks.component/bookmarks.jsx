@@ -3,8 +3,8 @@ import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
 import { getDisplayName } from '../../helpers/util';
 import { getBookmarks } from '../../services/postService';
-import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 import NewsThumbnail from '../news.thumbnail.component/news.thumbnail';
+import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 
 const DATA_INDEX = "dataIndex",
   UNIQUE_ID="id";

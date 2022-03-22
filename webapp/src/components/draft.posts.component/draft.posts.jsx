@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { connect } from 'react-redux';
 import { deleteDraft, getDrafts } from '../../services/postService';
-import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 import NewsThumbnail from '../news.thumbnail.component/news.thumbnail';
+import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.dynamic';
 import { withRouter } from 'react-router-dom';
 
 const DATA_INDEX = "dataIndex",
