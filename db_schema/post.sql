@@ -1,5 +1,5 @@
 -- Drop table if exists post
-USE topselfnews_db;
+USE journalbrew_db;
 DROP TABLE IF EXISTS post;
 CREATE TABLE post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,

@@ -1,5 +1,5 @@
 {
-  "name": "topselfnews",
+  "name": "journalbrew",
   "version": "1.0.0",
   "description": "A news app",
   "main": "index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vivekburman/topselfnews.git"
+    "url": "git+https://github.com/vivekburman/journalbrew.git"
   },
   "keywords": [
     "news",
@@ -21,9 +21,9 @@
   "author": "vivek burman",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vivekburman/topselfnews/issues"
+    "url": "https://github.com/vivekburman/journalbrew/issues"
   },
-  "homepage": "https://github.com/vivekburman/topselfnews#readme",
+  "homepage": "https://github.com/vivekburman/journalbrew#readme",
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/ms": "^0.7.31",

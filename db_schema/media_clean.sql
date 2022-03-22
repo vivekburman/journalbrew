@@ -1,5 +1,5 @@
 -- Drop table if exists media_clean
-USE topselfnews_db;
+USE journalbrew_db;
 DROP TABLE IF EXISTS media_clean;
 CREATE TABLE media_clean (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,

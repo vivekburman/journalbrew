@@ -1,11 +1,11 @@
--- DROP the database 'topselfnews_db' if exists and create
+-- DROP the database 'journalbrew_db' if exists and create
 -- a new one
 
-DROP DATABASE IF EXISTS topselfnews_db;
+DROP DATABASE IF EXISTS journalbrew_db;
 
-CREATE DATABASE topselfnews_db;
+CREATE DATABASE journalbrew_db;
 
-USE topselfnews_db;
+USE journalbrew_db;
 
 
 -- and drop the table user if exists
