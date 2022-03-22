@@ -43,7 +43,7 @@ const createToken = (token: {email: string, iat: string | number | Date }, key: 
     return jsonwebtoken.sign(token, key, {
         expiresIn: expiresIn,
         algorithm: 'RS256',
-        issuer: 'topshelfnews.com',
+        issuer: 'journalbrew.com',
     });
 }
 const verifyToken = (token: string, key: string ) => {

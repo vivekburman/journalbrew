@@ -16,7 +16,7 @@ const helpCenterData = {
           "id" : "cfr5J5s1cB",
           "type" : "paragraph",
           "data" : {
-              "text" : "TopShelfNews is a platform for news readers and writers. With our vision to support Open Journalism and a neutral reading experience to our readers, we are excited to build tools in this path. As a user, you can be a reader as well as a writer. To become a writer, all it takes is you to signup with your Google account."
+              "text" : "JournalBrew is a platform for news readers and writers. With our vision to support Open Journalism and a neutral reading experience to our readers, we are excited to build tools in this path. As a user, you can be a reader as well as a writer. To become a writer, all it takes is you to signup with your Google account."
           }
       },
       {
