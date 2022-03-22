@@ -1,14 +1,14 @@
-import React, { useRef } from 'react';
-import bookmarkImg from '../../images/bookmark.svg';
-import './news.thumbnail.component.scss';
-import CreatorInfo from '../creator.info.component/creator.info';
-import { Tags } from '../tags.component/tags';
+import React, { useRef, useState } from 'react';
 import Moment from 'react-moment';
-import threeDots from '../../images/threeDots.svg';
-import { useState } from 'react';
-import PostDropdown from '../post.dropdown.component/post.dropdown';
 import { useHistory } from 'react-router';
+
+import CreatorInfo from '../creator.info.component/creator.info';
+import PostDropdown from '../post.dropdown.component/post.dropdown';
+import bookmarkImg from '../../images/bookmark.svg';
+// import { Tags } from '../tags.component/tags';
+import threeDots from '../../images/threeDots.svg';
 import user from '../../images/user.svg';
+import './news.thumbnail.component.scss';
 
 
 const MODES = {
