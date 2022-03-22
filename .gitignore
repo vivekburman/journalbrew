@@ -1,4 +1,16 @@
 node_modules/
 *.env
 *.pem
-webapp/dist/
+webapp/src/*
+webapp/.vscode/*
+webapp/node_modules/*
+webapp/.eslintignore
+webapp/.eslintrc.json
+webapp/babel.config.js
+webapp/debug.log
+webapp/package-lock.json
+webapp/package.json
+webapp/README.md
+webapp/stats.json
+webapp/webpack.config.js
+.vscode/*
