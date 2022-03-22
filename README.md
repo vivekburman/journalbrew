@@ -1,4 +1,4 @@
-# topselfnews
+# journalbrew
 it is a news app
 
 ## Setup of Application
@@ -6,7 +6,7 @@ it is a news app
 2. Run npm i and go to /webapp and run npm i
 3. copy nginx conf file to nginx/conf
 4. windows test cmd for nginx is running = tasklist /fi "imagename eq nginx.exe"
-5. windows cmd to run nginx = nginx -c conf\topselfnews.conf
+5. windows cmd to run nginx = nginx -c conf\journalbrew.conf
 
 ## setup for redis
 1. run `sudo apt-add-repository ppa:redislabs/redis`
@@ -18,11 +18,11 @@ it is a news app
 6. redis-server or redis-server --requirepass <password> cmd in windows to start
 
 ## Run in dev mode:
-1. Run npm run start-dev in topselfnews and topselfnews/webapp folders.
+1. Run npm run start-dev in journalbrew and journalbrew/webapp folders.
 2. Make sure all _internal folders in webapp are ok
 
 ## Run in prod mode
-1. Run npm run build-prod in topselfnews/webapp
+1. Run npm run build-prod in journalbrew/webapp
 2. Start nginx as shown above
-3. Run npm run start-prod in topselfnews
+3. Run npm run start-prod in journalbrew
 4. Go to localhost:80

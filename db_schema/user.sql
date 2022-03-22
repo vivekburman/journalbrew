@@ -1,8 +1,8 @@
--- use database topselfnews_db
+-- use database journalbrew_db
 -- and drop the table user if exists
 -- create a new one
 
-USE topselfnews_db;
+USE journalbrew_db;
 DROP TABLE IF EXISTS user;
 CREATE TABLE user (
     uuid BINARY(16) NOT NULL,

@@ -1,8 +1,8 @@
--- use database topselfnews_db
+-- use database journalbrew_db
 -- and drop the table follow if exists
 -- create a new one
 
-USE topselfnews_db;
+USE journalbrew_db;
 DROP TABLE IF EXISTS follow;
 CREATE TABLE follow (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
