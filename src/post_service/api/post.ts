@@ -6,7 +6,6 @@ import { convertTime } from "../../auth_service/utils/general";
 import { utils } from "../../auth_service/utils/jwtUtils";
 import Busboy from 'busboy';
 import PQueue from 'p-queue';
-import awsSdk from 'aws-sdk';
 import SQL_DB from "../../database";
 import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS, BOOKMARK_POST_ID, USER_UUID } from "../../database/fields";
 import { getSanitizedText, isNullOrEmpty } from "../../helpers/util";
