@@ -1,4 +1,4 @@
 node_modules/
 *.env
 *.pem
-webapp/dist/
+webapp/src/*
