@@ -1,6 +1,6 @@
 import Axios from 'axios';
 const devHostURL = process.env.DEV_HOST_BASE_URL;
-const prodHostURL = process.env.PROD_HOST_BASE_URL;
+const prodHostURL = "/";
 const isProduction = process.env.NODE_ENV === 'production';
 
 function getHostURL() {
