@@ -13,7 +13,7 @@ const authStrategyKeys: object = {
     [enums.GOOGLE]: {
         clientID: process.env.GOOGLE_clientID,
         clientSecret: process.env.GOOGLE_clientSecret,
-        callbackURL: process.env.NODE_ENV == 'development' ? 'http://localhost:9000/oauth_callback' : '/oauth_callback'
+        callbackURL: process.env.NODE_ENV == 'development' ? 'http://localhost:9000/oauth_callback' : `${process.env.PUBLIC_BASE_URL}/oauth_callback`
     }, [enums.FACEBOOK]: {
         clientID: '',
         clientSecret: '',
