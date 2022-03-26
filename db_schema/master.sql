@@ -26,19 +26,6 @@ CREATE TABLE user (
     PRIMARY KEY(uuid)
 );
 
-
-DROP TABLE IF EXISTS user_to_post;
-CREATE TABLE user_to_post (
-    id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    author_id BINARY(16) NOT NULL,
-    full_story JSON NOT NULL,
-    post_id INT UNSIGNED NULL,
-    created_at DATETIME NOT NULL,
-    PRIMARY KEY(id),
-    FOREIGN KEY (author_id) REFERENCES user(uuid),
-    FOREIGN KEY (post_id) REFERENCES post(id)
-);
-
 DROP TABLE IF EXISTS post;
 CREATE TABLE post (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -54,10 +41,22 @@ CREATE TABLE post (
     full_story_id INT UNSIGNED NOT NULL,
     publish_status ENUM('published', 'underReview', 'discarded', 'removed'),
     created_at DATETIME NOT NULL,
-    PRIMARY KEY(id),
-    FOREIGN KEY (full_story_id) REFERENCES user_to_post(id),
-    FOREIGN KEY (author_id) REFERENCES user_to_post(author_id)
+    PRIMARY KEY(id)
 );
+
+DROP TABLE IF EXISTS user_to_post;
+CREATE TABLE user_to_post (
+    id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    author_id BINARY(16) NOT NULL,
+    full_story JSON NOT NULL,
+    post_id INT UNSIGNED NULL,
+    created_at DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY (author_id) REFERENCES user(uuid),
+    FOREIGN KEY (post_id) REFERENCES post(id)
+);
+ALTER TABLE post add FOREIGN KEY (full_story_id) REFERENCES user_to_post(id);
+ALTER TABLE post add FOREIGN KEY (author_id) REFERENCES user_to_post(author_id);
 
 DROP TABLE IF EXISTS bookmark;
 CREATE TABLE bookmark (
@@ -67,7 +66,8 @@ CREATE TABLE bookmark (
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (user_uuid) REFERENCES user(uuid),
-    FOREIGN KEY (bookmark_post_id) REFERENCES post(id)
+    FOREIGN KEY (bookmark_post_id) REFERENCES post(id),
+    CONSTRAINT bookmark_pair_unique UNIQUE(user_uuid, bookmark_post_id)
 );
 
 DROP TABLE IF EXISTS follow;
@@ -75,8 +75,8 @@ CREATE TABLE follow (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL,
     follower_uuid BINARY(16) NOT NULL,
     following_uuid BINARY(16) NOT NULL,
-    FOREIGN KEY (follower_uuid) REFERENCES user(author_id),
-    FOREIGN KEY (following_uuid) REFERENCES user(author_id),
-    CONSTRAINT follow_pair_unique UNIQUE(follower_uuid, following_uuid)
+    FOREIGN KEY (follower_uuid) REFERENCES user(uuid),
+    FOREIGN KEY (following_uuid) REFERENCES user(uuid),
+    CONSTRAINT follow_pair_unique UNIQUE(follower_uuid, following_uuid),
     PRIMARY KEY(id)
 );
