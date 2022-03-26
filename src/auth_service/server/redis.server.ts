@@ -5,8 +5,8 @@ let client: RedisClient;
 export const initRedis = () => {
     client =  redis.createClient({
         port: 6379,
-        host: '192.168.0.102',
-        password: 'journal_brew' 
+        host: process.env.REDIS_HOST,
+        password: process.env.REDIS_PASSWORD 
     });
     
     client.on("error", (err) => {
