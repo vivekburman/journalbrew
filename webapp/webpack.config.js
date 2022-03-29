@@ -92,7 +92,7 @@ module.exports = function(_env, args) {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
-        'process.env.PUBLIC_URL': JSON.stringify(isProduction ? 'http://localhost:3000' : '/'),
+        'process.env.PUBLIC_URL': JSON.stringify(isProduction ? 'https://www.journalbrew.com' : 'http://localhost:9000'),
       }),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'public/index.html'),
