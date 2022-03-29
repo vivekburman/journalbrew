@@ -5,6 +5,7 @@
   position: sticky;
   border-bottom: 1px solid rgba(1, 1, 1, 0.2);
   .feed-filter-wrapper {
+    touch-action: none;
     padding: 6px 16px;
     height: 34px;
     margin: 0 auto;
