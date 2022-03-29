@@ -6,6 +6,7 @@ const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const dotenv = require('dotenv-webpack');
+const WorkboxPlugin = require("workbox-webpack-plugin");
 
 module.exports = function(_env, args) {
   const isProduction = args.mode === 'production';
@@ -91,6 +92,7 @@ module.exports = function(_env, args) {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
+        'process.env.PUBLIC_URL': JSON.stringify(isProduction ? 'http://localhost:3000' : '/'),
       }),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'public/index.html'),
@@ -98,7 +100,12 @@ module.exports = function(_env, args) {
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       isDevelopment && new BundleAnalyzerPlugin(),
-      new dotenv()
+      new dotenv(),
+      new WorkboxPlugin.GenerateSW({
+        swDest: "service-worker.js",
+        clientsClaim: true,
+        skipWaiting: true
+      })
     ].filter(Boolean),
     optimization: {
       minimize: isProduction,
