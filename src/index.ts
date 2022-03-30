@@ -29,6 +29,7 @@ process.on('unhandledRejection', (err) => {
 
 process.on('SIGINT', () => {
     closeAllServers();
+    process.exit();
 });
 
 Promise.all([
