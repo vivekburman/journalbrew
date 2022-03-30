@@ -6,7 +6,7 @@
   "scripts": {
     "submodule": "git submodule update --init",
     "start-dev": "cross-env NODE_ENV=development nodemon ./src/index.ts --exit",
-    "start-prod": "cross-env NODE_ENV=production nodemon ./src/index.ts --exit",
+    "start-prod": "NODE_ENV=production pm2 start build/index.js",
     "kill-all": "taskkill /im node.exe /F",
     "build-js": "tsc --build tsconfig.json",
     "start-test": "cross-env mocha tsconfig.testing.json -r ts-node/register ./src/post_service/api/post.spec.ts"
