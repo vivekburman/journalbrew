@@ -51,7 +51,7 @@ class InfiniteScroll extends Component {
     for(let i =0 ; i < data.length; i++) {
       if (data[i]) {
         list.push(
-          <li
+          <div
           key={data[i][this.props.uniqueId]} 
           id={i === 0 ? this.SCROLL_MODES.TOP : i === (data.length - 1) ? this.SCROLL_MODES.BOTTOM : ''}
           className="list-item-wrapper position-absolute visible-hidden w-100"
@@ -60,16 +60,16 @@ class InfiniteScroll extends Component {
             {
               this.props.getListItemDOM(data[i], i, this.removeItem)
             }
-          </li>
+          </div>
         ); 
       }
     }
     if (this.shouldAddInlineLoader()) {
-      const el = <li key="loading" id="loader" className="list-item-wrapper">
+      const el = <div key="loading" id="loader" className="list-item-wrapper">
         {
           this.props.getLoadingUI()
         }
-      </li>;
+      </div>;
       this.currentScrollMode === this.SCROLL_MODES.BOTTOM ? list.push(el) : list.unshift(el);
     }
     return list;

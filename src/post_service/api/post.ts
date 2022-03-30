@@ -313,7 +313,8 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                     if (fieldParesed != 5) {
                         next(new createHttpError.BadRequest('Number of fields parsed does not match the expected count'));
                     } 
-                    await db.exec(db.TYPES.INSERT,
+                    await db.connect();
+                    const response = await db.insertWithValues(
                         "INSERT INTO `post` SET ?", {
                             [TITLE]: formPayload.title,
                             // [THUMBNAIL]: _res.Location,
@@ -327,18 +328,21 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                             [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
                         } 
                     );
+                    await db.updateWithValues(`UPDATE user_to_post SET ${POST_ID}=?`, [response[0].insertId]);
                     res.status(200).json({
                         success: true
                     });
                 } catch(err) {
                     next(err);
+                } finally {
+                    db.close();
                 }
             });
         })
         req_.pipe(busboy);
     } catch(err) {
         next(err);
-    } 
+    }
 });
 
 // Anonymous users

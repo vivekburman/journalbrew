@@ -10,7 +10,7 @@ import { EMAIL, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, JOINED_AT, 
 
 const userInfoRouter: Router = Router();
 
-// 1.  get userinfo
+// 1. get userinfo
 // 2. get user published posts
 // 3. get user unpublished posts
 // 4. get user bookmarks
@@ -248,7 +248,8 @@ userInfoRouter.delete('/draft/delete', utils.verifyAccessToken, async(req_: Requ
             const response = await db.exec(db.TYPES.DELETE, 
                 `DELETE FROM user_to_post 
                 WHERE ${ID}=?
-                AND ${AUTHOR_ID}=?`,
+                AND ${AUTHOR_ID}=?
+                AND ${POST_ID} IS NULL`,
             [draftID, Buffer.from(uuidParse(userID))]);
             if (response[0] && response[0].affectedRows == 1) {
                 res.status(200).json({
