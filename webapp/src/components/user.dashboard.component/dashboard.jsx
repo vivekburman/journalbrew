@@ -81,7 +81,7 @@ class Dashboard extends Component {
                     currentUser.userId == userID ?
                     <>
                       <Tab className="tab-item outline-none">
-                        Under Review
+                        Reviewing
                       </Tab>
                       <Tab className="tab-item outline-none">
                         Bookmarks

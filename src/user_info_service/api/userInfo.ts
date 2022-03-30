@@ -106,7 +106,7 @@ userInfoRouter.post('/underreview-posts', utils.verifyAccessToken,  async (req_:
                 `WITH CTE AS (SELECT ${ID}, 
                 ROW_NUMBER() OVER(ORDER BY ${CREATED_AT} DESC) - 1 AS dataIndex, 
                 COUNT(*) OVER() AS totalCount, 
-                ${TITLE}, ${SUMMARY}, ${THUMBNAIL}, ${TYPE}, ${CREATED_AT} AS createdAt
+                ${TITLE}, ${SUMMARY}, ${TYPE}, ${CREATED_AT} AS createdAt
                 FROM post
                 WHERE post.${AUTHOR_ID} = ?
                 AND ${PUBLISH_STATUS} = 'underReview' 
