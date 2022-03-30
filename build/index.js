@@ -48,6 +48,7 @@ process.on('unhandledRejection', function (err) {
 });
 process.on('SIGINT', function () {
     closeAllServers();
+    process.exit();
 });
 Promise.all([
     auth_service_1.authService.startService(),
