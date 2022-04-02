@@ -49,7 +49,7 @@ class BookmarksList extends Component {
       key={index} 
       showCreator={false}
       username={getDisplayName(personalInfo.firstName, personalInfo.middleName, personalInfo.lastName)}
-      postID={data.id} 
+      postID={data.postID} 
       title={data.title}
       summary={data.summary}
       thumbnail={data.thumbnail}

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import createHttpError from "http-errors";
-import { userInfo } from "os";
-import { parse as uuidParse } from 'uuid';
+import { parse as uuidParse, stringify as uuidStringify } from 'uuid';
 import { RequestWithPayload } from "../../auth_service/utils";
 import { convertTime } from "../../auth_service/utils/general";
 import { utils } from "../../auth_service/utils/jwtUtils";
@@ -146,13 +145,16 @@ userInfoRouter.post('/bookmarks', utils.verifyAccessToken, async (req_: Request,
                 `WITH CTE AS (SELECT bookmark.${ID}, 
                 ROW_NUMBER() OVER(ORDER BY bookmark.${CREATED_AT} DESC) - 1 AS dataIndex, 
                 COUNT(*) OVER() AS totalCount, 
-                ${TITLE}, ${SUMMARY}, ${TYPE}, post.${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
+                ${TITLE}, ${SUMMARY}, ${TYPE}, post.${ID} as postID, post.${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
                 FROM bookmark INNER JOIN post
                 ON bookmark.${BOOKMARK_POST_ID} = post.${ID}
                 WHERE ${USER_UUID} = ?
                 ORDER BY bookmark.${CREATED_AT} DESC)
                 SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
             [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
+            response[0].forEach((i: any) => {
+                i.authorID = uuidStringify(i.authorID);
+            });
             res.status(200).json({
                 postsList: response[0]
             });

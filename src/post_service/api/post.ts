@@ -416,9 +416,9 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             // 2. get User_To_post of that post
             // 3. get User info of that post
             const isAuthorAndUserSame = loginUserID === authorID;
-            const sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? ${isAuthorAndUserSame ? "" : `AND ${PUBLISH_STATUS}=?`}`;
+            const sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=?${isAuthorAndUserSame ? "" : ` AND ${PUBLISH_STATUS}=?`}`;
             const sqlValue = [_authorID, postId];
-            isAuthorAndUserSame && sqlValue.push(PublishStatus.PUBLISHED);
+            !isAuthorAndUserSame && sqlValue.push(PublishStatus.PUBLISHED);
             const responsePost = await db.selectWithValues(sqlQuery, sqlValue);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
