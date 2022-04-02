@@ -36,18 +36,22 @@ enum PublishStatus {
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
 const getUpdateValue = (val: any) => {
-    if (isNullOrEmpty(val)) return val;
-    if (!isNullOrEmpty(val.text)) {
-        val.text = val.text.replace(/"/g, '\"');    
-    } else if (!isNullOrEmpty(val.data.text)) {
-        val.data.text = val.data.text.replace(/"/g, '\\"');    
-    }
-    if (typeof val === "object") {
-        return `CAST('${JSON.stringify(val).replace(/'/g, "\\'")}' AS JSON)`;
-    }
+    if (isNullOrEmpty(val) && !Array.isArray(val)) return val;
     if (typeof val === "string" && Number.isNaN(+val)) {
         return `"${val.replace(/"/g, '\"').replace(/'/g, "\\'")}"`;
     }
+    try {
+        if (!isNullOrEmpty(val.text)) {
+            val.text = val.text.replace(/"/g, '\"');    
+        } else if (!isNullOrEmpty(val.data.text)) {
+            val.data.text = val.data.text.replace(/"/g, '\\"');    
+        }
+    }catch(e) {}
+    
+    if (typeof val === "object") {
+        return `CAST('${JSON.stringify(val).replace(/'/g, "\\'")}' AS JSON)`;
+    }
+   
     return val;
 }
 

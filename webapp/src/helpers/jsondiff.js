@@ -40,7 +40,19 @@ export default class JSONDiff {
     // make sure inserted to jsonPatch first else will be error
     this.deletes[path] = this.jsonPatch.length - 1;
   }
+  isAllDelete(oldObj=this.oldObj, newObj=this.newObj) {
+    if (newObj.blocks.length === 0 && oldObj.blocks.length > 0) {
+      this.jsonPatch.push({op: "replace", path: '/blocks', value: [{
+        "type": "paragraph",
+        "data": {}
+      }]});
+      return true;
+    }
+    return false;
+  }
   generateObjDiff(oldObj=this.oldObj, newObj=this.newObj, path='', pushToArr=this.jsonPatch) {
+    console.log("oldObj: ", oldObj);
+    console.log("newObj: ", newObj);
     if (this.isEmpty(oldObj)) {
       pushToArr.push({op: "add", path: `${path ? path : '/'}`, value: newObj});
     } else if (this.isEmpty(newObj)) {

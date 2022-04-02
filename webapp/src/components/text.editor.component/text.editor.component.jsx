@@ -244,7 +244,9 @@ class TextEditor extends Component {
       const newEditorData = await self.instanceRef.current.save();
       // remove unwanted data
       const diff = new JSONDiff({...self.props.editorData, time: 0, version: 0}, {...newEditorData, time: 0, version: 0});
-      diff.generateObjDiff();
+      if (!diff.isAllDelete()) {
+        diff.generateObjDiff();
+      }
       self.props.setEditorData(newEditorData);
       if (self.checkForMeaningfulUpdate(diff.jsonPatch)) {
         // self.props.handleSave(newEditorData, diff.jsonPatch, () => {
