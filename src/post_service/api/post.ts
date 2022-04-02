@@ -8,7 +8,7 @@ import Busboy from 'busboy';
 import PQueue from 'p-queue';
 import SQL_DB from "../../database";
 import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS, BOOKMARK_POST_ID, USER_UUID } from "../../database/fields";
-import { getSanitizedText, isNullOrEmpty } from "../../helpers/util";
+import { isNullOrEmpty } from "../../helpers/util";
 
 const postRouter: Router = Router();
 const thumbSize = 1024 * 1024 * 2;
@@ -35,6 +35,17 @@ enum PublishStatus {
 
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
+const getUpdateValue = (val: any) => {
+    if (isNullOrEmpty(val)) return val;
+    if (typeof val === "object") {
+        return `CAST('${JSON.stringify(val).replace(/\"/g, '\\"').replace(/'/g, "\\'")}' AS JSON)`;
+    }
+    if (typeof val === "string" && Number.isNaN(+val)) {
+        return `"${val.replace(/"/g, '\\"').replace(/'/g, "\\'")}"`;
+    }
+    return val;
+}
+
 function generateSQLStatements(jsonPatch:any[]) {
     // 1. get pointer to that object
         // 2. parse the jsonPatch to 3 buckets add, delete, replace
@@ -49,22 +60,6 @@ function generateSQLStatements(jsonPatch:any[]) {
             result += Number.isNaN(+item) ? `.${item}` : `[${item}]`;
         });
         return result;
-    }
-    const getUpdateValue = (val: any) => {
-        if (isNullOrEmpty(val)) return val;
-        if (Array.isArray(val)) {
-            return `CAST('[${val.toString()}]' AS JSON)`;
-        }
-        if (typeof val === "object") {
-            if (!isNullOrEmpty(val.data.text)) {
-                val.data.text = getSanitizedText(val.data.text);
-            }
-            return `CAST('${JSON.stringify(val)}' AS JSON)`;
-        }
-        if (typeof val === "string" && Number.isNaN(+val)) {
-            return `"${getSanitizedText(val)}"`;
-        }
-        return val;
     }
     jsonPatch.forEach((item: {'op': string, 'path': string, value: any}, index) => {
         const jsonPath = parsePath(item.path);
@@ -144,11 +139,12 @@ postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, 
         });
         sqlQuery.query = `${sqlQuery.query.slice(0, -1)} WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
         sqlQuery.values.push(authorID, jsonPatch.postId);
-        await db.updateJSONValues(sqlQuery.query, sqlQuery.values);
+        const r = await db.updateJSONValues(sqlQuery.query, sqlQuery.values);
         res.status(200).json({
             success: true
         });
     } catch(err) {
+        console.log(err);
         next(err);
     }finally {
         db.close();
