@@ -42,7 +42,7 @@ const isBookmarked = ({ userID, postID }) => {
   })
 }
 const setBookmark = ({ userID, postID }) => {
-  return axiosPut('api/user-info/bookmark', {
+  return axiosPut('api/user-info/add-bookmark', {
     userId: userID,
     postId: postID
   }, {

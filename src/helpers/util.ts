@@ -1,3 +1,5 @@
+import mysql from 'mysql2/promise';
+
 const FIRST_NAME = 'first_name', 
 MIDDLE_NAME = 'middle_name', 
 LAST_NAME = 'last_name';
@@ -40,9 +42,7 @@ const isNullOrEmpty = (obj: any): Boolean => {
 const escapeQuotes = (str:null | undefined |string) => {
     return str ? str.replace(/"|`|'/g, '') : '';
 }
-function getSanitizedText(str: string) {
-    return str.replace(/"/g, '\\"');
-}
+
 /**
  * sanitize quotes before update
  */
@@ -50,7 +50,6 @@ export {
     getHTMLSafeString,
     isNullOrEmpty,
     escapeQuotes,
-    getSanitizedText,
     PublishStatus,
     User,
     REFRESH_TOKEN

@@ -8,7 +8,7 @@ import Busboy from 'busboy';
 import PQueue from 'p-queue';
 import SQL_DB from "../../database";
 import { AUTHOR_ID, FULL_STORY, CREATED_AT, ID, POST_ID, TITLE, THUMBNAIL, SUMMARY, TAGS, LOCATION, TYPE, FULL_STORY_ID, PUBLISH_STATUS, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, UUID, LIKES, VIEWS, BOOKMARK_POST_ID, USER_UUID } from "../../database/fields";
-import { getSanitizedText, isNullOrEmpty } from "../../helpers/util";
+import { isNullOrEmpty } from "../../helpers/util";
 
 const postRouter: Router = Router();
 const thumbSize = 1024 * 1024 * 2;
@@ -35,6 +35,26 @@ enum PublishStatus {
 
 type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|string, aud:string, iss: string};
 
+const getUpdateValue = (val: any) => {
+    if (isNullOrEmpty(val) && !Array.isArray(val)) return val;
+    if (typeof val === "string" && Number.isNaN(+val)) {
+        return `"${val.replace(/"/g, '\"').replace(/'/g, "\\'")}"`;
+    }
+    try {
+        if (!isNullOrEmpty(val.text)) {
+            val.text = val.text.replace(/"/g, '\"');    
+        } else if (!isNullOrEmpty(val.data.text)) {
+            val.data.text = val.data.text.replace(/"/g, '\\"');    
+        }
+    }catch(e) {}
+    
+    if (typeof val === "object") {
+        return `CAST('${JSON.stringify(val).replace(/'/g, "\\'")}' AS JSON)`;
+    }
+   
+    return val;
+}
+
 function generateSQLStatements(jsonPatch:any[]) {
     // 1. get pointer to that object
         // 2. parse the jsonPatch to 3 buckets add, delete, replace
@@ -49,22 +69,6 @@ function generateSQLStatements(jsonPatch:any[]) {
             result += Number.isNaN(+item) ? `.${item}` : `[${item}]`;
         });
         return result;
-    }
-    const getUpdateValue = (val: any) => {
-        if (isNullOrEmpty(val)) return val;
-        if (Array.isArray(val)) {
-            return `CAST('[${val.toString()}]' AS JSON)`;
-        }
-        if (typeof val === "object") {
-            if (!isNullOrEmpty(val.data.text)) {
-                val.data.text = getSanitizedText(val.data.text);
-            }
-            return `CAST('${JSON.stringify(val)}' AS JSON)`;
-        }
-        if (typeof val === "string" && Number.isNaN(+val)) {
-            return `"${getSanitizedText(val)}"`;
-        }
-        return val;
     }
     jsonPatch.forEach((item: {'op': string, 'path': string, value: any}, index) => {
         const jsonPath = parsePath(item.path);
@@ -144,11 +148,12 @@ postRouter.patch('/update-post', utils.verifyAccessToken, async (req_: Request, 
         });
         sqlQuery.query = `${sqlQuery.query.slice(0, -1)} WHERE ${AUTHOR_ID}=? AND ${ID}=?`;
         sqlQuery.values.push(authorID, jsonPatch.postId);
-        await db.updateJSONValues(sqlQuery.query, sqlQuery.values);
+        const r = await db.updateJSONValues(sqlQuery.query, sqlQuery.values);
         res.status(200).json({
             success: true
         });
     } catch(err) {
+        console.log(err);
         next(err);
     }finally {
         db.close();
@@ -313,7 +318,8 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                     if (fieldParesed != 5) {
                         next(new createHttpError.BadRequest('Number of fields parsed does not match the expected count'));
                     } 
-                    await db.exec(db.TYPES.INSERT,
+                    await db.connect();
+                    const response = await db.insertWithValues(
                         "INSERT INTO `post` SET ?", {
                             [TITLE]: formPayload.title,
                             // [THUMBNAIL]: _res.Location,
@@ -327,18 +333,21 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                             [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
                         } 
                     );
+                    await db.updateWithValues(`UPDATE user_to_post SET ${POST_ID}=?`, [response[0].insertId]);
                     res.status(200).json({
                         success: true
                     });
                 } catch(err) {
                     next(err);
+                } finally {
+                    db.close();
                 }
             });
         })
         req_.pipe(busboy);
     } catch(err) {
         next(err);
-    } 
+    }
 });
 
 // Anonymous users
@@ -411,9 +420,9 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             // 2. get User_To_post of that post
             // 3. get User info of that post
             const isAuthorAndUserSame = loginUserID === authorID;
-            const sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=? ${isAuthorAndUserSame ? "" : `AND ${PUBLISH_STATUS}=?`}`;
+            const sqlQuery = `SELECT ${TITLE}, ${TAGS}, ${LOCATION}, ${LIKES}, ${VIEWS}, ${CREATED_AT} AS createdAt, ${FULL_STORY_ID} FROM post WHERE ${AUTHOR_ID}=? AND ${ID}=?${isAuthorAndUserSame ? "" : ` AND ${PUBLISH_STATUS}=?`}`;
             const sqlValue = [_authorID, postId];
-            isAuthorAndUserSame && sqlValue.push(PublishStatus.PUBLISHED);
+            !isAuthorAndUserSame && sqlValue.push(PublishStatus.PUBLISHED);
             const responsePost = await db.selectWithValues(sqlQuery, sqlValue);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];

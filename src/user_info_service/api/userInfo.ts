@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import createHttpError from "http-errors";
-import { userInfo } from "os";
-import { parse as uuidParse } from 'uuid';
+import { parse as uuidParse, stringify as uuidStringify } from 'uuid';
 import { RequestWithPayload } from "../../auth_service/utils";
 import { convertTime } from "../../auth_service/utils/general";
 import { utils } from "../../auth_service/utils/jwtUtils";
@@ -10,7 +9,7 @@ import { EMAIL, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, JOINED_AT, 
 
 const userInfoRouter: Router = Router();
 
-// 1.  get userinfo
+// 1. get userinfo
 // 2. get user published posts
 // 3. get user unpublished posts
 // 4. get user bookmarks
@@ -146,13 +145,16 @@ userInfoRouter.post('/bookmarks', utils.verifyAccessToken, async (req_: Request,
                 `WITH CTE AS (SELECT bookmark.${ID}, 
                 ROW_NUMBER() OVER(ORDER BY bookmark.${CREATED_AT} DESC) - 1 AS dataIndex, 
                 COUNT(*) OVER() AS totalCount, 
-                ${TITLE}, ${SUMMARY}, ${TYPE}, post.${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
+                ${TITLE}, ${SUMMARY}, ${TYPE}, post.${ID} as postID, post.${CREATED_AT} AS createdAt, post.${AUTHOR_ID} AS authorID
                 FROM bookmark INNER JOIN post
                 ON bookmark.${BOOKMARK_POST_ID} = post.${ID}
                 WHERE ${USER_UUID} = ?
                 ORDER BY bookmark.${CREATED_AT} DESC)
                 SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
             [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
+            response[0].forEach((i: any) => {
+                i.authorID = uuidStringify(i.authorID);
+            });
             res.status(200).json({
                 postsList: response[0]
             });
@@ -248,7 +250,8 @@ userInfoRouter.delete('/draft/delete', utils.verifyAccessToken, async(req_: Requ
             const response = await db.exec(db.TYPES.DELETE, 
                 `DELETE FROM user_to_post 
                 WHERE ${ID}=?
-                AND ${AUTHOR_ID}=?`,
+                AND ${AUTHOR_ID}=?
+                AND ${POST_ID} IS NULL`,
             [draftID, Buffer.from(uuidParse(userID))]);
             if (response[0] && response[0].affectedRows == 1) {
                 res.status(200).json({
@@ -296,7 +299,7 @@ userInfoRouter.post('/bookmarked', utils.verifyAccessToken, async(req_: Request,
         next(error);
     } 
 });
-userInfoRouter.put('/bookmark', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
+userInfoRouter.put('/add-bookmark', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
     try {
         const req = req_ as RequestWithPayload;
         const userID = req.body.userId || null;
