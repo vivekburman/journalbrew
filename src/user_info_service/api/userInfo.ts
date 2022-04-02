@@ -299,7 +299,7 @@ userInfoRouter.post('/bookmarked', utils.verifyAccessToken, async(req_: Request,
         next(error);
     } 
 });
-userInfoRouter.put('/bookmark', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
+userInfoRouter.put('/add-bookmark', utils.verifyAccessToken, async(req_: Request, res: Response, next:NextFunction) => {
     try {
         const req = req_ as RequestWithPayload;
         const userID = req.body.userId || null;

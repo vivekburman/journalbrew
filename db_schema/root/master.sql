@@ -67,7 +67,6 @@ CREATE TABLE bookmark (
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (user_uuid) REFERENCES user(uuid),
-    FOREIGN KEY (bookmark_post_id) REFERENCES post(id),
     CONSTRAINT bookmark_pair_unique UNIQUE(user_uuid, bookmark_post_id)
 );
 
