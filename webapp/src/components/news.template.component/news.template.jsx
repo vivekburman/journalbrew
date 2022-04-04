@@ -2,6 +2,60 @@ import React from 'react';
 import { parseHTMLToReact } from '../../helpers/jsontohtml';
 import './news.template.component.scss';
 
+const getEmbed = (embed, index) => {
+  switch(embed.service) {
+    case 'youtube':
+      return (
+        <iframe
+        height={embed.height}
+        scrolling='on' 
+        key={index}
+        frameBorder="0" 
+        src={embed.embed} 
+        className="w-100">
+        </iframe>
+      );
+    case 'twitter':
+      return (
+        <iframe 
+        key={index}
+        scrolling='on' 
+        height={embed.height}
+        frameBorder="0" 
+        allowtransparency="true"
+        src={embed.embed} 
+        className="w-100">
+        </iframe>
+      );
+    case 'facebook':
+      return (
+        <iframe 
+        key={index}
+        scrolling='on' 
+        height={embed.height}
+        frameBorder="0"
+        allowtransparency="true"
+        src={embed.embed} 
+        className="w-100">
+        </iframe>
+      );
+    case 'instagram':
+      return (
+        <iframe 
+        key={index}
+        height={embed.height}
+        scrolling='on' 
+        frameBorder="0" 
+        allowtransparency="true"
+        src={embed.embed} 
+        className="w-100">
+        </iframe>
+      );
+  }
+}
+
+
+
 export const renderTemplate = (blocks=[]) => {
   const layout = [];
   blocks.forEach((entity, index) => {
@@ -40,24 +94,27 @@ export const renderTemplate = (blocks=[]) => {
         </ul>);
         break;
       case 'image':
-        layout.push(<img key={index} className="template-img" src={entity.data.url} alt={entity.data.caption}></img>);
+        layout.push(<img key={index} className="template-img" src={entity.data.file.url} alt={entity.data.file.caption}></img>);
         break;
       case 'video':
         layout.push(
           <video key={index} className="template-video" loop preload="metadata" controls>
-            <source src={entity.data.url} type="video/mp4"></source>
+            <source src={entity.data.file.url} type="video/mp4"></source>
           </video>
         );
         break;
       case 'quote':
         layout.push(
-          <blockquote className="template-blockqoute" title={parseHTMLToReact(entity.data.caption)}>{ parseHTMLToReact(entity.data.text) }</blockquote>
+          <blockquote key={index} className="template-blockqoute" title={parseHTMLToReact(entity.data.caption)}>{ parseHTMLToReact(entity.data.text) }</blockquote>
         );
         break;
       case 'delimiter':
         layout.push(
-          <div className="template-delimiter"></div>
+          <div key={index} className="template-delimiter"></div>
         )
+        break;
+      case 'embed':
+        layout.push(getEmbed(entity.data, index));
         break;
       default:
         break;
