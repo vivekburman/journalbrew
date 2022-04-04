@@ -38,7 +38,7 @@ type User = {email:string, id:string, iat:number|Date|string, exp:number|Date|st
 const getUpdateValue = (val: any) => {
     if (isNullOrEmpty(val) && !Array.isArray(val)) return val;
     if (typeof val === "string" && Number.isNaN(+val)) {
-        return `"${val.replace(/"/g, '\"').replace(/'/g, "\\'")}"`;
+        return `"${val.replace(/"/g, '\\"').replace(/'/g, "\\'")}"`;
     }
     try {
         if (!isNullOrEmpty(val.text)) {
