@@ -58,7 +58,7 @@ class CreateOrUpdatePost extends Component {
   render() {
     return (
       <>
-      <div className={!this.state.error ? "display-none" : "w-100 h-100 flex-row-nowrap position-absolute align-items-center justify-content-center"}
+      <div className={!this.state.error ? "display-none" : "w-100 h-100 flex-row-nowrap position-fixed align-items-center justify-content-center"}
       style={{"top": "0"}}>
         <div className="publish-error" style={{"padding": "30px"}}>
           <span>&#128533;</span>
