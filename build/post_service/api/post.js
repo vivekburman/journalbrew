@@ -80,7 +80,7 @@ var getUpdateValue = function (val) {
     if (util_1.isNullOrEmpty(val) && !Array.isArray(val))
         return val;
     if (typeof val === "string" && Number.isNaN(+val)) {
-        return "\"" + val.replace(/"/g, '\"').replace(/'/g, "\\'") + "\"";
+        return "\"" + val.replace(/"/g, '\\"').replace(/'/g, "\\'") + "\"";
     }
     try {
         if (!util_1.isNullOrEmpty(val.text)) {
