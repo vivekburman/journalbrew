@@ -70,12 +70,20 @@ function generateSQLStatements(jsonPatch:any[]) {
         });
         return result;
     }
+    const getJSONAddOpType = (jsonPath: string) => {
+        try {
+            if (jsonPath.match(/\$\.blocks\[[0-9]+\]/) || jsonPath.match(/\$\.blocks\[[0-9]+\]\.data\.items\[[0-9]+\]/)) return 'JSON_ARRAY_INSERT';
+            return `JSON_SET`;
+        }catch(e) {
+            return `JSON_SET`;
+        }
+    }
     jsonPatch.forEach((item: {'op': string, 'path': string, value: any}, index) => {
         const jsonPath = parsePath(item.path);
         const value = getUpdateValue(item.value);
         switch(item.op) {
             case 'add':
-                map.push(`JSON_SET(${FULL_STORY}, '${jsonPath}', ${value})`);
+                map.push(`${getJSONAddOpType(jsonPath)}(${FULL_STORY}, '${jsonPath}', ${value})`);
                 break;
             case 'replace':
                 map.push(`JSON_REPLACE(${FULL_STORY}, '${jsonPath}', ${value})`);
