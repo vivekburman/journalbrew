@@ -111,12 +111,22 @@ function generateSQLStatements(jsonPatch) {
         });
         return result;
     };
+    var getJSONAddOpType = function (jsonPath) {
+        try {
+            if (jsonPath.match(/\$\.blocks\[[0-9]+\]/) || jsonPath.match(/\$\.blocks\[[0-9]+\]\.data\.items\[[0-9]+\]/))
+                return 'JSON_ARRAY_INSERT';
+            return "JSON_SET";
+        }
+        catch (e) {
+            return "JSON_SET";
+        }
+    };
     jsonPatch.forEach(function (item, index) {
         var jsonPath = parsePath(item.path);
         var value = getUpdateValue(item.value);
         switch (item.op) {
             case 'add':
-                map.push("JSON_SET(" + fields_1.FULL_STORY + ", '" + jsonPath + "', " + value + ")");
+                map.push(getJSONAddOpType(jsonPath) + "(" + fields_1.FULL_STORY + ", '" + jsonPath + "', " + value + ")");
                 break;
             case 'replace':
                 map.push("JSON_REPLACE(" + fields_1.FULL_STORY + ", '" + jsonPath + "', " + value + ")");
