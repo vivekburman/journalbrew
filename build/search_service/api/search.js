@@ -179,7 +179,7 @@ function searchByTag(str) {
         return null;
     }
     var _str = util_1.getHTMLSafeString(str);
-    var values = ["\"" + util_1.escapeQuotes(_str.slice(1)).replace(/@/g, '') + "\""];
+    var values = ["\"" + util_1.escapeQuotes(_str.slice(1)).replace(/#/g, '') + "\""];
     return {
         query: "JSON_CONTAINS(" + fields_1.TAGS + ", ?, '$')",
         values: values
