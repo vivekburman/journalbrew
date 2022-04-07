@@ -17,38 +17,49 @@ class FeedFilter extends Component {
     this.totalItemsWidth = 0;
     this.filterList = [
       {
+        value: '',
         name: "Explore",
         id: 1,
       },{
+        value: 'national',
         name: "National",
         id: 2,
       },{
+        value: 'local',
         name: "Local",
         id: 3,
       },{
+        value: 'worldwide',
         name: "Worldwide",
         id: 4,
       },{
+        value: 'business',
         name: "Business",
         id: 5,
       },{
+        value: 'technology',
         name: "Technology",
         id: 6,
       },{
+        value: 'sports',
         name: "Sports",
         id: 7,
       },{
+        value: 'science',
         name: "Science",
         id: 8,
       },{
+        value: 'health',
         name: "Health",
         id: 9,
       },
       // {
+        // value: 'opinion',
       //   name: "Opinion",
       //   id: 10,
       // },
       {
+        value: 'historical',
         name: "Historical",
         id: 10,
       }
@@ -75,7 +86,8 @@ class FeedFilter extends Component {
     this.performSearch(filterId);
   }
   performSearch = async (filterId) => {
-    this.props.setFilterData(`#${this.filterList.find(i => i.id === filterId).name}`.toLowerCase());
+    const filter = this.filterList.find(i => i.id === filterId);
+    this.props.setFilterData(`${!filter.value.length ? '' : `#${filter.value}`}`.toLowerCase());
   }
   onPrevClick = () => {
     const dom = this.sliderRef.current;
