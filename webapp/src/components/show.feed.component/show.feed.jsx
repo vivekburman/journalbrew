@@ -62,8 +62,9 @@ class ShowFeed extends Component {
   }
   getFeed(start, end) {
     const { filterText="" } = this.props;
-    const func = filterText ? searchByTag : searchByDefault;
-    return func(filterText, start, end)
+    const __filterText = filterText.toLowerCase();
+    const func = __filterText ? searchByTag : searchByDefault;
+    return func(__filterText, start, end)
     .then(({data}) => {
       this.allData = [...this.allData, ...data.postsList];
       return {data: data.postsList, isLast: data.postsList.length && data.postsList[0].totalCount - 1 <= end};
