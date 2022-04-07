@@ -181,7 +181,7 @@ function searchByTag(str) {
     var _str = util_1.getHTMLSafeString(str);
     var values = ["\"" + util_1.escapeQuotes(_str.slice(1)).replace(/#/g, '') + "\""];
     return {
-        query: "JSON_CONTAINS(" + fields_1.TAGS + ", ?, '$')",
+        query: "JSON_CONTAINS(" + fields_1.TAGS + ", ?, '$') = 1",
         values: values
     };
 }

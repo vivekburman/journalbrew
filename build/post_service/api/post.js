@@ -307,7 +307,7 @@ postRouter.post('/publish-post', jwtUtils_1.utils.verifyAccessToken, function (r
                                 next(new http_errors_1.default.BadRequest('tags is null or exceeds 5 array length or make sure its all string'));
                             }
                             fieldParesed_1++;
-                            formPayload_1.tags = val;
+                            formPayload_1.tags = _val;
                             break;
                         // case 'type':
                         //     if (val == null || val == undefined || !(val in ArticleType)) {
@@ -430,7 +430,7 @@ postRouter.get('/view-post', function (req_, res, next) { return __awaiter(void 
                 responsePost = _d.sent();
                 if (!((_a = responsePost === null || responsePost === void 0 ? void 0 : responsePost[0]) === null || _a === void 0 ? void 0 : _a[0])) return [3 /*break*/, 7];
                 post = responsePost[0][0];
-                post.tags = util_1.isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
+                post.tags = util_1.isNullOrEmpty(post.tags) ? [] : post.tags;
                 return [4 /*yield*/, Promise.all([
                         db.selectWithValues("SELECT " + fields_1.FULL_STORY + " AS fullStory, " + fields_1.ID + " AS id FROM user_to_post WHERE " + fields_1.AUTHOR_ID + "=? AND " + fields_1.ID + "=?", [_authorID, post[fields_1.FULL_STORY_ID]]),
                         db.selectWithValues("SELECT " + fields_1.FIRST_NAME + " AS firstName, " + fields_1.MIDDLE_NAME + " AS middleName, " + fields_1.LAST_NAME + " AS lastName, " + fields_1.PROFILE_PIC_URL + " AS profilePicUrl FROM user WHERE " + fields_1.UUID + "=?", [_authorID]),
@@ -504,7 +504,7 @@ postRouter.post('/view-post', jwtUtils_1.utils.verifyAccessToken, function (req_
                 responsePost = _e.sent();
                 if (!((_a = responsePost === null || responsePost === void 0 ? void 0 : responsePost[0]) === null || _a === void 0 ? void 0 : _a[0])) return [3 /*break*/, 7];
                 post = responsePost[0][0];
-                post.tags = util_1.isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
+                post.tags = util_1.isNullOrEmpty(post.tags) ? [] : post.tags;
                 return [4 /*yield*/, Promise.all([
                         db.selectWithValues("SELECT " + fields_1.FULL_STORY + " AS fullStory, " + fields_1.ID + " AS id FROM user_to_post WHERE " + fields_1.AUTHOR_ID + "=? AND " + fields_1.ID + "=?", [_authorID, post[fields_1.FULL_STORY_ID]]),
                         db.selectWithValues("SELECT " + fields_1.FIRST_NAME + " AS firstName, " + fields_1.MIDDLE_NAME + " AS middleName, " + fields_1.LAST_NAME + " AS lastName, " + fields_1.PROFILE_PIC_URL + " AS profilePicUrl FROM user WHERE " + fields_1.UUID + "=?", [_authorID]),
