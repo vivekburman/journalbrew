@@ -190,7 +190,7 @@ function searchByLocation(str) {
         return null;
     }
     var _str = util_1.getHTMLSafeString(str);
-    var values = ["%" + util_1.escapeQuotes(_str.slice(1)).replace(/%/g, '') + "%"];
+    var values = ["%" + util_1.escapeQuotes(_str.slice(1)).replace(/%/g, '').toLowerCase() + "%"];
     return {
         query: fields_1.LOCATION + " LIKE ?",
         values: values
