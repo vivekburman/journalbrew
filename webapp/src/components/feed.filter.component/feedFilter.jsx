@@ -6,15 +6,6 @@ import { setFilterData } from '../../reducers/filter/filter.action';
 class FeedFilter extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedFilter: 1,
-      hideNextBtn: false,
-      hidePrevBtn: true,
-    };
-    this.offset = 2;
-    this.sliderRef = createRef(null);
-    this.pointerPosition = null;
-    this.totalItemsWidth = 0;
     this.filterList = [
       {
         value: '',
@@ -63,10 +54,16 @@ class FeedFilter extends Component {
         name: "Historical",
         id: 10,
       }
-    ]
-  }
-  componentWillUnmount() {
-    this.props.setFilterData('');
+    ];
+    this.state = {
+      selectedFilter: this.filterList.find(i => i.value === this.props.filterText.replace('#', '')).id,
+      hideNextBtn: false,
+      hidePrevBtn: true,
+    };
+    this.offset = 2;
+    this.sliderRef = createRef(null);
+    this.pointerPosition = null;
+    this.totalItemsWidth = 0;
   }
   componentDidMount() {
     const dom = this.sliderRef.current;
@@ -242,7 +239,10 @@ class FeedFilter extends Component {
     );
   }
 }
+const mapStateToProps = ({ filterState }) => ({
+  filterText: filterState.filterText
+});
 const mapDispatchToProps = (dispatch) => ({
   setFilterData: (data) => dispatch(setFilterData(data)),
 });
-export default connect(null, mapDispatchToProps)(FeedFilter);
+export default connect(mapStateToProps, mapDispatchToProps)(FeedFilter);
