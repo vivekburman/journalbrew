@@ -130,7 +130,7 @@ function searchByTag(str: string) {
         return null;
     }
     const _str = getHTMLSafeString(str);
-    const values = [`"${escapeQuotes(_str.slice(1)).replace(/@/g, '')}"`];
+    const values = [`"${escapeQuotes(_str.slice(1)).replace(/#/g, '')}"`];
 
     return {
         query : `JSON_CONTAINS(${TAGS}, ?, '$')`,
