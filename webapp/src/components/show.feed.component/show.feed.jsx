@@ -60,9 +60,6 @@ class ShowFeed extends Component {
     }
     return this.getFeed(start, end);
   }
-  componentDidUpdate() {
-    this.allData = [];
-  }
   getFeed(start, end) {
     const { filterText="" } = this.props;
     const func = filterText ? searchByTag : searchByDefault;
@@ -84,6 +81,7 @@ class ShowFeed extends Component {
   }
   
   render() {
+    this.allData = [];
     return (
       <div className="main-feed-list-wrapper margin-top-0 flex-column-nowrap">
         <InfiniteScroll 

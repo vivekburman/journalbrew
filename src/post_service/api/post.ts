@@ -242,7 +242,7 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                             next(new createHttpError.BadRequest('tags is null or exceeds 5 array length or make sure its all string'));
                         }
                         fieldParesed++;
-                        formPayload.tags = val;
+                        formPayload.tags = _val;
                         break;
                     // case 'type':
                     //     if (val == null || val == undefined || !(val in ArticleType)) {
@@ -379,7 +379,7 @@ postRouter.get('/view-post', async (req_: Request, res: Response, next:NextFunct
             const responsePost = await db.selectWithValues(sqlQuery, [_authorID, postId, PublishStatus.PUBLISHED]);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
-                post.tags = isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
+                post.tags = isNullOrEmpty(post.tags) ? [] : post.tags;
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
                     db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),
@@ -434,7 +434,7 @@ postRouter.post('/view-post', utils.verifyAccessToken, async (req_: Request, res
             const responsePost = await db.selectWithValues(sqlQuery, sqlValue);
             if (responsePost?.[0]?.[0]) {
                 const post = responsePost[0][0];
-                post.tags = isNullOrEmpty(post.tags) ? [] : JSON.parse(post.tags);
+                post.tags = isNullOrEmpty(post.tags) ? [] : post.tags;
                 const _response = await Promise.all([
                     db.selectWithValues(`SELECT ${FULL_STORY} AS fullStory, ${ID} AS id FROM user_to_post WHERE ${AUTHOR_ID}=? AND ${ID}=?`, [_authorID, post[FULL_STORY_ID]]),
                     db.selectWithValues(`SELECT ${FIRST_NAME} AS firstName, ${MIDDLE_NAME} AS middleName, ${LAST_NAME} AS lastName, ${PROFILE_PIC_URL} AS profilePicUrl FROM user WHERE ${UUID}=?`, [_authorID]),

@@ -54,7 +54,9 @@ class FeedFilter extends Component {
       }
     ]
   }
-  
+  componentWillUnmount() {
+    this.props.setFilterData('');
+  }
   componentDidMount() {
     const dom = this.sliderRef.current;
     const children = Array.from(dom.children);
@@ -228,7 +230,6 @@ class FeedFilter extends Component {
     );
   }
 }
-
 const mapDispatchToProps = (dispatch) => ({
   setFilterData: (data) => dispatch(setFilterData(data)),
 });

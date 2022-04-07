@@ -133,7 +133,7 @@ function searchByTag(str: string) {
     const values = [`"${escapeQuotes(_str.slice(1)).replace(/#/g, '')}"`];
 
     return {
-        query : `JSON_CONTAINS(${TAGS}, ?, '$')`,
+        query : `JSON_CONTAINS(${TAGS}, ?, '$') = 1`,
         values: values
     } 
 }
