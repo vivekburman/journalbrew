@@ -19,7 +19,7 @@ const publishPostAPI = (postId, token, formData) => {
   _formData.append('postId', postId);
   _formData.append('title', formData.title);
   _formData.append('location', formData.location);
-  _formData.append('tags', JSON.stringify(formData.tags));
+  _formData.append('tags', JSON.stringify(formData.tags.map(i => i.toLowerCase())));
   _formData.append('summary', formData.summary);
   // _formData.append('type', formData.type);
   // _formData.append('thumb', formData.thumb);
@@ -94,7 +94,6 @@ class Publish extends Component {
     if (!_toggle) {
       this.handleFormLoad();
     }
-    console.log(this._summary);
     this.setState({
       toggle: !this.state.toggle,
       tagError: '',
