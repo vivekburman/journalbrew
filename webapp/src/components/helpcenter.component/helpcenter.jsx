@@ -61,7 +61,7 @@ const helpCenterData = {
           "id" : "JOQUaW1tws",
           "type" : "paragraph",
           "data" : {
-              "text" : "For any queries, feedback or issues. Users can email to this Email ID <a href=\"mailto:vivek.journalbrew@gmail.com\">vivek.journalbrew@gmail.com</a> or WhatsApp to <strong>+919679169901</strong>. We are thankful for you to be part of our journey."
+              "text" : "For any queries, feedback or issues. Users can email to this Email ID <a href=\"mailto:vivek.journalbrew@gmail.com\">vivek.journalbrew@gmail.com</a>. We are thankful for you to be part of our journey."
           }
       }
   ],
