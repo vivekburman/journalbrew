@@ -3,10 +3,10 @@
   right: 0;
   z-index: 3;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-}
-.focus-blur-container.focus-no-full-screen {
-  left: 0;
-  right: initial;
+  .focus-no-full-screen {
+    right: 0;
+    left: initial;
+  }
 }
 @media (max-width: 768px) {
   .focus-blur-container:not(.focus-no-full-screen) {
@@ -15,12 +15,6 @@
     top: 0;
     right: 0;
     height: 100vh;
-  }
-}
-@media (min-width: 435px) {
-  .focus-blur-container.focus-no-full-screen {
-    right: 0;
-    left: initial;
   }
 }
 .focus-blur-pointer {
