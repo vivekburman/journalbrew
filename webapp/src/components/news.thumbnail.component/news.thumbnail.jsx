@@ -63,10 +63,11 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
         {thumbnail ? <div className="news-thumbnail">
           <img src={ thumbnail } alt="Images" className="news-image flex"/>
         </div> : <></>}
-        <div className="news-details flex-column-nowrap align-content-spacebetween justify-content-between w-100">
+        <div className="news-details cursor-pointer flex-column-nowrap align-content-spacebetween justify-content-between w-100"
+        onClick={navClick}>
           <div className="margin-bottom-15">
             <div className="flex flex-row-nowrap align-items-center">
-              <h1 className="news-title flex-grow-1 cursor-pointer" onClick={navClick}>
+              <h1 className="news-title flex-grow-1">
                 {title}
               </h1>
               {
@@ -74,7 +75,8 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
                 <div className="position-relative">
                   <img src={threeDots} alt="menu" className="icon-img rotate-z-90" 
                   onClick={toggleDD} />
-                  <PostDropdown 
+                  <PostDropdown
+                  noFullScreen={true}
                   onDeleteMenuClick={onDeleteClick}
                   onEditMenuClick={onEditClick}
                   isOpen={isMenuDropdownOpen}

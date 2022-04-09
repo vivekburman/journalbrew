@@ -54,10 +54,10 @@ CREATE TABLE user_to_post (
     PRIMARY KEY(id),
     FOREIGN KEY (author_id) REFERENCES user(uuid),
 );
-ALTER TABLE user_to_post add FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE;
+ALTER TABLE user_to_post add FOREIGN KEY (post_id) REFERENCES post(id);
 
-ALTER TABLE post add FOREIGN KEY (full_story_id) REFERENCES user_to_post(id) ON DELETE CASCADE;
-ALTER TABLE post add FOREIGN KEY (author_id) REFERENCES user_to_post(author_id) ON DELETE CASCADE;
+ALTER TABLE post add FOREIGN KEY (full_story_id) REFERENCES user_to_post(id);
+ALTER TABLE post add FOREIGN KEY (author_id) REFERENCES user_to_post(author_id);
 
 DROP TABLE IF EXISTS bookmark;
 CREATE TABLE bookmark (
