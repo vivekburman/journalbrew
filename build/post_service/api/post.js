@@ -371,7 +371,7 @@ postRouter.post('/publish-post', jwtUtils_1.utils.verifyAccessToken, function (r
                                         _a))];
                             case 2:
                                 response = _b.sent();
-                                return [4 /*yield*/, db_1.updateWithValues("UPDATE user_to_post SET " + fields_1.POST_ID + "=?", [response[0].insertId])];
+                                return [4 /*yield*/, db_1.updateWithValues("UPDATE user_to_post SET " + fields_1.POST_ID + "=? WHERE " + fields_1.ID + "=?", [response[0].insertId, formPayload_1.postId])];
                             case 3:
                                 _b.sent();
                                 res.status(200).json({
