@@ -72,7 +72,7 @@ function generateSQLStatements(jsonPatch:any[]) {
     }
     const getJSONAddOpType = (jsonPath: string) => {
         try {
-            if (jsonPath.match(/\$\.blocks\[[0-9]+\]/) || jsonPath.match(/\$\.blocks\[[0-9]+\]\.data\.items\[[0-9]+\]/)) return 'JSON_ARRAY_INSERT';
+            if (jsonPath.match(/\$\.blocks\[[0-9]+\]$/)?.length || jsonPath.match(/\$\.blocks\[[0-9]+\]\.data\.items\[[0-9]+\]$/)?.length) return 'JSON_ARRAY_INSERT';
             return `JSON_SET`;
         }catch(e) {
             return `JSON_SET`;
