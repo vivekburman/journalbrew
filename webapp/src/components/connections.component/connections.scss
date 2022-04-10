@@ -21,7 +21,12 @@
         border-bottom: 3px solid hsla(204, 89%, 52%, 1);
         border-radius: 5px 5px 0 0;
         color: rgb(66, 66, 66);
-      }
+    }
+    .connection-item {
+        padding: 16px;
+        border: 1px solid rgba(110,109,109,.212);
+        border-radius: 3px;
+    }
 }
 @media (min-width: 576px) {
     .follow-following-component {

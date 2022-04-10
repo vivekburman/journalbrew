@@ -58,7 +58,6 @@ class BookmarksList extends Component {
       />
   }
   getPosts = (userID, start, end) => {
-    const self = this;
     return getBookmarks(userID, start, end, this.props.currentUser?.token)
     .then(({data}) => {
       this.allData = [...this.allData, ...data.postsList];
@@ -85,11 +84,9 @@ class BookmarksList extends Component {
     );
   }
   render() {
-    const {windowWidth} = this.props;
     return (
       <div className="main-feed-list-wrapper margin-top-0 padding-right-8 padding-left-8">
           <InfiniteScroll 
-            windowWidth={windowWidth}
             dataIndex={DATA_INDEX}
             sliderSize={this.sliderSize}
             getLoadingUI = {this.getSkeletonUI}
@@ -103,9 +100,8 @@ class BookmarksList extends Component {
   }
 }
 
-const mapStateToProps = ({user, window}) => ({
-  currentUser: user.currentUser,
-  windowWidth: window.windowSize
+const mapStateToProps = ({user}) => ({
+  currentUser: user.currentUser
 });
 
 export default connect(mapStateToProps)(BookmarksList);
