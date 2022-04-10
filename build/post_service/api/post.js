@@ -112,8 +112,9 @@ function generateSQLStatements(jsonPatch) {
         return result;
     };
     var getJSONAddOpType = function (jsonPath) {
+        var _a, _b;
         try {
-            if (jsonPath.match(/\$\.blocks\[[0-9]+\]/) || jsonPath.match(/\$\.blocks\[[0-9]+\]\.data\.items\[[0-9]+\]/))
+            if (((_a = jsonPath.match(/\$\.blocks\[[0-9]+\]$/)) === null || _a === void 0 ? void 0 : _a.length) || ((_b = jsonPath.match(/\$\.blocks\[[0-9]+\]\.data\.items\[[0-9]+\]$/)) === null || _b === void 0 ? void 0 : _b.length))
                 return 'JSON_ARRAY_INSERT';
             return "JSON_SET";
         }
