@@ -5,6 +5,7 @@ import './accordian.component.scss';
 import story from '../../images/story.svg';
 import bookmark from '../../images/bookmarked.svg';
 import help from '../../images/help.svg';
+import connection from '../../images/connection.svg';
 
 import {Link} from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
@@ -34,6 +35,14 @@ class Accordian extends Component {
                 <div className="accordian-item">
                   <img src={bookmark} className="item-img ts--top-align-2" alt="list-item-icon" />
                   <span className="item-name">Bookmarks</span>
+                </div>
+              </Link>
+            </div>
+            <div className="accordian-list-item">
+              <Link to="/connections" className="link">
+                <div className="accordian-item">
+                  <img src={connection} className="item-img ts--top-align-2" alt="list-item-icon" />
+                  <span className="item-name">Connections</span>
                 </div>
               </Link>
             </div>
