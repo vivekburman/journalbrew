@@ -341,7 +341,7 @@ postRouter.post('/publish-post', utils.verifyAccessToken, async (req_: Request, 
                             [AUTHOR_ID]: Buffer.from(uuidParse(payload.id))  
                         } 
                     );
-                    await db.updateWithValues(`UPDATE user_to_post SET ${POST_ID}=?`, [response[0].insertId]);
+                    await db.updateWithValues(`UPDATE user_to_post SET ${POST_ID}=? WHERE ${ID}=?`, [response[0].insertId, formPayload.postId]);
                     res.status(200).json({
                         success: true
                     });
