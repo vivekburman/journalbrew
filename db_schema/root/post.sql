@@ -17,6 +17,6 @@ CREATE TABLE post (
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
     CONSTRAINT full_story_unqiue UNIQUE(full_story_id),
-    FOREIGN KEY (full_story_id) REFERENCES user_to_post(id),
-    FOREIGN KEY (author_id) REFERENCES user_to_post(author_id)
+    FOREIGN KEY (full_story_id) REFERENCES user_to_post(id) ON DELETE CASCADE,
+    FOREIGN KEY (author_id) REFERENCES user(uuid)
 );
