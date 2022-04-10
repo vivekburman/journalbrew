@@ -41,7 +41,8 @@ CREATE TABLE post (
     full_story_id INT UNSIGNED NOT NULL,
     publish_status ENUM('published', 'underReview', 'discarded', 'removed'),
     created_at DATETIME NOT NULL,
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    FOREIGN KEY (author_id) REFERENCES user(uuid)
 );
 
 DROP TABLE IF EXISTS user_to_post;
@@ -52,12 +53,11 @@ CREATE TABLE user_to_post (
     post_id INT UNSIGNED NULL,
     created_at DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY (author_id) REFERENCES user(uuid),
+    FOREIGN KEY (author_id) REFERENCES user(uuid)
 );
-ALTER TABLE user_to_post add FOREIGN KEY (post_id) REFERENCES post(id);
+ALTER TABLE user_to_post add FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE;
 
-ALTER TABLE post add FOREIGN KEY (full_story_id) REFERENCES user_to_post(id);
-ALTER TABLE post add FOREIGN KEY (author_id) REFERENCES user_to_post(author_id);
+ALTER TABLE post add FOREIGN KEY (full_story_id) REFERENCES user_to_post(id) ON DELETE CASCADE;
 
 DROP TABLE IF EXISTS bookmark;
 CREATE TABLE bookmark (
