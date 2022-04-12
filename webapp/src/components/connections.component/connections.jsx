@@ -30,7 +30,7 @@ class Connections extends Component {
           feedList.push((
             <li key={ i }>
                 <div className='connection-item flex-row-nowrap margin-bottom-5 align-items-center'>
-                    <Skeleton circle={true} height={50} width={50} />
+                    <Skeleton circle={true} height={40} width={40} />
                     <div className='margin-left-15'></div>
                     <Skeleton width={250} height={20}/>
                     <div className='margin-left-15 margin-right-15 flex-grow-1'></div>
@@ -43,7 +43,8 @@ class Connections extends Component {
     }
     getListItemDOM = (data, index) => {
         return  (
-            <FollowCard data={data} index={index} currentUser={this.props.currentUser.userId}/>
+            <FollowCard data={data} index={index} currentUser={this.props.currentUser.userId} 
+            showFollow={this.currentMode === this.MODES.FOLLOWING}/>
         );
     }
     getConnections = (userID, start, end) => {
@@ -99,7 +100,7 @@ class Connections extends Component {
                     </Tab>
                     </TabList>
                     <TabPanel>
-                    <div className="main-feed-list-wrapper margin-top-0 padding-right-8 padding-left-8">
+                    <div className="margin-top-0 padding-right-8 padding-left-8">
                         <InfiniteScroll 
                             key={this.MODES.FOLLOW} 
                             dataIndex={DATA_INDEX}
