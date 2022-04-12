@@ -5,6 +5,7 @@ import InfiniteScroll from '../infinitescroll.dynamic.component/infinite.scroll.
 import Skeleton from 'react-loading-skeleton';
 
 import './connections.scss';
+import { getFolloweeConnections, getFollowerConnections } from '../../services/userService';
 const DATA_INDEX = "dataIndex",
   UNIQUE_ID="id";
 class Connections extends Component {
@@ -18,6 +19,8 @@ class Connections extends Component {
         this.currentMode = 1;
         this.sliderSize = 20;
         this.getRangeData = this.getRangeData.bind(this);
+        this.emptyStateUI = this.emptyStateUI.bind(this);
+        this.onModeToggle = this.onModeToggle.bind(this);
     }
     getSkeletonUI = () => {
         const feedList = [];
@@ -41,25 +44,26 @@ class Connections extends Component {
             <div>apple</div>
         );
     }
-    getPosts = (userID, start, end) => {
-    return getBookmarks(userID, start, end, this.props.currentUser?.token)
-    .then(({data}) => {
-        this.allData = [...this.allData, ...data.userList];
-        return {data: data.userList, isLast: data.userList.length && data.userList[0].totalCount - 1 <= end};
-    });
+    getConnections = (userID, start, end) => {
+        const restAPI = this.currentMode === this.MODES.FOLLOW ? getFollowerConnections : getFolloweeConnections;
+        return restAPI(userID, start, end, this.props.currentUser?.token)
+        .then(({data}) => {
+            this.allData = [...this.allData, ...data.userList];
+            return {data: data.userList, isLast: data.userList.length && data.userList[0].totalCount - 1 <= end};
+        });
     }
     getRangeData (start, end) {
-    const userID = this.props.userID;
-    if (this.allData.length) {
-        const lastData = this.allData[this.allData.length - 1];
-        const _end = Math.min(lastData.totalCount - 1, end);
-        if (_end <= lastData[DATA_INDEX]) {
-            return Promise.resolve({data: this.allData.slice(start, _end), isLast: lastData.totalCount - 1 <= end});
+        const userID = this.props.currentUser.userId;
+        if (this.allData.length) {
+            const lastData = this.allData[this.allData.length - 1];
+            const _end = Math.min(lastData.totalCount - 1, end);
+            if (_end <= lastData[DATA_INDEX]) {
+                return Promise.resolve({data: this.allData.slice(start, _end), isLast: lastData.totalCount - 1 <= end});
+            }
         }
+        return this.getConnections(userID, start, end);
     }
-    return this.getPosts(userID, start, end);
-    }
-    emptyStateUI = () => {
+    emptyStateUI() {
         return(
             <div>
             <h1>Nothing to show here</h1>
@@ -67,8 +71,8 @@ class Connections extends Component {
             </div>
         );
     }
-    onModeToggle = (e) => {
-        const type = e.currentTarget.dataset.itemType;
+    onModeToggle (e) {
+        const type = +e.currentTarget.dataset.itemType;
         if (type === this.MODES.FOLLOW) {
             this.currentMode = this.MODES.FOLLOW;
         } else {
