@@ -307,3 +307,45 @@ body {
 .font-roboto {
   font-family: 'Roboto', sans-serif;
 }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.follow, .following {
+  vertical-align: middle;
+  @extend %font-roboto;
+  position: relative;
+  cursor: pointer;
+  margin-left: 12px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.30px;
+  &.tsn-loading {
+    pointer-events: none;
+    cursor: default;
+    background-color: rgba(168, 168, 168, 0.233);
+    &::before {
+      border: 4px solid #cacaca; /* Light grey */
+      border-top: 4px solid #0049B0; /* Blue */
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      animation: spin 2s linear infinite;
+      content: '';
+      position: absolute;
+      left: 37%;
+      top: 1px;
+    }
+  }
+}
+.follow {
+  border: 1px solid #000;
+}
+.following {
+  margin-top: 0px;
+  background-color: #4b4b4b;
+  color: #fff;
+}

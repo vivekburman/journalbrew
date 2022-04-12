@@ -400,7 +400,7 @@ userInfoRouter.put('/follow-request', utils.verifyAccessToken, async(req_: Reque
         const followerID = req.body.followerId || null;
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
-            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+            throw new createHttpError.BadRequest("Follower or followee Id is undefined");
         } else if(followerID === followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
@@ -433,7 +433,7 @@ userInfoRouter.delete('/unfollow-request', utils.verifyAccessToken, async(req_: 
         const followerID = req.body.followerId || null;
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
-            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+            throw new createHttpError.BadRequest("Follower or followee Id is undefined");
         } else if(followerID === followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
@@ -477,7 +477,7 @@ userInfoRouter.post('/connections/followers', utils.verifyAccessToken, async(req
             const db = new SQL_DB();
             const response = await db.exec(db.TYPES.CTE_SELECT, 
                 `WITH CTE AS (SELECT ${ID}, ${FOLLOWER_ID} as followerID, ${FIRST_NAME} as firstName, 
-                ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName, ${PROFILE_PIC_URL} as profilePicUrl
+                ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName, ${PROFILE_PIC_URL} as profilePicUrl,
                 ROW_NUMBER() OVER(ORDER BY ${ID} DESC) - 1 AS dataIndex, 
                 COUNT(*) OVER() AS totalCount
                 FROM follow INNER JOIN user on user.${UUID} = ${FOLLOWER_ID} WHERE ${FOLLOWEE_ID}=?
@@ -486,7 +486,7 @@ userInfoRouter.post('/connections/followers', utils.verifyAccessToken, async(req
             [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
             res.status(200).json({
                 success: true,
-                followers: response[0]
+                userList: response[0]
             });
         }
     }catch(error) {
@@ -511,7 +511,7 @@ userInfoRouter.post('/connections/following', utils.verifyAccessToken, async(req
             const db = new SQL_DB();
             const response = await db.exec(db.TYPES.CTE_SELECT, 
                 `WITH CTE AS (SELECT ${ID}, ${FOLLOWEE_ID} as followeeID, ${FIRST_NAME} as firstName, 
-                ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName, ${PROFILE_PIC_URL} as profilePicUrl
+                ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName, ${PROFILE_PIC_URL} as profilePicUrl,
                 ROW_NUMBER() OVER(ORDER BY ${ID} DESC) - 1 AS dataIndex, 
                 COUNT(*) OVER() AS totalCount
                 FROM follow INNER JOIN user on user.${UUID} = ${FOLLOWEE_ID} WHERE ${FOLLOWER_ID}=?
@@ -520,7 +520,11 @@ userInfoRouter.post('/connections/following', utils.verifyAccessToken, async(req
             [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
             res.status(200).json({
                 success: true,
-                followers: response[0]
+                userList: response[0].map((i: any) => {
+                    i.following = true;
+                    i.followeeID = uuidStringify(i.followeeID);
+                    return i;
+                })
             });
         }
     }catch(error) {

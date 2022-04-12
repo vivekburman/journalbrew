@@ -6,6 +6,8 @@ import Skeleton from 'react-loading-skeleton';
 
 import './connections.scss';
 import { getFolloweeConnections, getFollowerConnections } from '../../services/userService';
+
+import FollowCard from '../follow.card.component/follow.card';
 const DATA_INDEX = "dataIndex",
   UNIQUE_ID="id";
 class Connections extends Component {
@@ -41,7 +43,7 @@ class Connections extends Component {
     }
     getListItemDOM = (data, index) => {
         return  (
-            <div>apple</div>
+            <FollowCard data={data} index={index} currentUser={this.props.currentUser.userId}/>
         );
     }
     getConnections = (userID, start, end) => {
