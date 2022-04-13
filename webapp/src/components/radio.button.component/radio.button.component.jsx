@@ -21,13 +21,13 @@ const RadioButton = ({options, orientation=1, autoWrap = false,  isLazy=false, o
     }
   }
   return (
-    <div className={"radio-btn-wrapper flex " + 
+    <div className={"radio-btn-wrapper " + 
     (orientation == _orient.h ? `radio-h flex-row-${autoWrap ? 'wrap' : 'nowrap'}` : `radio-v flex-column-${autoWrap ? 'wrap' : 'nowrap'}`)}>
       {
         options.map((e, index) => {
           return (
-          <div key={e.title} className="radio-btn-itemwrapper flex flex-row-nowrap align-items-center">
-            <div className={"radio-btn-wrapper cursor-pointer flex flex-row-nowrap align-items-center justify-content-center " + (selectedOption == index ? "active" : "")} data-index={index} onClick={handleChange}>
+          <div key={e.title} className="radio-btn-itemwrapper flex-row-nowrap align-items-center">
+            <div className={"radio-btn-wrapper cursor-pointer flex-row-nowrap align-items-center justify-content-center " + (selectedOption == index ? "active" : "")} data-index={index} onClick={handleChange}>
               <div className="radio-btn">
                 <div className="radio-btn-fill"></div>
               </div>

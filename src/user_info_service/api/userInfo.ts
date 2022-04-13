@@ -6,6 +6,7 @@ import { convertTime } from "../../auth_service/utils/general";
 import { utils } from "../../auth_service/utils/jwtUtils";
 import SQL_DB from "../../database";
 import { EMAIL, FIRST_NAME, MIDDLE_NAME, LAST_NAME, PROFILE_PIC_URL, JOINED_AT, UUID, ID, CREATED_AT, TITLE, SUMMARY, THUMBNAIL, TYPE, AUTHOR_ID, PUBLISH_STATUS, BOOKMARK_POST_ID, USER_UUID, FULL_STORY, POST_ID, FOLLOWER_ID, FOLLOWEE_ID } from "../../database/fields";
+import { isNullOrEmpty } from "../../helpers/util";
 
 const userInfoRouter: Router = Router();
 
@@ -368,7 +369,7 @@ userInfoRouter.post('/following', utils.verifyAccessToken, async(req_: Request, 
         const followerID = req.body.followerId || null;
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
-            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+            throw new createHttpError.BadRequest("Follower or followee Id is not defined");
         } else if(followerID === followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
@@ -377,7 +378,7 @@ userInfoRouter.post('/following', utils.verifyAccessToken, async(req_: Request, 
                 `SELECT ${ID} FROM follow WHERE ${FOLLOWER_ID}=? AND ${FOLLOWEE_ID} = ?`, 
                 [Buffer.from(uuidParse(followerID)), Buffer.from(uuidParse(followingID))]
             );
-            if (response[0] && response[0].affectedRows === 1) {
+            if (response[0] && response[0].length === 1) {
                 res.status(200).json({
                     success: true
                 });
@@ -399,7 +400,7 @@ userInfoRouter.put('/follow-request', utils.verifyAccessToken, async(req_: Reque
         const followerID = req.body.followerId || null;
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
-            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+            throw new createHttpError.BadRequest("Follower or followee Id is undefined");
         } else if(followerID === followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
@@ -432,7 +433,7 @@ userInfoRouter.delete('/unfollow-request', utils.verifyAccessToken, async(req_: 
         const followerID = req.body.followerId || null;
         const followingID = req.body.followingId || null;
         if (!followerID || !followingID) {
-            throw new createHttpError.BadRequest("Follower or followee Id is defined");
+            throw new createHttpError.BadRequest("Follower or followee Id is undefined");
         } else if(followerID === followingID) {
             throw new createHttpError.BadRequest("Follower or followee Id is same");
         } else {
@@ -454,6 +455,81 @@ userInfoRouter.delete('/unfollow-request', utils.verifyAccessToken, async(req_: 
             }
         }
 
+    }catch(error) {
+        next(error);
+    } 
+});
+userInfoRouter.post('/connections/followers', utils.verifyAccessToken, async(req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const userID = req.body.userId || null;
+        const rangeStart = req.body.filter?.rangeStart;
+        const rangeEnd = req.body.filter?.rangeEnd;
+
+        if (isNullOrEmpty(userID)) {
+            throw new createHttpError.BadRequest("user Id is not found");
+        } else if (!Number.isInteger(rangeStart) || rangeStart < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeStart not defined");
+        } else if (!Number.isInteger(rangeEnd) || rangeEnd < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeEnd not defined");
+        } else {
+            const _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.CTE_SELECT, 
+                `WITH CTE AS (SELECT ${ID}, ${FOLLOWER_ID} as followerID, ${FIRST_NAME} as firstName, 
+                ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName, ${PROFILE_PIC_URL} as profilePicUrl,
+                ROW_NUMBER() OVER(ORDER BY ${ID} DESC) - 1 AS dataIndex, 
+                COUNT(*) OVER() AS totalCount
+                FROM follow INNER JOIN user on user.${UUID} = ${FOLLOWER_ID} WHERE ${FOLLOWEE_ID}=?
+                ORDER BY ${ID} DESC)
+                SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
+            [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
+            res.status(200).json({
+                success: true,
+                userList:  response[0].map((i: any) => {
+                    i.followerID = uuidStringify(i.followerID);
+                    return i;
+                })
+            });
+        }
+    }catch(error) {
+        next(error);
+    } 
+});
+userInfoRouter.post('/connections/following', utils.verifyAccessToken, async(req_: Request, res: Response, next: NextFunction) => {
+    try {
+        const req = req_ as RequestWithPayload;
+        const userID = req.body.userId || null;
+        const rangeStart = req.body.filter?.rangeStart;
+        const rangeEnd = req.body.filter?.rangeEnd;
+
+        if (isNullOrEmpty(userID)) {
+            throw new createHttpError.BadRequest("user Id is not found");
+        } else if (!Number.isInteger(rangeStart) || rangeStart < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeStart not defined");
+        } else if (!Number.isInteger(rangeEnd) || rangeEnd < 0) {
+            throw new createHttpError.BadRequest("Filter Object is not in proper format, rangeEnd not defined");
+        } else {
+            const _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
+            const db = new SQL_DB();
+            const response = await db.exec(db.TYPES.CTE_SELECT, 
+                `WITH CTE AS (SELECT ${ID}, ${FOLLOWEE_ID} as followeeID, ${FIRST_NAME} as firstName, 
+                ${MIDDLE_NAME} as middleName, ${LAST_NAME} as lastName, ${PROFILE_PIC_URL} as profilePicUrl,
+                ROW_NUMBER() OVER(ORDER BY ${ID} DESC) - 1 AS dataIndex, 
+                COUNT(*) OVER() AS totalCount
+                FROM follow INNER JOIN user on user.${UUID} = ${FOLLOWEE_ID} WHERE ${FOLLOWER_ID}=?
+                ORDER BY ${ID} DESC)
+                SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?`,
+            [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
+            res.status(200).json({
+                success: true,
+                userList: response[0].map((i: any) => {
+                    i.following = true;
+                    i.followeeID = uuidStringify(i.followeeID);
+                    return i;
+                })
+            });
+        }
     }catch(error) {
         next(error);
     } 

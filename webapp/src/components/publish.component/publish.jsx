@@ -515,7 +515,7 @@ class Publish extends Component {
                         <div className={"form-error " + (this.state.tagError.length > 0 ? 'err-show' : 'err-hide')}>{this.state.tagError}</div>
                       </div>
                       {/* <div>
-                        <div className={`publish-form-input-wrapper flex ${this.props.windowWidth > 768 ? 'flex-row-nowrap align-items-center' : 'flex-column-nowrap'}`}>
+                        <div className={`publish-form-input-wrapper ${this.props.windowWidth > 768 ? 'flex-row-nowrap align-items-center' : 'flex-column-nowrap'}`}>
                           <div className="publish-radio-title">Article Type:</div>
                           <RadioButton options={types} orientation={this.props.windowWidth > 768 ? 0 : 1} onChange={this.handleRadioBtnChange}/>
                         </div>

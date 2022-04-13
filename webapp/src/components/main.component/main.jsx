@@ -7,6 +7,7 @@ import CreateOrUpdatePost from '../loadable.component/CreateOrUpdatePost.lazy';
 import FullNews from '../loadable.component/FullNews.lazy';
 import PaymentInsights from '../loadable.component/PaymentInsights.lazy';
 import HelpCenter from '../loadable.component/HelpCenter.lazy';
+import ConnectionsLazy from '../loadable.component/Connections.lazy';
 
 class Main extends Component {
   render() {
@@ -21,6 +22,7 @@ class Main extends Component {
             <Route exact path="/full-story/:userId/:postId" component={FullNews} />
             {/* <Route exact path="/payment-history-&-insights" component={PaymentInsights} /> */}
             <Route exact path="/helpcenter" component={HelpCenter} />
+            <Route exact path="/connections" component={ConnectionsLazy} />
           </Switch>
         </div>
       </main>

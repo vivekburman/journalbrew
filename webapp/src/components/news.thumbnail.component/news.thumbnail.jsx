@@ -66,7 +66,7 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
         <div className="news-details cursor-pointer flex-column-nowrap align-content-spacebetween justify-content-between w-100"
         onClick={navClick}>
           <div className="margin-bottom-15">
-            <div className="flex flex-row-nowrap align-items-center">
+            <div className="flex-row-nowrap align-items-center">
               <h1 className="news-title flex-grow-1">
                 {title}
               </h1>
@@ -88,8 +88,8 @@ const NewsFeedThumbnail = ({ postID, title, summary, thumbnail, type,
               {summary}
             </p>
           </div>
-          <div className="flex flex-row-nowrap align-items-center justify-content-between">
-              <div className="flex flex-row-nowrap align-items-center">
+          <div className="flex-row-nowrap align-items-center justify-content-between">
+              <div className="flex-row-nowrap align-items-center">
                 {!showCreator ? <Moment fromNow date={time} />
                 : 
                 <>

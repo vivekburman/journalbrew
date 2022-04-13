@@ -22,7 +22,7 @@ class ShowFeed extends Component {
     const feedList = [];
     for(let i = 0; i < 10; i++) {
       feedList.push((
-        <li key={ i } className="news-item flex flex-row-nowrap justify-content-between">
+        <li key={ i } className="news-item flex-row-nowrap justify-content-between">
           <div className="news-details w-100" style={{lineHeight: 1.5}}>
             <Skeleton />
             <div style={{margin: '15px 0'}}></div>

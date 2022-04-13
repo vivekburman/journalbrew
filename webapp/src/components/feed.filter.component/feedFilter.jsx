@@ -44,15 +44,15 @@ class FeedFilter extends Component {
         name: "Health",
         id: 9,
       },
-      // {
-        // value: 'opinion',
-      //   name: "Opinion",
-      //   id: 10,
-      // },
+      {
+        value: 'column',
+        name: "Column",
+        id: 10,
+      },
       {
         value: 'historical',
         name: "Historical",
-        id: 10,
+        id: 11,
       }
     ];
     this.state = {

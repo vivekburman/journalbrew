@@ -62,11 +62,39 @@ const unsetBookmark = ({ userID, postID }) => {
     }
   })
 }
+const getFollowerConnections = (userID, start, end) => {
+  return axiosPost('api/user-info/connections/followers', {
+    userId: userID,
+    filter: {
+      rangeStart: start,
+      rangeEnd: end
+    }
+  }, {
+    headers: {
+      'Authorization': getToken()
+    }
+  })
+}
+const getFolloweeConnections = (userID, start, end) => {
+  return axiosPost('api/user-info/connections/following', {
+    userId: userID,
+    filter: {
+      rangeStart: start,
+      rangeEnd: end
+    }
+  }, {
+    headers: {
+      'Authorization': getToken()
+    }
+  })
+}
 export {
   getFollows,
   requestFollow,
   requestUnFollow,
   unsetBookmark,
   setBookmark,
-  isBookmarked
+  isBookmarked,
+  getFolloweeConnections,
+  getFollowerConnections
 }
