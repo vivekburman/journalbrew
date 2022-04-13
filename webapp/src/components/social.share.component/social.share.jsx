@@ -17,7 +17,7 @@ const SocialShare = (props) => {
     setReportDropDown(false);
   }
   return(
-    <div className="flex flex-row-nowrap">
+    <div className="flex-row-nowrap">
       <Link to=''>
         <img src={twitter} alt="twitter" className="icon-img"/>
       </Link>

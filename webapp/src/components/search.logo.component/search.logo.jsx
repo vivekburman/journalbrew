@@ -108,15 +108,15 @@ class SearchNLogoComponent extends Component {
         <Switch>
           <Route exact path={['/', '/user-profile']}>
             <div className={`search ${windowWidth < 768 && (isSearchBarOpen ? 'flex-grow-1 search-grow' : '')}`}>
-              <div className="search-wrapper flex flex-row-nowrap justify-content-center">
+              <div className="search-wrapper flex-row-nowrap justify-content-center">
                 <div className="search-wrapper align-items-center">
-                  <div className="flex flex-row-nowrap align-items-center">
+                  <div className="flex-row-nowrap align-items-center">
                     <img src={close} className="icon-img icon-img-close"
                       onClick={this._closeSearchBar}/>
                     <img src={search}
                       className="icon-img icon-img-search"
                       onClick={this._openSearchBar} />
-                    <div className='flex flex-row-nowrap flex-grow-1 align-items-center'>
+                    <div className='flex-row-nowrap flex-grow-1 align-items-center'>
                       <input
                         className={`search-input outline-none on-focus ${isSearchBarOpen ? 'expand-search' : 'collapse-search'}`}
                         type="text"

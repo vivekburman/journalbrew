@@ -17,8 +17,8 @@ class UserReaction extends Component {
   render() {
     const { likes, hasUserLiked, showViews=false, views, direction='row'} = this.props;
     return (
-      <div className={`flex flex-${direction}-nowrap ${direction ==='row' ? 'align-items-center' : ''}`}>
-        <div className="flex flex-row-nowrap align-items-center">
+      <div className={`flex-${direction}-nowrap ${direction ==='row' ? 'align-items-center' : ''}`}>
+        <div className="flex-row-nowrap align-items-center">
           { hasUserLiked ? <img src={liked} alt="liked" className="icon-img rotate-180 size-29" />
           : <img src={likePlaceholder} alt="likePlaceholder" className="icon-img rotate-180 size-29" /> }
           <span className="align-self-center likes-count">{`${formatCount(likes)} Likes`}</span>

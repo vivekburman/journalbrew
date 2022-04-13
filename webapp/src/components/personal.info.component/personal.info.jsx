@@ -33,10 +33,10 @@ const PersonalInfo = (props) => {
             </div>
           </div>
           :
-          <div className="flex flex-row-nowrap justify-content-between">
+          <div className="flex-row-nowrap justify-content-between">
             <div>
               <h1 className="username">{getDisplayName(personalInfo.firstName, personalInfo.middleName, personalInfo.lastName)}</h1>
-              <div className="flex flex-row-nowrap align-items-center">
+              <div className="flex-row-nowrap align-items-center">
                 <img src={calendar} className="icon-img calendar-img cursor-default" alt="calendar"/>
                 <time className="time">Joined {getDateOfJoining(personalInfo.createdAt)}</time>
               </div>

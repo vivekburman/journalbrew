@@ -213,7 +213,7 @@ const createCard = (data) => {
     for (let i = 0; i < 10; i++) {
       list.push(
         <div key={i}>
-          <div className="flex flex-row-nowrap" style={{margin: '20px 10px', lineHeight: 1.4}}>
+          <div className="flex-row-nowrap" style={{margin: '20px 10px', lineHeight: 1.4}}>
             <Skeleton circle={true} width={50} height={50} />
             <div className="flex-grow-1" style={{ margin: '5px 5px 0 5px' }}>
               <Skeleton />

@@ -32,7 +32,7 @@ const ProfileDropDown = ({ windowSize, hideProfileDropDown, logoutUser, currentU
       <Link to={`/user-profile/${currentUser.userId}`} className="profile-item-link">
         <div className="profile-list-item">
           <UserAvatar size={50} url={ currentUser.profilePicUrl }/>
-          <div className="flex flex-column-nowrap profile-list-info">
+          <div className="flex-column-nowrap profile-list-info">
             <span>{getDisplayName(currentUser.firstName, currentUser.middleName, currentUser.lastName)}</span>
             <span className="see-profile">See your Profile</span>
           </div>

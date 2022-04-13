@@ -72,7 +72,7 @@
   @extend %font-cormorant;
 }
 .full-story-profile-wrapper, .full-story-profile-wrapper-bottom {
-  @extend %flex-column-nowrap;
+  @extend %flex-row-nowrap;
 }
 .full-story-top-items-wrapper {
   align-items: flex-start;

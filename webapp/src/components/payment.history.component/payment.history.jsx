@@ -11,10 +11,10 @@ const createPayments = (payments=dummuyData) => {
     return payments.map(entry => {
       const _date = new Date(entry.time);
       return (
-        <li key={_date.toString()} className="flex flex-row-nowrap align-items-center justify-content-between payment-history-item">
+        <li key={_date.toString()} className="flex-row-nowrap align-items-center justify-content-between payment-history-item">
           <div className="payment-date">
             <span className="payment-day">{ _date.getDate() }</span>
-            <div className="flex flex-row-nowrap">
+            <div className="flex-row-nowrap">
               <span className="payment-month">{ months[_date.getMonth()] }</span>
               <span className="payment-year">{ _date.getFullYear() }</span>
             </div>
@@ -28,7 +28,7 @@ const createPayments = (payments=dummuyData) => {
   } else {
     for (let i = 0; i < 10; i++) {
       list.push(
-        <li key={i} className="flex flex-row-nowrap justify-content-between payment-history-item">
+        <li key={i} className="flex-row-nowrap justify-content-between payment-history-item">
           <Skeleton height={70} width={70}/>
           <div className="flex-grow-1 padding-left-8">
             <Skeleton width={'100%'} />
@@ -45,7 +45,7 @@ const PaymentHistoryNInsights = (props) => {
   const { totalAmount=20000, payments=[] } = props;
   
   return (
-    <div className="payment-history-container flex flex-column-nowrap">
+    <div className="payment-history-container flex-column-nowrap">
       <GrowthGraph totalAmount={totalAmount}/>
       <div className="history-container">
         <h2 className="header">Payment History</h2>
