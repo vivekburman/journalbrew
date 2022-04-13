@@ -486,7 +486,10 @@ userInfoRouter.post('/connections/followers', utils.verifyAccessToken, async(req
             [Buffer.from(uuidParse(userID)), rangeStart, _rangeEnd]);
             res.status(200).json({
                 success: true,
-                userList: response[0]
+                userList:  response[0].map((i: any) => {
+                    i.followerID = uuidStringify(i.followerID);
+                    return i;
+                })
             });
         }
     }catch(error) {

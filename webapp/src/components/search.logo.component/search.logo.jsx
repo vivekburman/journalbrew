@@ -100,7 +100,7 @@ class SearchNLogoComponent extends Component {
   render() {
     const { windowWidth } = this.props;
     const { searchText, isSearchBarOpen, searchError, searchLoading, searchResult, toggleHelpPopover } = this.state;
-    const placeholder = 'Search news';
+    const placeholder = 'Search';
     return (
       <div className="search-and-logo">
         <h1 onClick={this.goToHome} className={`logo ${isSearchBarOpen && windowWidth < 567 ? 'collapse-logo' : 'expand-logo'}`}>JournalBrew</h1>

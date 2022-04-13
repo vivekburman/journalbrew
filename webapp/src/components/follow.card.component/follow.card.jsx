@@ -14,7 +14,7 @@ const FollowCard = (props) => {
     const history = useHistory();
 
     const navigateToUserPage = () => {
-        history.push(`/user-profile/${props.currentUser}`);
+        history.push(`/user-profile/${data[props.userIDKey]}`);
     }
     
     const followRequest = (e) => {
@@ -54,13 +54,16 @@ const FollowCard = (props) => {
                 {getDisplayName(data.firstName, data.middleName, data.lastName)}
             </div>
             {
-                props.showFollow && isFollowing ? 
+                props.showFollow ? 
+                (isFollowing ? 
                 <div className={"following " + (showFollowLoading ? "tsn-loading" : "")} 
                 onClick={unFollowRequest}>Following
                 </div>
                 :
                 <div className={"follow " + (showFollowLoading ? "tsn-loading" : "")} 
-                onClick={followRequest}>Follow</div>
+                onClick={followRequest}>Follow</div>)
+                :
+                <></>
             }
         </div>
     )

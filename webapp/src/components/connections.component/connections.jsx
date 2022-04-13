@@ -9,7 +9,9 @@ import { getFolloweeConnections, getFollowerConnections } from '../../services/u
 
 import FollowCard from '../follow.card.component/follow.card';
 const DATA_INDEX = "dataIndex",
-  UNIQUE_ID="id";
+  UNIQUE_ID="id",
+  FOLLOWER_ID = "followerID",
+  FOLLOWEE_ID = "followeeID"
 class Connections extends Component {
     constructor(props) {
         super(props);
@@ -23,6 +25,7 @@ class Connections extends Component {
         this.getRangeData = this.getRangeData.bind(this);
         this.emptyStateUI = this.emptyStateUI.bind(this);
         this.onModeToggle = this.onModeToggle.bind(this);
+        this.getListItemDOM = this.getListItemDOM.bind(this);
     }
     getSkeletonUI = () => {
         const feedList = [];
@@ -41,10 +44,11 @@ class Connections extends Component {
         }
         return <ul className="ul-default">{feedList}</ul>;
     }
-    getListItemDOM = (data, index) => {
+    getListItemDOM (data, index) {
         return  (
             <FollowCard data={data} index={index} currentUser={this.props.currentUser.userId} 
-            showFollow={this.currentMode === this.MODES.FOLLOWING}/>
+            showFollow={this.currentMode === this.MODES.FOLLOWING}
+            userIDKey={this.currentMode === this.MODES.FOLLOWING ? FOLLOWEE_ID : FOLLOWER_ID}/>
         );
     }
     getConnections = (userID, start, end) => {
@@ -81,6 +85,7 @@ class Connections extends Component {
         } else {
             this.currentMode = this.MODES.FOLLOWING;
         }
+        this.allData = [];
     }
     render() {
         return(

@@ -38,14 +38,16 @@ class Accordian extends Component {
                 </div>
               </Link>
             </div>
+            { currentUser && 
             <div className="accordian-list-item">
-              <Link to="/connections" className="link">
+                <Link to="/connections" className="link">
                 <div className="accordian-item">
                   <img src={connection} className="item-img ts--top-align-2" alt="list-item-icon" />
                   <span className="item-name">Connections</span>
                 </div>
               </Link>
             </div>
+            }            
             <div className="accordian-list-item">
               <Link to="/helpcenter" className="link">
                 <div className="accordian-item">
