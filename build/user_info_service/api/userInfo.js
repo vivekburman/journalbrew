@@ -46,6 +46,7 @@ var general_1 = require("../../auth_service/utils/general");
 var jwtUtils_1 = require("../../auth_service/utils/jwtUtils");
 var database_1 = __importDefault(require("../../database"));
 var fields_1 = require("../../database/fields");
+var util_1 = require("../../helpers/util");
 var userInfoRouter = express_1.Router();
 // 1. get userinfo
 // 2. get user published posts
@@ -462,7 +463,7 @@ userInfoRouter.post('/following', jwtUtils_1.utils.verifyAccessToken, function (
                 followerID = req.body.followerId || null;
                 followingID = req.body.followingId || null;
                 if (!(!followerID || !followingID)) return [3 /*break*/, 1];
-                throw new http_errors_1.default.BadRequest("Follower or followee Id is defined");
+                throw new http_errors_1.default.BadRequest("Follower or followee Id is not defined");
             case 1:
                 if (!(followerID === followingID)) return [3 /*break*/, 2];
                 throw new http_errors_1.default.BadRequest("Follower or followee Id is same");
@@ -471,7 +472,7 @@ userInfoRouter.post('/following', jwtUtils_1.utils.verifyAccessToken, function (
                 return [4 /*yield*/, db.exec(db.TYPES.SELECT, "SELECT " + fields_1.ID + " FROM follow WHERE " + fields_1.FOLLOWER_ID + "=? AND " + fields_1.FOLLOWEE_ID + " = ?", [Buffer.from(uuid_1.parse(followerID)), Buffer.from(uuid_1.parse(followingID))])];
             case 3:
                 response = _a.sent();
-                if (response[0] && response[0].affectedRows === 1) {
+                if (response[0] && response[0].length === 1) {
                     res.status(200).json({
                         success: true
                     });
@@ -502,7 +503,7 @@ userInfoRouter.put('/follow-request', jwtUtils_1.utils.verifyAccessToken, functi
                 followerID = req.body.followerId || null;
                 followingID = req.body.followingId || null;
                 if (!(!followerID || !followingID)) return [3 /*break*/, 1];
-                throw new http_errors_1.default.BadRequest("Follower or followee Id is defined");
+                throw new http_errors_1.default.BadRequest("Follower or followee Id is undefined");
             case 1:
                 if (!(followerID === followingID)) return [3 /*break*/, 2];
                 throw new http_errors_1.default.BadRequest("Follower or followee Id is same");
@@ -544,7 +545,7 @@ userInfoRouter.delete('/unfollow-request', jwtUtils_1.utils.verifyAccessToken, f
                 followerID = req.body.followerId || null;
                 followingID = req.body.followingId || null;
                 if (!(!followerID || !followingID)) return [3 /*break*/, 1];
-                throw new http_errors_1.default.BadRequest("Follower or followee Id is defined");
+                throw new http_errors_1.default.BadRequest("Follower or followee Id is undefined");
             case 1:
                 if (!(followerID === followingID)) return [3 /*break*/, 2];
                 throw new http_errors_1.default.BadRequest("Follower or followee Id is same");
@@ -573,6 +574,91 @@ userInfoRouter.delete('/unfollow-request', jwtUtils_1.utils.verifyAccessToken, f
                 next(error_11);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
+        }
+    });
+}); });
+userInfoRouter.post('/connections/followers', jwtUtils_1.utils.verifyAccessToken, function (req_, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var req, userID, rangeStart, rangeEnd, _rangeEnd, db, response, error_12;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 6, , 7]);
+                req = req_;
+                userID = req.body.userId || null;
+                rangeStart = (_a = req.body.filter) === null || _a === void 0 ? void 0 : _a.rangeStart;
+                rangeEnd = (_b = req.body.filter) === null || _b === void 0 ? void 0 : _b.rangeEnd;
+                if (!util_1.isNullOrEmpty(userID)) return [3 /*break*/, 1];
+                throw new http_errors_1.default.BadRequest("user Id is not found");
+            case 1:
+                if (!(!Number.isInteger(rangeStart) || rangeStart < 0)) return [3 /*break*/, 2];
+                throw new http_errors_1.default.BadRequest("Filter Object is not in proper format, rangeStart not defined");
+            case 2:
+                if (!(!Number.isInteger(rangeEnd) || rangeEnd < 0)) return [3 /*break*/, 3];
+                throw new http_errors_1.default.BadRequest("Filter Object is not in proper format, rangeEnd not defined");
+            case 3:
+                _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
+                db = new database_1.default();
+                return [4 /*yield*/, db.exec(db.TYPES.CTE_SELECT, "WITH CTE AS (SELECT " + fields_1.ID + ", " + fields_1.FOLLOWER_ID + " as followerID, " + fields_1.FIRST_NAME + " as firstName, \n                " + fields_1.MIDDLE_NAME + " as middleName, " + fields_1.LAST_NAME + " as lastName, " + fields_1.PROFILE_PIC_URL + " as profilePicUrl,\n                ROW_NUMBER() OVER(ORDER BY " + fields_1.ID + " DESC) - 1 AS dataIndex, \n                COUNT(*) OVER() AS totalCount\n                FROM follow INNER JOIN user on user." + fields_1.UUID + " = " + fields_1.FOLLOWER_ID + " WHERE " + fields_1.FOLLOWEE_ID + "=?\n                ORDER BY " + fields_1.ID + " DESC)\n                SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?", [Buffer.from(uuid_1.parse(userID)), rangeStart, _rangeEnd])];
+            case 4:
+                response = _c.sent();
+                res.status(200).json({
+                    success: true,
+                    userList: response[0].map(function (i) {
+                        i.followerID = uuid_1.stringify(i.followerID);
+                        return i;
+                    })
+                });
+                _c.label = 5;
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                error_12 = _c.sent();
+                next(error_12);
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
+        }
+    });
+}); });
+userInfoRouter.post('/connections/following', jwtUtils_1.utils.verifyAccessToken, function (req_, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var req, userID, rangeStart, rangeEnd, _rangeEnd, db, response, error_13;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 6, , 7]);
+                req = req_;
+                userID = req.body.userId || null;
+                rangeStart = (_a = req.body.filter) === null || _a === void 0 ? void 0 : _a.rangeStart;
+                rangeEnd = (_b = req.body.filter) === null || _b === void 0 ? void 0 : _b.rangeEnd;
+                if (!util_1.isNullOrEmpty(userID)) return [3 /*break*/, 1];
+                throw new http_errors_1.default.BadRequest("user Id is not found");
+            case 1:
+                if (!(!Number.isInteger(rangeStart) || rangeStart < 0)) return [3 /*break*/, 2];
+                throw new http_errors_1.default.BadRequest("Filter Object is not in proper format, rangeStart not defined");
+            case 2:
+                if (!(!Number.isInteger(rangeEnd) || rangeEnd < 0)) return [3 /*break*/, 3];
+                throw new http_errors_1.default.BadRequest("Filter Object is not in proper format, rangeEnd not defined");
+            case 3:
+                _rangeEnd = Math.min(rangeStart + QUERY_SIZE, rangeEnd);
+                db = new database_1.default();
+                return [4 /*yield*/, db.exec(db.TYPES.CTE_SELECT, "WITH CTE AS (SELECT " + fields_1.ID + ", " + fields_1.FOLLOWEE_ID + " as followeeID, " + fields_1.FIRST_NAME + " as firstName, \n                " + fields_1.MIDDLE_NAME + " as middleName, " + fields_1.LAST_NAME + " as lastName, " + fields_1.PROFILE_PIC_URL + " as profilePicUrl,\n                ROW_NUMBER() OVER(ORDER BY " + fields_1.ID + " DESC) - 1 AS dataIndex, \n                COUNT(*) OVER() AS totalCount\n                FROM follow INNER JOIN user on user." + fields_1.UUID + " = " + fields_1.FOLLOWEE_ID + " WHERE " + fields_1.FOLLOWER_ID + "=?\n                ORDER BY " + fields_1.ID + " DESC)\n                SELECT * FROM CTE WHERE dataIndex >= ? AND dataIndex < ?", [Buffer.from(uuid_1.parse(userID)), rangeStart, _rangeEnd])];
+            case 4:
+                response = _c.sent();
+                res.status(200).json({
+                    success: true,
+                    userList: response[0].map(function (i) {
+                        i.following = true;
+                        i.followeeID = uuid_1.stringify(i.followeeID);
+                        return i;
+                    })
+                });
+                _c.label = 5;
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                error_13 = _c.sent();
+                next(error_13);
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
         }
     });
 }); });
