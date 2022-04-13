@@ -228,7 +228,7 @@ const FullPost = (props) => {
               <section>{showArticle(fullPostInfo.postInfo.fullStory)}</section>
               <hr />
             </div>
-            <div className='margin-top-10'>
+            <div className='margin-top-10 flex-row-wrap tags-wrapper'>
               <Tags tags={fullPostInfo.metaInfo.tags}/>
             </div>
             <div>

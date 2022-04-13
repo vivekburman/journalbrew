@@ -9,6 +9,11 @@
   background: rgba(245,235,111,0.29);
  }
 }
+.tags-wrapper {
+  .tag {
+    height: auto !important;
+  }
+}
 .full-news {
   max-width: 680px;
   margin: 0 16px;
@@ -73,6 +78,7 @@
 }
 .full-story-profile-wrapper, .full-story-profile-wrapper-bottom {
   @extend %flex-row-nowrap;
+  width: 100%;
 }
 .full-story-top-items-wrapper {
   align-items: flex-start;
